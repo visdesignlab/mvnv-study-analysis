@@ -66,21 +66,59 @@ async function startAnalysis(fetchFlag) {
 
   let allData = {};
 
+
+
   let allDocs = collectionNames.map(async collectionName => {
     if (fetchFlag) {
+
+      let taskNames = {
+        "S-task1": "S-task01",
+        "S-task1A": "S-task02",
+        "S-task3": "S-task03",
+        "S-task4": "S-task04",
+        "S-task4A": "S-task05",
+        "S-task5": "S-task06",
+        "S-task6": "S-task07",
+        "S-task7": "S-task08",
+        "S-task8": "S-task09",
+        "S-task9": "S-task10",
+        "S-task9A": "S-task11",
+        "S-task11": "S-task12",
+        "S-task12": "S-task13",
+        "S-task12A": "S-task14",
+        "S-task13": "S-task15",
+        "S-taskExplore": "S-task16",
+        "S-task10": "S-task-10"
+      };
+
       let querySnapshot = await db.collection(collectionName).get();
 
       allData[collectionName] = [];
       querySnapshot.forEach(function(doc) {
-        allData[collectionName].push({ id: doc.id, data: doc.data() });
+        let data = doc.data();
+        //create temporary keys
+        Object.keys(data).map(key => {
+          //rename tasks;
+          delete data[key].taskID;
+          if (taskNames[key]) {
+              let tempKey = taskNames[key].split('-')[1];
+            data[tempKey] = data[key];
+            delete data[key];
+          }
+        });
+        //replace with actual new keys
+        Object.keys(data).map(key => {
+          if (Object.values(taskNames).includes('S-' + key)) {
+              data['S-' + key] = data[key];
+              delete data[key];
+          }
+          });
+        allData[collectionName].push({ id: doc.id, data });
       });
 
       if (saveFlag) {
         console.log("saving ", collectionName);
-        saveJSON(
-          JSON.stringify(allData[collectionName]),
-          collectionName + ".json"
-        );
+        saveJSON(JSON.stringify(allData[collectionName]), collectionName + ".json");
       }
     } else {
       let filename = "results/" + mode + "/JSON/" + collectionName + ".json";
@@ -89,11 +127,11 @@ async function startAnalysis(fetchFlag) {
   });
 
   Promise.all(allDocs).then(function(values) {
-    console.log("finished loading docs", allData);
-
     if (saveFlag) {
       return;
     }
+
+    console.log('creating csvs')
 
     //create csv files for analysis
     let validParticipants = allData.study_participants
@@ -101,7 +139,7 @@ async function startAnalysis(fetchFlag) {
         return (
           p.data.demographics &&
           isProlific(p.id) &&
-          p.id !== '5d449accde2d3a001a707892' && //bad data from participant that timed out
+          p.id !== "5d449accde2d3a001a707892" && //bad data from participant that timed out
           Date.parse(p.data.startTime) >
             Date.parse(
               "Tue Aug 20 2019 01:00:00 GMT-0600 (Mountain Daylight Time)"
@@ -118,7 +156,15 @@ async function startAnalysis(fetchFlag) {
         validParticipants.includes(p.id)
       );
 
+    console.log('valid data ', allData)
+
+      let participantInfo = allData["study_participants"].filter(p =>
+        validParticipants.includes(p.id)
+      );
+
       let flattenAnswers = validData.map(p => {
+        console.log(p.data);
+
         //flatten answer.nodes, then flatten the whole data;
         Object.keys(p.data).map(key => {
           delete p.data[key].replyCount;
@@ -138,11 +184,31 @@ async function startAnalysis(fetchFlag) {
 
             //compute accuracy and add to data structure;
             let answer = p.data[key].answer;
-            answer.accuracy = computeAccuracy(p.data[key].taskID, answer); // col for more nuanced score
+            answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
             answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
           }
         });
+
+        //compute average accuracy for this participant;
+        p.data.averageAccuracy =
+          Object.keys(p.data).reduce((acc, key) => {
+            return acc + p.data[key].answer.accuracy;
+          }, 0) / Object.keys(p.data).length;
+
         p.data.id = p.id;
+
+        p.data.overallMinutesToComplete = participantInfo.find(
+          pt => pt.id === p.data.id
+        ).data.minutesToComplete;
+
+        //add demographic information for this participant;
+        p.data.demographics = participantInfo.find(
+          pt => pt.id === p.data.id
+        ).data.demographics;
+        p.data.overallFeedback = participantInfo.find(
+          pt => pt.id === p.data.id
+        ).data.feedback;
+
         return p.data;
       });
 
@@ -157,65 +223,154 @@ async function startAnalysis(fetchFlag) {
           csvKeys2.filter(key => !csvKeys1.includes(key))
         );
 
-        // csvKeys = csvKeys.filter(
-        //   k =>
-        //     k.includes("answer.nodes") ||
-        //     k.includes("answer.accuracy") ||
-        //     k.includes("answer.correct") ||
-        //     k.includes("answer.radio") ||
-        //     k.includes("answer.value") ||
-        //     k.includes("feedback") ||
-        //     k.includes("minutesToComplete") ||
-        //     k.includes("order") ||
-        //     k.includes("prompt") ||
-        //     k.includes("workerID") ||
-        //     k.includes("visType")
-        // );
+        csvKeys = csvKeys.filter(
+          k =>
+            k.includes("answer.nodes") ||
+            k.includes("answer.accuracy") ||
+            k.includes("answer.correct") ||
+            k.includes("answer.radio") ||
+            k.includes("answer.value") ||
+            k.includes("feedback") ||
+            k.includes("minutesToComplete") ||
+            k.includes("order") ||
+            k.includes("prompt") ||
+            k.includes("workerID") ||
+            k.includes("overall") ||
+            k.includes("averageAccuracy") ||
+            k.includes("demographics") ||
+            k.includes("visType") ||
+            k.includes("taskID")
+        );
 
         // fill in blanks for tasks the user did not take ;
         let sorted = validData
           //sort by visType
-        //   .sort((a, b) => (a.data["S-task1"].visType === "nodeLink" ? 1 : -1));
+          .sort((a, b) => (a.data["S-task01"].visType === "nodeLink" ? 1 : -1));
 
-        let rHeaders = ['prolificId','taskId','visType','taskType','topology', 'hypothesis','measure','value'];
+        let rHeaders = [
+          "prolificId",
+          "taskId",
+          "visType",
+          "taskType",
+          "topology",
+          "hypothesis",
+          "measure",
+          "value"
+        ];
         let rRows = [];
 
-        console.log(validData);
+        validData.map(participantData => {
+          let id = participantData.id;
+          Object.keys(participantData.data)
+            .filter(key => key[0] === "S")
+            .map(taskId => {
+              let data = participantData.data[taskId];
+              let visType = data.visType;
+              let taskType = data.taxonomy.type;
+              let topology = data.taxonomy.target;
+              let hypothesis = data.hypothesis.replace(/,/g, ";");
 
-        validData.map(participantData=>{
-            let id= participantData.id;
-            Object.keys(participantData.data).filter(key=>key[0] === 'S').map(taskId=>{
-                let data = participantData.data[taskId];
-                let visType = data.visType;
-                let taskType = data.taxonomy.type;
-                let topology = data.taxonomy.target;
-                let hypothesis = data.hypothesis.replace(/,/g, ";");
+              //create a row for every relevant value;
+              data.answer.nodes
+                .split(";")
+                .map(n => n.trim())
+                .map(node => {
+                  rRows.push([
+                    id,
+                    taskId,
+                    visType,
+                    taskType,
+                    topology,
+                    hypothesis,
+                    "nodeAnswer",
+                    node
+                  ]);
+                });
 
-                //create a row for every relevant value; 
-                data.answer.nodes.split(';').map(n=>n.trim()).map(node=>{
-                    rRows.push([id,taskId,visType,taskType,topology, hypothesis,'nodeAnswer',node]);
-                }) 
+              data.answer.value
+                .split(";")
+                .map(n => n.trim())
+                .map(v => {
+                  if (v.length > 0) {
+                    v = v.replace(/,/g, "");
+                    v = v.replace(/\r?\n|\r/g, "");
 
-                data.answer.value.split(';').map(n=>n.trim()).map(v=>{
-                    if (v.length>0){
-                            v = v.replace(/,/g, "");
-                            v = v.replace(/\r?\n|\r/g, "");
-                        
-
-
-                        rRows.push([id,taskId,visType,taskType,topology, hypothesis,'valueAnswer',v]);
-                    }
-                })  
-                if (data.answer.radio){
-                    rRows.push([id,taskId,visType,taskType,topology, hypothesis,'valueAnswer',data.answer.radio]);
-                }
-                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'accuracy',data.answer.accuracy]);
-                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'correct',data.answer.correct]);
-                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'difficulty',data.feedback.difficulty]);
-                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'confidence',data.feedback.confidence]);
-                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'minutesToComplete',data.minutesToComplete]);
-            })
-        })
+                    rRows.push([
+                      id,
+                      taskId,
+                      visType,
+                      taskType,
+                      topology,
+                      hypothesis,
+                      "valueAnswer",
+                      v
+                    ]);
+                  }
+                });
+              if (data.answer.radio) {
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis,
+                  "valueAnswer",
+                  data.answer.radio
+                ]);
+              }
+              rRows.push([
+                id,
+                taskId,
+                visType,
+                taskType,
+                topology,
+                hypothesis,
+                "accuracy",
+                data.answer.accuracy
+              ]);
+              rRows.push([
+                id,
+                taskId,
+                visType,
+                taskType,
+                topology,
+                hypothesis,
+                "correct",
+                data.answer.correct
+              ]);
+              rRows.push([
+                id,
+                taskId,
+                visType,
+                taskType,
+                topology,
+                hypothesis,
+                "difficulty",
+                data.feedback.difficulty
+              ]);
+              rRows.push([
+                id,
+                taskId,
+                visType,
+                taskType,
+                topology,
+                hypothesis,
+                "confidence",
+                data.feedback.confidence
+              ]);
+              rRows.push([
+                id,
+                taskId,
+                visType,
+                taskType,
+                topology,
+                hypothesis,
+                "minutesToComplete",
+                data.minutesToComplete
+              ]);
+            });
+        });
 
         let csvValues = sorted.map(p => {
           //fill in missing values;
@@ -239,13 +394,13 @@ async function startAnalysis(fetchFlag) {
             }
             return v.toString();
           });
-          return values;
+          return values;12
         });
 
-         csvKeys  = csvKeys.map(k=>k.split('.').pop());
-         let csvData = [csvKeys].concat(csvValues);
+        csvKeys = csvKeys.map(k => k.split(".").pop());
+        let csvData = [csvKeys].concat(csvValues);
 
-        // saveCSV(csvData, collection + ".csv");
+        saveCSV(csvData, collection + ".csv");
 
         saveCSV([rHeaders].concat(rRows), collection + ".csv");
       }
@@ -330,7 +485,7 @@ function computeAccuracy(task, answerObj) {
   let third = 0.6; //credit given for second best answer;
 
   let answers = {
-    "S-task1": function(answer) {
+    "S-task01": function(answer) {
       if (answer.ids.includes("18704160")) {
         //T.J - 5151 tweets
         return 1;
@@ -347,7 +502,7 @@ function computeAccuracy(task, answerObj) {
       }
       return 0;
     },
-    "S-task1A": function(answer) {
+    "S-task02": function(answer) {
       if (answer.ids.includes("909697437694087200")) {
         //Evis2018
         return 1;
@@ -363,45 +518,39 @@ function computeAccuracy(task, answerObj) {
 
       return 0;
     },
-    "S-task3": function(answer) {
+    "S-task03": function(answer) {
       //Jeffrey or Alex
-      let correctAnswers = ["247943631", "81658145","208312922", "40219508"];
+      let correctAnswers = ["247943631", "81658145", "208312922", "40219508"];
       if (correctAnswers.find(a => a == answer.ids)) {
         return 1;
       }
-     
+
       return 0;
     },
-    "S-task4": function(answer) {
+    "S-task04": function(answer) {
       // 'AA','Noeska', 'Till', 'Joe'
       let correctAnswers = ["191257554", "40219508", "36853217", "15208867"];
-      return scoreList(correctAnswers, answer)
+      return scoreList(correctAnswers, answer);
     },
-    "S-task4A": function(answer) {
+    "S-task05": function(answer) {
       //Robert 16112517
       let score = answer.ids
         .split(";")
         .map(a => a.trim())
-        .reduce(
-          (acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1),
-          0
-        );
+        .reduce((acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1), 0);
       return d3.max([0, score]);
     },
-    "S-task5": function(answer) {
+    "S-task06": function(answer) {
       //Robert 16112517
       let score = answer.ids
         .split(";")
-        .reduce(
-          (acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1),
-          0
-        );
+        .reduce((acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1), 0);
       return d3.max([0, score]);
     },
-    "S-task6": function(answer) {
+    "S-task07": function(answer) {
       return answer.radio == "European" ? 1 : 0;
     },
-    "S-task7": function(answer) {
+    "S-task08": function(answer) {
       if (answer.ids === "78865306") {
         //Chris
         return 1;
@@ -418,7 +567,7 @@ function computeAccuracy(task, answerObj) {
       }
       return 0;
     },
-    "S-task8": function(answer) {
+    "S-task09": function(answer) {
       let score = 0;
       if (answer.radio === "Mentions") {
         score = score + 0.5; //score for getting the type right
@@ -429,7 +578,7 @@ function computeAccuracy(task, answerObj) {
 
       return score;
     },
-    "S-task9": function(answer) {
+    "S-task10": function(answer) {
       // 'Lonni','Thomas', 'Anna', 'Klaus'
       let correctAnswers = [
         "2924711485",
@@ -437,52 +586,51 @@ function computeAccuracy(task, answerObj) {
         "446672281",
         "270431596"
       ];
-     return scoreList(correctAnswers, answer);
+      return scoreList(correctAnswers, answer);
     },
-    "S-task9A": function(answer) {
+    "S-task11": function(answer) {
       //  'Anna'
       let correctAnswers = ["446672281"];
       return scoreList(correctAnswers, answer);
     },
-    "S-task11": function(answer) {
+    "S-task12": function(answer) {
       return answer.value >= 1500 && answer.value <= 2500 ? 1 : 0;
     },
-    "S-task12": function(answer) {
+    "S-task13": function(answer) {
       //EVis19, Mandy
       let correctAnswers = ["1085199426837188600", "1035496563743842300"];
       return scoreList(correctAnswers, answer);
     },
-    "S-task12A": function(answer) {
+    "S-task14": function(answer) {
       //Rob, Micah
       let correctAnswers = ["208312922", "84043985"];
-     return scoreList(correctAnswers, answer);
+      return scoreList(correctAnswers, answer);
     },
-    "S-task13": function(answer) {
+    "S-task15": function(answer) {
       //Robert 16112517
       return answer.ids.includes("16112517") ? 1 : 0;
     },
-    "S-taskExplore": function(answer) {
+    "S-task16": function(answer) {
       return 1;
     }
   };
 
   function scoreList(correctAnswers, answer) {
     //+.25 points for each correct answer -.1 point for each incorrect answer;
-    let ids = answer.ids
-    .split(";")
-    .map(a => a.trim());
+    let ids = answer.ids.split(";").map(a => a.trim());
 
-    let score = ids
-      .reduce(
-        (acc, cValue) =>
-          correctAnswers.find(a => a === cValue)
-            ? acc + 1/correctAnswers.length
-            : acc - 1/correctAnswers.length,
-        0
-      );
+    let score = ids.reduce(
+      (acc, cValue) =>
+        correctAnswers.find(a => a === cValue)
+          ? acc + 1 / correctAnswers.length
+          : acc - 1 / correctAnswers.length,
+      0
+    );
 
     return d3.max([0, score]);
   }
+
+    console.log('task', task)
 
   return answers[task](answerObj);
 }
