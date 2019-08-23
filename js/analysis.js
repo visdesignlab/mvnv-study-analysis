@@ -177,7 +177,7 @@ async function startAnalysis(fetchFlag) {
           //sort by visType
         //   .sort((a, b) => (a.data["S-task1"].visType === "nodeLink" ? 1 : -1));
 
-        let rHeaders = ['prolificId','taskId','visType','responseType','value'];
+        let rHeaders = ['prolificId','taskId','visType','taskType','topology', 'hypothesis','measure','value'];
         let rRows = [];
 
         console.log(validData);
@@ -187,25 +187,33 @@ async function startAnalysis(fetchFlag) {
             Object.keys(participantData.data).filter(key=>key[0] === 'S').map(taskId=>{
                 let data = participantData.data[taskId];
                 let visType = data.visType;
+                let taskType = data.taxonomy.type;
+                let topology = data.taxonomy.target;
+                let hypothesis = data.hypothesis.replace(/,/g, ";");
 
                 //create a row for every relevant value; 
                 data.answer.nodes.split(';').map(n=>n.trim()).map(node=>{
-                    rRows.push([id,taskId,visType,'nodeAnswer',node]);
+                    rRows.push([id,taskId,visType,taskType,topology, hypothesis,'nodeAnswer',node]);
                 }) 
-                // console.log(data.answer.value.split(';'))
-                data.answer.value.split(';').map(n=>n.trim()).map(value=>{
-                    if (value.length>0){
-                        rRows.push([id,taskId,visType,'valueAnswer',value]);
+
+                data.answer.value.split(';').map(n=>n.trim()).map(v=>{
+                    if (v.length>0){
+                            v = v.replace(/,/g, "");
+                            v = v.replace(/\r?\n|\r/g, "");
+                        
+
+
+                        rRows.push([id,taskId,visType,taskType,topology, hypothesis,'valueAnswer',v]);
                     }
                 })  
                 if (data.answer.radio){
-                    rRows.push([id,taskId,visType,'valueAnswer',data.answer.radio]);
+                    rRows.push([id,taskId,visType,taskType,topology, hypothesis,'valueAnswer',data.answer.radio]);
                 }
-                rRows.push([id,taskId,visType,'accuracy',data.answer.accuracy]);
-                rRows.push([id,taskId,visType,'correct',data.answer.correct]);
-                rRows.push([id,taskId,visType,'difficulty',data.feedback.difficulty]);
-                rRows.push([id,taskId,visType,'confidence',data.feedback.confidence]);
-                rRows.push([id,taskId,visType,'minutesToComplete',data.minutesToComplete]);
+                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'accuracy',data.answer.accuracy]);
+                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'correct',data.answer.correct]);
+                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'difficulty',data.feedback.difficulty]);
+                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'confidence',data.feedback.confidence]);
+                rRows.push([id,taskId,visType,taskType,topology, hypothesis,'minutesToComplete',data.minutesToComplete]);
             })
         })
 
