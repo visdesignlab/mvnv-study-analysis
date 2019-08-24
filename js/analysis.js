@@ -123,6 +123,8 @@ async function startAnalysis(fetchFlag) {
     } else {
       let filename = "results/" + mode + "/JSON/" + collectionName + ".json";
       allData[collectionName] = await d3.json(filename);
+
+
     }
   });
 
@@ -151,25 +153,25 @@ async function startAnalysis(fetchFlag) {
     let filteredCollections = ["results"];
 
     //saveKeys
-    filteredCollections.map(collection => {
+    filteredCollections.map(async collection => {
       let validData = allData[collection].filter(p =>
         validParticipants.includes(p.id)
       );
 
-    console.log('valid data ', allData)
 
       let participantInfo = allData["study_participants"].filter(p =>
         validParticipants.includes(p.id)
       );
 
       let flattenAnswers = validData.map(p => {
-        console.log(p.data);
 
         //flatten answer.nodes, then flatten the whole data;
         Object.keys(p.data).map(key => {
           delete p.data[key].replyCount;
           delete p.data[key].replyType;
           delete p.data[key].answerKey;
+
+
 
           if (p.data[key].answer) {
             ["answer"].map(answer => {
@@ -187,6 +189,9 @@ async function startAnalysis(fetchFlag) {
             answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
             answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
           }
+
+             p.data[key].taskID = key;
+
         });
 
         //compute average accuracy for this participant;
@@ -195,24 +200,24 @@ async function startAnalysis(fetchFlag) {
             return acc + p.data[key].answer.accuracy;
           }, 0) / Object.keys(p.data).length;
 
-        p.data.id = p.id;
+        p.data.workerID = p.id;
+        delete p.id;
 
         p.data.overallMinutesToComplete = participantInfo.find(
-          pt => pt.id === p.data.id
+          pt => pt.id === p.data.workerID
         ).data.minutesToComplete;
 
         //add demographic information for this participant;
         p.data.demographics = participantInfo.find(
-          pt => pt.id === p.data.id
+          pt => pt.id === p.data.workerID
         ).data.demographics;
         p.data.overallFeedback = participantInfo.find(
-          pt => pt.id === p.data.id
+          pt => pt.id === p.data.workerID
         ).data.feedback;
+
 
         return p.data;
       });
-
-      // console.log(flattenAnswers)
 
       if (validData.length > 0) {
         //create keys from users 1 and 2 (since they had different task lists)
@@ -225,21 +230,23 @@ async function startAnalysis(fetchFlag) {
 
         csvKeys = csvKeys.filter(
           k =>
-            k.includes("answer.nodes") ||
-            k.includes("answer.accuracy") ||
-            k.includes("answer.correct") ||
-            k.includes("answer.radio") ||
-            k.includes("answer.value") ||
-            k.includes("feedback") ||
-            k.includes("minutesToComplete") ||
-            k.includes("order") ||
-            k.includes("prompt") ||
-            k.includes("workerID") ||
-            k.includes("overall") ||
-            k.includes("averageAccuracy") ||
-            k.includes("demographics") ||
-            k.includes("visType") ||
-            k.includes("taskID")
+            {
+              return k.includes("answer.nodes") ||
+                k.includes("answer.accuracy") ||
+                k.includes("answer.correct") ||
+                k.includes("answer.radio") ||
+                k.includes("answer.value") ||
+                k.includes("feedback") ||
+                k.includes("minutesToComplete") ||
+                k.includes("order") ||
+                k.includes("prompt") ||
+                k.includes("workerID") ||
+                k.includes("overall") ||
+                k.includes("averageAccuracy") ||
+                k.includes("demographics") ||
+                k.includes("visType") ||
+                k.includes("taskID");
+            }
         );
 
         // fill in blanks for tasks the user did not take ;
@@ -253,14 +260,18 @@ async function startAnalysis(fetchFlag) {
           "visType",
           "taskType",
           "topology",
-          "hypothesis",
+          "hypothesis_1",
+          "hypothesis_2",
           "measure",
           "value"
         ];
         let rRows = [];
 
+        // let taskInfo = await d3.json('results/pilot/study.json');
+
         validData.map(participantData => {
-          let id = participantData.id;
+          let id = participantData.data.workerID;
+
           Object.keys(participantData.data)
             .filter(key => key[0] === "S")
             .map(taskId => {
@@ -268,7 +279,9 @@ async function startAnalysis(fetchFlag) {
               let visType = data.visType;
               let taskType = data.taxonomy.type;
               let topology = data.taxonomy.target;
-              let hypothesis = data.hypothesis.replace(/,/g, ";");
+              let hypothesis = data.hypothesis.split(','); 
+              let hypothesis_1 = hypothesis[0];
+              let hypothesis_2 = hypothesis[1] ? hypothesis[1] : '';
 
               //create a row for every relevant value;
               data.answer.nodes
@@ -281,7 +294,8 @@ async function startAnalysis(fetchFlag) {
                     visType,
                     taskType,
                     topology,
-                    hypothesis,
+                    hypothesis_1,
+                    hypothesis_2,
                     "nodeAnswer",
                     node
                   ]);
@@ -301,7 +315,8 @@ async function startAnalysis(fetchFlag) {
                       visType,
                       taskType,
                       topology,
-                      hypothesis,
+                      hypothesis_1,
+                      hypothesis_2,
                       "valueAnswer",
                       v
                     ]);
@@ -314,61 +329,73 @@ async function startAnalysis(fetchFlag) {
                   visType,
                   taskType,
                   topology,
-                  hypothesis,
+                  hypothesis_1,
+                  hypothesis_2,
                   "valueAnswer",
                   data.answer.radio
                 ]);
               }
-              rRows.push([
-                id,
-                taskId,
-                visType,
-                taskType,
-                topology,
-                hypothesis,
-                "accuracy",
-                data.answer.accuracy
-              ]);
-              rRows.push([
-                id,
-                taskId,
-                visType,
-                taskType,
-                topology,
-                hypothesis,
-                "correct",
-                data.answer.correct
-              ]);
-              rRows.push([
-                id,
-                taskId,
-                visType,
-                taskType,
-                topology,
-                hypothesis,
-                "difficulty",
-                data.feedback.difficulty
-              ]);
-              rRows.push([
-                id,
-                taskId,
-                visType,
-                taskType,
-                topology,
-                hypothesis,
-                "confidence",
-                data.feedback.confidence
-              ]);
-              rRows.push([
-                id,
-                taskId,
-                visType,
-                taskType,
-                topology,
-                hypothesis,
-                "minutesToComplete",
-                data.minutesToComplete
-              ]);
+
+              {
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis_1,
+                  hypothesis_2,
+                  "accuracy",
+                  data.answer.accuracy
+                ]);
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis_1,
+                  hypothesis_2,
+                  "correct",
+                  data.answer.correct
+                ]);
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis_1,
+                  hypothesis_2,
+                  "difficulty",
+                  data.feedback.difficulty
+                ]);
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis_1,
+                  hypothesis_2,
+                  "confidence",
+                  data.feedback.confidence
+                ]);
+                rRows.push([
+                  id,
+                  taskId,
+                  visType,
+                  taskType,
+                  topology,
+                  hypothesis_1,
+                  hypothesis_2,
+                  "minutesToComplete",
+                  data.minutesToComplete
+                ]);
+
+
+              }
+             
             });
         });
 
@@ -394,13 +421,13 @@ async function startAnalysis(fetchFlag) {
             }
             return v.toString();
           });
-          return values;12
+          return values;
         });
 
         csvKeys = csvKeys.map(k => k.split(".").pop());
         let csvData = [csvKeys].concat(csvValues);
 
-        saveCSV(csvData, collection + ".csv");
+        // saveCSV(csvData, collection + ".csv");
 
         saveCSV([rHeaders].concat(rRows), collection + ".csv");
       }
@@ -630,7 +657,25 @@ function computeAccuracy(task, answerObj) {
     return d3.max([0, score]);
   }
 
-    console.log('task', task)
 
   return answers[task](answerObj);
+}
+
+async function exportForVisone(){
+
+  let graph = await d3.json('network_large_undirected_singleEdge.json')
+
+
+  //create a barebones graph to import into Visone; 
+  let bareBonesGraph= {'nodes':[],'links':[]};
+
+  graph.nodes.map(n=>bareBonesGraph.nodes.push({'id':n.id,'name':n.shortName}));
+  graph.links.map((l,i)=>{
+    let source = graph.nodes.find(n=>n.id === l.source);
+    let target = graph.nodes.find(n=>n.id === l.target);
+    bareBonesGraph.links.push({'source':graph.nodes.indexOf(source),'target':graph.nodes.indexOf(target),'id':i})
+  })
+    
+
+  saveJSON(bareBonesGraph,'layoutGraph.json')
 }
