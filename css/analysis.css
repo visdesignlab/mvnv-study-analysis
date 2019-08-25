@@ -27,8 +27,18 @@ body {
 
 }
 
+.event.trials{
+    fill:purple
+}
+
+.event.training{
+    fill:#2366d1
+}
+
 .event{
-    opacity:.5
+    opacity:.5;
+    stroke:white;
+    stroke-width:5px;
 }
 
 .browseaway{
@@ -37,6 +47,10 @@ body {
 
 .help{
     fill:red;
+}
+
+.reloadedpage{
+    fill:purple
 }
 
 .task{

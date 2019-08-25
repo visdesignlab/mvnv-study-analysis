@@ -80,8 +80,8 @@ function makePlot(provData,index, type,width,height,svg) {
 
   x.domain(dateDomain);
 
-  var y = d3.scaleLinear().range([height, 0]);
-  y.domain([0,provData[index].provEvents.filter(e=>e.type === type).length-1]);
+  var y = d3.scaleLinear().range([height-10, 0]);
+  y.domain(type === 'singleAction' ? [0,0] : [0,2]) //provData[index].provEvents.filter(e=>e.type === type && e.level === undefined).length-1+2]);
 
   var xAxis_woy = d3
     .axisBottom(x)
@@ -130,9 +130,9 @@ function makePlot(provData,index, type,width,height,svg) {
   rects = rectsEnter.merge(rects);
 
   rects
-    .attr("height", 10)
+    .attr("height", 15)
     .attr("x", d => x(Date.parse(d.startTime)) || x(Date.parse(d.time)))
-    .attr("y", (d, i) => y(i)) //y(d.participantOrder))
+    .attr("y", (d, i) => y(d.level)) //y(d.participantOrder))
     .attr("width", d => {
       let diff = x(Date.parse(d.endTime)) - x(Date.parse(d.startTime));
 
@@ -159,21 +159,21 @@ function makePlot(provData,index, type,width,height,svg) {
   labels = labelsEnter.merge(rects);
 
   labels
-    .attr("x", d => x(Date.parse(d.startTime) || Date.parse(d.time)))
-    .attr("y", (d, i) => y(i)) //y(d.participantOrder))
+    // .attr("x", d => x(Date.parse(d.startTime) || Date.parse(d.time)))
+    // .attr("y", (d, i) => y(d.level)) //y(d.participantOrder))
+    .attr('transform',d=>'translate(' +x(Date.parse(d.startTime) || Date.parse(d.time))  + ',' + y(d.level)  +  ') rotate(-40)')
     .attr("dy", 5)
-    .text(d => d.label)
     .style("text-anchor", "end")
     .style("font-size", 12)
-    .attr("class", d => "label " + d.label.replace(/ /g, ""));
-  // .style('fill',d=>d.label == 'help' ? 'red' : 'black')
+    .attr("class", d => "label " + d.label.replace(/ /g, ""))
+    // .text(d => d.label)
 }
 
 function drawProvenance(provData) {
   
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
-  var height = 800;
+  var height = 130;
   var width = 1400;
 
 
