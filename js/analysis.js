@@ -50,9 +50,220 @@ function setNested(obj, path, value) {
 }
 
 //checks if member is is from prolific (only contains numbers)
-let isProlific = function(id) {
+function isProlific(id) {
   return id[0] == "5";
-};
+}
+
+function getProlificParticipants(study_participants) {
+  return study_participants
+    .filter(p => {
+      return (
+        p.data.demographics &&
+        isProlific(p.id) &&
+        p.id !== "5d449accde2d3a001a707892" && //bad data from participant that timed out
+        Date.parse(p.data.startTime) >
+          Date.parse(
+            "Tue Aug 20 2019 01:00:00 GMT-0600 (Mountain Daylight Time)"
+          )
+      ); //only keep participants that completed the study;
+    })
+    .map(p => p.id);
+}
+
+function makePlot(provData,index, type,width,height,svg) {
+
+  let dateDomain = d3.extent(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.startTime)).concat(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.endTime))))
+
+ 
+  // set the ranges
+  var x = d3.scaleTime().range([0, width]);
+
+  x.domain(dateDomain);
+
+  var y = d3.scaleLinear().range([height, 0]);
+  y.domain([0,provData[index].provEvents.filter(e=>e.type === type).length-1]);
+
+  var xAxis_woy = d3
+    .axisBottom(x)
+    .ticks(12)
+    .tickFormat(d3.timeFormat("%I:%M"));
+  // .tickValues(provData.map(d => Date.parse(d.provEvents[0].startTime)  || Date.parse(d.provEvents[0].time)));
+
+  svg
+    .append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis_woy);
+
+
+  let participantGroups = svg
+    .selectAll(".participantGroup")
+    .data([provData[index]]);
+
+  let participantGroupsEnter = participantGroups
+    .enter()
+    .append("g")
+    .attr("class", "participantGroup");
+
+  participantGroups.exit().remove();
+
+  participantGroups = participantGroupsEnter.merge(participantGroups);
+
+  
+  let rects = participantGroups.selectAll(".event").data((d, i) =>
+    d.provEvents
+      .filter(e => e.type === type)
+      .map(pEvent => {
+        pEvent.participantOrder = i;
+        return pEvent;
+      })
+  );
+
+  let rectsEnter = rects
+    .enter()
+    .append("rect")
+    .attr("class", "event");
+  // .style('opacity',.2);
+
+  rects.exit().remove();
+
+  rects = rectsEnter.merge(rects);
+
+  rects
+    .attr("height", 10)
+    .attr("x", d => x(Date.parse(d.startTime)) || x(Date.parse(d.time)))
+    .attr("y", (d, i) => y(i)) //y(d.participantOrder))
+    .attr("width", d => {
+      let diff = x(Date.parse(d.endTime)) - x(Date.parse(d.startTime));
+
+      return diff || 10;
+    })
+    .attr("class", d => "event " + d.label.replace(/ /g, ""));
+
+  let labels = participantGroups.selectAll(".label").data((d, i) =>
+    d.provEvents
+      .filter(e => e.type === type)
+      .map(pEvent => {
+        pEvent.participantOrder = i;
+        return pEvent;
+      })
+  );
+
+  let labelsEnter = labels
+    .enter()
+    .append("text")
+    .attr("class", "label");
+
+  labels.exit().remove();
+
+  labels = labelsEnter.merge(rects);
+
+  labels
+    .attr("x", d => x(Date.parse(d.startTime) || Date.parse(d.time)))
+    .attr("y", (d, i) => y(i)) //y(d.participantOrder))
+    .attr("dy", 5)
+    .text(d => d.label)
+    .style("text-anchor", "end")
+    .style("font-size", 12)
+    .attr("class", d => "label " + d.label.replace(/ /g, ""));
+  // .style('fill',d=>d.label == 'help' ? 'red' : 'black')
+}
+
+function drawProvenance(provData) {
+  
+  var margin = { top: 50, right: 15, bottom: 25, left: 150 };
+
+  var height = 800;
+  var width = 1400;
+
+
+  width = width - margin.left - margin.right;
+  height = height - margin.top - margin.bottom;
+
+  provData.map((d,i)=>{
+
+    var svg = d3
+    .select("body")
+    .append('svg')
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  makePlot(provData,i, "longAction",width,height,svg);
+  })
+  
+}
+
+async function plotParticipantActions() {
+  participant_actions = await d3.json(
+    "results/pilot/JSON/participant_actions.json"
+  );
+
+  let validParticipants = participant_actions.filter(p => {
+    let startTime = Date.parse(p.data.initialSetup);
+    let endTime = Date.parse(p.data.update);
+
+    let studyDuration = endTime - startTime;
+    let pilotStartTime = Date.parse(
+      "Tue Aug 20 2019 01:00:00 GMT-0600 (Mountain Daylight Time)"
+    );
+
+    return (
+      isProlific(p.id) &&
+      studyDuration > 20 * 60 * 1000 &&
+      startTime > pilotStartTime
+    );
+  });
+
+  let eventTypes = await d3.json("js/events.json");
+
+  //create events objects per participant;
+  let events = [];
+
+  validParticipants.map(participant => {
+    participantEventArray = [];
+
+    participant.data.provGraphs.map(action => {
+      //see if this a single event, or the start/end of a long event;
+      let event = eventTypes[action.event];
+
+      if (event && event.type === "singleAction") {
+        //create copy of event template
+        let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
+        eventObj.label = action.event;
+        eventObj.time = action.time;
+        participantEventArray.push(eventObj);
+      } else {
+        //at the start of an event;
+        if (event && event.start.trim() == action.event.trim()) {
+          let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
+          eventObj.startTime = action.time;
+          participantEventArray.push(eventObj);
+        } else {
+          //at the end of an event;
+          //find the 'start' eventObj;
+          let startObj = participantEventArray
+            .filter(e => {
+              let value =
+                e.type === "longAction" &&
+                Array.isArray(e.end) &&
+                e.end.includes(action.event);
+              return value;
+            })
+            .pop();
+          startObj.endTime = action.time;
+        }
+      }
+    });
+
+    events.push({ id: participant.id, provEvents: participantEventArray });
+    // console.log(participantEventArray.filter(e=>e.type === 'longAction' && e.endTime === undefined))
+  });
+
+  console.log("events", events);
+  drawProvenance(events);
+}
 async function startAnalysis(fetchFlag) {
   let collectionNames = [
     // "heuristics_participants",
@@ -66,11 +277,8 @@ async function startAnalysis(fetchFlag) {
 
   let allData = {};
 
-
-
   let allDocs = collectionNames.map(async collectionName => {
     if (fetchFlag) {
-
       let taskNames = {
         "S-task1": "S-task01",
         "S-task1A": "S-task02",
@@ -101,30 +309,31 @@ async function startAnalysis(fetchFlag) {
           //rename tasks;
           delete data[key].taskID;
           if (taskNames[key]) {
-              let tempKey = taskNames[key].split('-')[1];
+            let tempKey = taskNames[key].split("-")[1];
             data[tempKey] = data[key];
             delete data[key];
           }
         });
         //replace with actual new keys
         Object.keys(data).map(key => {
-          if (Object.values(taskNames).includes('S-' + key)) {
-              data['S-' + key] = data[key];
-              delete data[key];
+          if (Object.values(taskNames).includes("S-" + key)) {
+            data["S-" + key] = data[key];
+            delete data[key];
           }
-          });
+        });
         allData[collectionName].push({ id: doc.id, data });
       });
 
       if (saveFlag) {
         console.log("saving ", collectionName);
-        saveJSON(JSON.stringify(allData[collectionName]), collectionName + ".json");
+        saveJSON(
+          JSON.stringify(allData[collectionName]),
+          collectionName + ".json"
+        );
       }
     } else {
       let filename = "results/" + mode + "/JSON/" + collectionName + ".json";
       allData[collectionName] = await d3.json(filename);
-
-
     }
   });
 
@@ -133,22 +342,10 @@ async function startAnalysis(fetchFlag) {
       return;
     }
 
-    console.log('creating csvs')
+    console.log("creating csvs");
 
     //create csv files for analysis
-    let validParticipants = allData.study_participants
-      .filter(p => {
-        return (
-          p.data.demographics &&
-          isProlific(p.id) &&
-          p.id !== "5d449accde2d3a001a707892" && //bad data from participant that timed out
-          Date.parse(p.data.startTime) >
-            Date.parse(
-              "Tue Aug 20 2019 01:00:00 GMT-0600 (Mountain Daylight Time)"
-            )
-        ); //only keep participants that completed the study;
-      })
-      .map(p => p.id);
+    let validParticipants = getProlificParticipants(allData.study_participants);
 
     let filteredCollections = ["results"];
 
@@ -158,20 +355,16 @@ async function startAnalysis(fetchFlag) {
         validParticipants.includes(p.id)
       );
 
-
       let participantInfo = allData["study_participants"].filter(p =>
         validParticipants.includes(p.id)
       );
 
       let flattenAnswers = validData.map(p => {
-
         //flatten answer.nodes, then flatten the whole data;
         Object.keys(p.data).map(key => {
           delete p.data[key].replyCount;
           delete p.data[key].replyType;
           delete p.data[key].answerKey;
-
-
 
           if (p.data[key].answer) {
             ["answer"].map(answer => {
@@ -190,8 +383,7 @@ async function startAnalysis(fetchFlag) {
             answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
           }
 
-             p.data[key].taskID = key;
-
+          p.data[key].taskID = key;
         });
 
         //compute average accuracy for this participant;
@@ -215,7 +407,6 @@ async function startAnalysis(fetchFlag) {
           pt => pt.id === p.data.workerID
         ).data.feedback;
 
-
         return p.data;
       });
 
@@ -228,26 +419,25 @@ async function startAnalysis(fetchFlag) {
           csvKeys2.filter(key => !csvKeys1.includes(key))
         );
 
-        csvKeys = csvKeys.filter(
-          k =>
-            {
-              return k.includes("answer.nodes") ||
-                k.includes("answer.accuracy") ||
-                k.includes("answer.correct") ||
-                k.includes("answer.radio") ||
-                k.includes("answer.value") ||
-                k.includes("feedback") ||
-                k.includes("minutesToComplete") ||
-                k.includes("order") ||
-                k.includes("prompt") ||
-                k.includes("workerID") ||
-                k.includes("overall") ||
-                k.includes("averageAccuracy") ||
-                k.includes("demographics") ||
-                k.includes("visType") ||
-                k.includes("taskID");
-            }
-        );
+        csvKeys = csvKeys.filter(k => {
+          return (
+            k.includes("answer.nodes") ||
+            k.includes("answer.accuracy") ||
+            k.includes("answer.correct") ||
+            k.includes("answer.radio") ||
+            k.includes("answer.value") ||
+            k.includes("feedback") ||
+            k.includes("minutesToComplete") ||
+            k.includes("order") ||
+            k.includes("prompt") ||
+            k.includes("workerID") ||
+            k.includes("overall") ||
+            k.includes("averageAccuracy") ||
+            k.includes("demographics") ||
+            k.includes("visType") ||
+            k.includes("taskID")
+          );
+        });
 
         // fill in blanks for tasks the user did not take ;
         let sorted = validData
@@ -267,7 +457,7 @@ async function startAnalysis(fetchFlag) {
         ];
         let rRows = [];
 
-        // let taskInfo = await d3.json('results/pilot/study.json');
+        // console.log(layout.elements.nodes)
 
         validData.map(participantData => {
           let id = participantData.data.workerID;
@@ -279,9 +469,9 @@ async function startAnalysis(fetchFlag) {
               let visType = data.visType;
               let taskType = data.taxonomy.type;
               let topology = data.taxonomy.target;
-              let hypothesis = data.hypothesis.split(','); 
+              let hypothesis = data.hypothesis.split(",");
               let hypothesis_1 = hypothesis[0];
-              let hypothesis_2 = hypothesis[1] ? hypothesis[1] : '';
+              let hypothesis_2 = hypothesis[1] ? hypothesis[1] : "";
 
               //create a row for every relevant value;
               data.answer.nodes
@@ -392,10 +582,7 @@ async function startAnalysis(fetchFlag) {
                   "minutesToComplete",
                   data.minutesToComplete
                 ]);
-
-
               }
-             
             });
         });
 
@@ -429,7 +616,7 @@ async function startAnalysis(fetchFlag) {
 
         // saveCSV(csvData, collection + ".csv");
 
-        saveCSV([rHeaders].concat(rRows), collection + ".csv");
+        // saveCSV([rHeaders].concat(rRows), collection + ".csv");
       }
     });
   });
@@ -657,25 +844,57 @@ function computeAccuracy(task, answerObj) {
     return d3.max([0, score]);
   }
 
-
   return answers[task](answerObj);
 }
 
-async function exportForVisone(){
+async function exportForVisone() {
+  let graph = await d3.json("network_large_undirected_singleEdge.json");
 
-  let graph = await d3.json('network_large_undirected_singleEdge.json')
+  //create a barebones graph to import into Visone;
+  let bareBonesGraph = { nodes: [], links: [] };
 
+  graph.nodes.map(n =>
+    bareBonesGraph.nodes.push({ id: n.id, name: n.shortName })
+  );
+  graph.links.map((l, i) => {
+    let source = graph.nodes.find(n => n.id === l.source);
+    let target = graph.nodes.find(n => n.id === l.target);
+    bareBonesGraph.links.push({
+      source: graph.nodes.indexOf(source),
+      target: graph.nodes.indexOf(target),
+      id: i
+    });
+  });
 
-  //create a barebones graph to import into Visone; 
-  let bareBonesGraph= {'nodes':[],'links':[]};
+  saveJSON(bareBonesGraph, "layoutGraph.json");
+}
 
-  graph.nodes.map(n=>bareBonesGraph.nodes.push({'id':n.id,'name':n.shortName}));
-  graph.links.map((l,i)=>{
-    let source = graph.nodes.find(n=>n.id === l.source);
-    let target = graph.nodes.find(n=>n.id === l.target);
-    bareBonesGraph.links.push({'source':graph.nodes.indexOf(source),'target':graph.nodes.indexOf(target),'id':i})
-  })
-    
+async function importLayout() {
+  let filenames = [
+    "network_large_undirected_singleEdge.json",
+    "network_large_undirected_multiEdge.json",
+    "network_small_undirected_singleEdge.json"
+  ];
+  // let taskInfo = await d3.json('results/pilot/study.json');
 
-  saveJSON(bareBonesGraph,'layoutGraph.json')
+  filenames.map(async (fname, i) => {
+    let graph = await d3.json("results/pilot/" + fname);
+    let layoutFile =
+      i < 2
+        ? "results/pilot/manual_layout_generic.json"
+        : "results/pilot/small_manual_layout.json";
+
+    let layout = await d3.json(layoutFile);
+
+    graph.nodes.map(n => {
+      // let layoutNode = layout.elements.nodes.find(l=>l.data.label === n.shortName);
+      // n.x = layoutNode.position.x;
+      // n.y = layoutNode.position.y;
+
+      let layoutNode = layout.nodes.find(l => l.id === n.id);
+      n.x = layoutNode.x;
+      n.y = layoutNode.y;
+    });
+    saveJSON(graph, fname);
+  });
 }

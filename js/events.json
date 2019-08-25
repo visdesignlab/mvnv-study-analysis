@@ -1,0 +1,77 @@
+{
+    "signed consent form":{
+        "type":"singleAction"
+    },
+    " started training": {
+        "label":"training",
+        "type":"longAction",
+        "start":" started training",
+        "end":["finished training","started trials"]
+    },
+    "Unfocused Tab": {
+        "label":"browse away",
+        "type":"longAction",
+        "start":"Unfocused Tab",
+        "end":["Focused Tab"]
+    },
+    "started trials": {
+        "label":"trials",
+        "type":"longAction",
+        "start":" started trials",
+        "end":["ended trials"]
+    },
+    "started Task": {
+        "label":"task",
+        "type":"longAction",
+        "start":" started Task",
+        "end":["ended Task","ended task - submitted feedback","submitted correct answer"]
+    },
+    "started guided tour":  {
+        "label":"guided tour",
+        "type":"longAction",
+        "start":"started guided tour",
+        "end":["ended guided tour"]
+    },
+    "searched for node": {
+        "type":"singleAction"
+    },
+    "submitted incorrect answer": {
+        "type":"singleAction"
+    },
+    "cleared all selections": {
+        "type":"singleAction"
+    },
+    "opened Help": {
+        "label":"help",
+        "type":"longAction",
+        "start":"opened Help",
+        "end":["closed Help"]
+    },
+    "started study": {
+        "label":"study",
+        "type":"longAction",
+        "start":"started study",
+        "end":["ended Study"]
+    },
+    "submitted valid answer": {
+        "type":"singleAction"
+    },
+    "submitted invalid answer": {
+        "type":"singleAction"
+    },
+    "started Feedback":  {
+        "label":"feedback",
+        "type":"longAction",
+        "start":"started Feedback",
+        "end":["submitted feedback"]
+    },
+    "started second guided tour":  {
+        "label":"second guided tour",
+        "type":"longAction",
+        "start":"started second guided tour",
+        "end":["ended guided tour"]
+    },
+    "reloaded page": {
+        "type":"singleAction"
+    }
+}
