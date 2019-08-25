@@ -27,6 +27,21 @@ body {
 
 }
 
+div.tooltip {
+    position: absolute;
+    color:black;
+    text-align: center;
+    font-size:13px;
+    width: 150px;
+    border-radius: 5px;
+    padding: 2px;
+    background: white;
+    border: 0px;
+    pointer-events: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    }
+
 .event.trials{
     fill:purple
 }

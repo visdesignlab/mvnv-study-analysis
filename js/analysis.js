@@ -70,6 +70,24 @@ function getProlificParticipants(study_participants) {
     .map(p => p.id);
 }
 
+function showTooltip(data,delay=200){
+
+  let tooltip = d3.select('.tooltip');
+
+    tooltip.html(data)
+    .style("left", (window.event.pageX + 10) + "px")
+    .style("top", (window.event.pageY - 20) + "px"); 
+
+    tooltip.transition().duration(delay).style("opacity", .9);
+
+}
+
+function hideTooltip(){
+  d3.select('.tooltip').transition().duration(100).style("opacity",0);
+}
+
+
+
 function makePlot(provData,index, type,width,height,svg) {
 
   let dateDomain = d3.extent(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.startTime)).concat(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.endTime))))
@@ -145,6 +163,13 @@ function makePlot(provData,index, type,width,height,svg) {
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""));
 
+    rects
+    .on('mouseover',d=>{
+      let tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
+      showTooltip(d.endTime ? tooltipContent : d.label)
+    })
+    .on("mouseout",hideTooltip)
+
   let labels = participantGroups.selectAll(".label").data((d, i) =>
     d.provEvents
       .filter(e => e.type === type)
@@ -153,6 +178,8 @@ function makePlot(provData,index, type,width,height,svg) {
         return pEvent;
       })
   );
+
+
 
   let labelsEnter = labels
     .enter()
@@ -179,6 +206,12 @@ function makePlot(provData,index, type,width,height,svg) {
 }
 
 function drawProvenance(provData) {
+
+      //add tooltip
+      d3.select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
   
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
