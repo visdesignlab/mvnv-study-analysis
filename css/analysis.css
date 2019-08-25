@@ -31,6 +31,10 @@ body {
     fill:purple
 }
 
+.guidedtour{
+    fill:rgb(128, 57, 82);
+}
+
 .event.training{
     fill:#2366d1
 }

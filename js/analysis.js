@@ -75,18 +75,20 @@ function makePlot(provData,index, type,width,height,svg) {
   let dateDomain = d3.extent(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.startTime)).concat(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.endTime))))
 
  
+  let startTime = dateDomain[0]
   // set the ranges
-  var x = d3.scaleTime().range([0, width]);
+  var x = d3.scaleLinear().range([0, width]);
 
-  x.domain(dateDomain);
+  x.domain([0,75*60*1000]);
 
   var y = d3.scaleLinear().range([height-10, 0]);
-  y.domain(type === 'singleAction' ? [0,0] : [0,2]) //provData[index].provEvents.filter(e=>e.type === type && e.level === undefined).length-1+2]);
+  y.domain(type === 'singleAction' ? [0,0] : [-2,2]) //provData[index].provEvents.filter(e=>e.type === type && e.level === undefined).length-1+2]);
 
   var xAxis_woy = d3
     .axisBottom(x)
-    .ticks(12)
-    .tickFormat(d3.timeFormat("%I:%M"));
+    .ticks(10)
+    // .tickValues([0,5000,1000,15,20,30,40,50,60,70])
+    .tickFormat(d=>Math.round(d/1000/60));
   // .tickValues(provData.map(d => Date.parse(d.provEvents[0].startTime)  || Date.parse(d.provEvents[0].time)));
 
   svg
@@ -131,7 +133,10 @@ function makePlot(provData,index, type,width,height,svg) {
 
   rects
     .attr("height", 15)
-    .attr("x", d => x(Date.parse(d.startTime)) || x(Date.parse(d.time)))
+    .attr("x", d => {
+      let time = Date.parse(d.startTime)|| x(Date.parse(d.time))
+      return x(time-startTime)
+    })
     .attr("y", (d, i) => y(d.level)) //y(d.participantOrder))
     .attr("width", d => {
       let diff = x(Date.parse(d.endTime)) - x(Date.parse(d.startTime));
@@ -161,20 +166,24 @@ function makePlot(provData,index, type,width,height,svg) {
   labels
     // .attr("x", d => x(Date.parse(d.startTime) || Date.parse(d.time)))
     // .attr("y", (d, i) => y(d.level)) //y(d.participantOrder))
-    .attr('transform',d=>'translate(' +x(Date.parse(d.startTime) || Date.parse(d.time))  + ',' + y(d.level)  +  ') rotate(-40)')
+    .attr('transform',d=>{
+
+      let time = Date.parse(d.startTime)|| x(Date.parse(d.time))      
+      return 'translate(' +x(time-startTime)  + ',' + y(d.level-1.5)+  ') rotate(0)'
+    })
     .attr("dy", 5)
-    .style("text-anchor", "end")
+    .style("text-anchor", "start")
     .style("font-size", 12)
     .attr("class", d => "label " + d.label.replace(/ /g, ""))
-    // .text(d => d.label)
+    .text(d => d.level == 0 ? d.label : '')
 }
 
 function drawProvenance(provData) {
   
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
-  var height = 130;
-  var width = 1400;
+  var height = 150;
+  var width = 1800;
 
 
   width = width - margin.left - margin.right;
