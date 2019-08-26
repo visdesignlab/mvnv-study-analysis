@@ -50,6 +50,10 @@ div.tooltip {
     fill:rgb(128, 57, 82);
 }
 
+.task.wrong{
+    fill:rgb(179, 0, 0);
+}
+
 .event.training{
     fill:#2366d1
 }
@@ -69,7 +73,7 @@ div.tooltip {
 }
 
 .help{
-    fill:red;
+    fill:rgb(179, 0, 0);
 }
 
 .reloadedpage{

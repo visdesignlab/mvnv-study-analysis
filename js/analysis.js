@@ -92,7 +92,10 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
   let dateDomain = d3.extent(provData[index].provEvents.filter(e=>e.type === type).map(e=>Date.parse(e.startTime)).concat(provData[index].provEvents.filter(e=>e.type === type).map(e=> Date.parse(e.endTime))))
 
- 
+  let opacityScale = d3.scaleLinear()
+  .domain([0,15])
+  .range([.3,1]);
+
   let startTime = dateDomain[0]
   // console.log('start time is ', Date(startTime))
   // set the ranges
@@ -116,6 +119,37 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis_woy);
 
+
+    let studyStarted = 0;
+     provData[index].provEvents.map((e,i)=>{
+       if (e.label === 'study'){
+         studyStarted = i;
+       }
+     });
+
+       //compute taskOrder in provData
+    provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted).map((e,i)=>{
+      e.order=i
+    });
+
+    // console.log(provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted))
+
+    // console.log(participantResults);
+    let resultsArray;
+    if (participantResults){
+      resultsArray = Object.entries(participantResults);
+    }
+
+    //associate results data for each task
+    provData[index].provEvents.map(e=>{
+      if (e.order!== undefined && resultsArray){
+        let data = resultsArray.filter(r=> r[1].order == e.order)[0];
+        e.task = {id:data[0],data:data[1]};
+      }
+    })
+
+    // console.log(provData[index].provEvents);
+   
 
   let participantGroups = svg
     .selectAll(".participantGroup")
@@ -143,8 +177,8 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
   let rectsEnter = rects
     .enter()
     .append("rect")
-    .attr("class", "event");
-  // .style('opacity',.2);
+    .attr("class", "event")
+    .style('opacity',d=>d.task ? opacityScale(d.task.id.match(/\d+/g).map(Number)):'');
 
   rects.exit().remove();
 
@@ -162,11 +196,19 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
       return diff || 0;
     })
-    .attr("class", d => "event " + d.label.replace(/ /g, ""));
+    .attr("class", d => "event " + d.label.replace(/ /g, ""))
+    .classed('wrong',d=>d.task && d.task.data.answer ? d.task.data.answer.correct == 0 : false)
 
     rects
     .on('mouseover',d=>{
-      let tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
+
+      let tooltipContent;
+      if (d.label == 'task'){
+        tooltipContent ='task:' + (d.task !== undefined ? d.task.id : '');
+
+      } else {
+        tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
+            }
       showTooltip(d.endTime ? tooltipContent : d.label)
     })
     .on("mouseout",hideTooltip)
@@ -267,7 +309,7 @@ async function drawProvenance(provData) {
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
-  var width = 1800;
+  var width = window.screen.availWidth;
 
 
   width = width - margin.left - margin.right;
