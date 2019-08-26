@@ -72,7 +72,7 @@ div.tooltip {
     fill:purple
 }
 
-.task{
+.task,.submittedvalidanswer{
     fill:rgb(2, 118, 87)
 }
 
@@ -85,7 +85,7 @@ div.tooltip {
 }
 
 .searchedfornode{
-    fill:rgb(2, 118, 87)
+    fill:rgb(4, 123, 174)
 }
 .shepherd-title{
     font-weight:bold !important;

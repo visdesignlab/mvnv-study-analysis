@@ -88,12 +88,13 @@ function hideTooltip(){
 
 
 
-function makePlot(provData,index, type,width,height,svg) {
+function makePlot(provData,index,type,width,height,svg) {
 
-  let dateDomain = d3.extent(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.startTime)).concat(provData[index].provEvents.map(e=>Date.parse(e.time) || Date.parse(e.endTime))))
+  let dateDomain = d3.extent(provData[index].provEvents.filter(e=>e.type === type).map(e=>Date.parse(e.startTime)).concat(provData[index].provEvents.filter(e=>e.type === type).map(e=> Date.parse(e.endTime))))
 
  
   let startTime = dateDomain[0]
+  // console.log('start time is ', Date(startTime))
   // set the ranges
   var x = d3.scaleLinear().range([0, width]);
 
@@ -159,7 +160,7 @@ function makePlot(provData,index, type,width,height,svg) {
     .attr("width", d => {
       let diff = x(Date.parse(d.endTime)) - x(Date.parse(d.startTime));
 
-      return diff || 10;
+      return diff || 0;
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""));
 
@@ -203,6 +204,39 @@ function makePlot(provData,index, type,width,height,svg) {
     .style("font-size", 12)
     .attr("class", d => "label " + d.label.replace(/ /g, ""))
     .text(d => d.level == 0 ? d.label : '')
+
+
+  rects = participantGroups.selectAll(".s-event").data((d, i) =>
+    d.provEvents
+      .filter(e => e.type === 'singleAction')
+      .map(pEvent => {
+        pEvent.participantOrder = i;
+        return pEvent;
+      })
+  );
+
+  rectsEnter = rects
+    .enter()
+    .append("rect")
+    .attr("class", "s-event");
+  // .style('opacity',.2);
+
+  rects.exit().remove();
+
+  rects = rectsEnter.merge(rects);
+
+  rects
+    .attr("height", 20)
+    .attr("x", d => x(Date.parse(d.time)) -x(startTime))
+    .attr("y", (d, i) => y(d.level+1.1)) //y(d.participantOrder))
+    .attr("width", 3)
+    .attr("class", d => "s-event " + d.label.replace(/ /g, ""))
+    .on('mouseover',d=>{
+      showTooltip(d.label)
+    })
+    .on("mouseout",hideTooltip)
+
+
 }
 
 function drawProvenance(provData) {
@@ -215,7 +249,7 @@ function drawProvenance(provData) {
   
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
-  var height = 150;
+  var height = 180;
   var width = 1800;
 
 
@@ -233,6 +267,7 @@ function drawProvenance(provData) {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   makePlot(provData,i, "longAction",width,height,svg);
+  
   })
   
 }
