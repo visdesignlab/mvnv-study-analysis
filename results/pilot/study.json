@@ -189,7 +189,7 @@
     },
     "S-task12": {
         "hypothesis": "Cluster Hypothesis",
-        "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  likes</span> among the selected people.",
+        "prompt": "Select all the <span class='attribute'>people</span> who are in a cluster with Alex. Estimate the <span class='attribute'>average number of  likes</span> of the selected people.",
         "replyType": ["multipleNodeSelection", "value"],
         "replyCount": {
             "type": "at least",

@@ -27,6 +27,88 @@ body {
 
 }
 
+div.tooltip {
+    position: absolute;
+    color:black;
+    text-align: center;
+    font-size:13px;
+    width: 250px;
+    border-radius: 5px;
+    padding: 2px;
+    background: white;
+    border: 0px;
+    pointer-events: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    }
+
+.event.trials{
+    fill:purple
+}
+
+.guidedtour{
+    fill:rgb(128, 57, 82);
+}
+
+.nodeLink{
+    stroke:rgb(3, 126, 104);
+    opacity:.4;
+    stroke-width:10px;
+    fill:none
+}
+
+.adjMatrix{
+    stroke:rgb(255, 125, 26);
+    opacity:.4;
+    stroke-width:10px;
+    fill:none
+}
+
+.task.wrong{
+    fill:rgb(179, 0, 0);
+}
+
+.event.training{
+    fill:#2366d1
+}
+
+.event{
+    opacity:.5;
+    stroke:white;
+    stroke-width:3px;
+}
+
+.browseaway{
+    fill:rgb(193, 135, 64);
+}
+
+.rank,.visType{
+    font-weight:bold;
+}
+
+.help{
+    fill:rgb(179, 0, 0);
+}
+
+.reloadedpage{
+    fill:purple
+}
+
+.task,.submittedvalidanswer{
+    fill:rgb(2, 118, 87)
+}
+
+.submittedincorrectanswer,.submittedinvalidanswer{
+    fill:red;
+}
+
+.clearedallselections{
+    fill:rgb(193, 135, 64);
+}
+
+.searchedfornode{
+    fill:rgb(4, 123, 174)
+}
 .shepherd-title{
     font-weight:bold !important;
     font-size:20px !important;
@@ -180,10 +262,14 @@ div.tooltip {
     background-color:#898989;
 }
 
-.attribute{
+.event.sortedOn{
+    stroke-width:4px;
+    stroke:black;
+}
+/* .attribute{
     font-weight:bold;
     color:#f7e671;
-}
+} */
 
 
 #start-trials{
