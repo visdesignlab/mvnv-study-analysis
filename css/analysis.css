@@ -46,7 +46,7 @@ div.tooltip {
     fill:purple
 }
 
-.guidedtour{
+.guidedtour,.secondguidedtour{
     fill:rgb(128, 57, 82);
 }
 
@@ -262,7 +262,10 @@ div.tooltip {
     background-color:#898989;
 }
 
-.event.sortedOn{
+.frames{
+    fill:none;
+}
+.frames.sortedOn{
     stroke-width:4px;
     stroke:black;
 }

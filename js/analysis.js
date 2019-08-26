@@ -198,7 +198,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""))
     .classed('wrong',d=>d.task && d.task.data.answer ? d.task.data.answer.correct == 0 : false)
-    .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
+    // .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
     rects
     .on('mouseover',d=>{
@@ -214,8 +214,40 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     })
     .on("mouseout",hideTooltip)
     .on("click",d=>{
-      drawProvenance(provData,d.task.id)
+      if (d.order!==undefined){
+        drawProvenance(provData,d.task.id)
+      }
     })
+
+    let frames = participantGroups.selectAll(".frames").data((d, i) =>
+    d.provEvents
+      .filter(e => e.label === 'task' && e.order!== undefined));
+
+  let framesEnter = frames
+    .enter()
+    .append("rect")
+    .attr("class", "frames")
+
+    frames.exit().remove();
+
+    frames = framesEnter.merge(frames);
+
+    frames
+    .attr("height", 15)
+    .attr("x", d => {
+      let time = Date.parse(d.startTime)|| x(Date.parse(d.time))
+      return x(time-startTime)
+    })
+    .attr("y", (d, i) => y(d.level)) //y(d.participantOrder))
+    .attr("width", d => {
+      let diff = x(Date.parse(d.endTime)) - x(Date.parse(d.startTime));
+      return diff || 0;
+    })
+    .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
+
+
+
+    
 
     participantGroups.append('text').attr('class','rank')
     .text(participantResults ? 'Avg Accuracy:' + Math.round(participantResults.averageAccuracy*100)/100  : 'NA')
@@ -315,8 +347,7 @@ async function drawProvenance(provData,sortOrder) {
   height = height - margin.top - margin.bottom;
 
 d3.selectAll('svg').remove();
-
-  provData.sort((a,b)=>{
+ let sortedData =  provData.sort((a,b)=>{
     let aResults = participantResults.find(d=>d.data.workerID == a.id)
     let bResults = participantResults.find(d=>d.data.workerID == b.id)
 
@@ -327,10 +358,14 @@ d3.selectAll('svg').remove();
     if (sortOrder){
       return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
     } else{
+ 
+      // return Date.parse(aResults.data['S-task01'].startTime) < Date.parse(bResults.data['S-task01'].startTime) ? -1 : 1 
       return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
     }
 
-  }).map((d,i)=>{
+  });
+  
+  sortedData.map((d,i)=>{
     let participantResult = participantResults.find(d=>d.data.workerID == provData[i].id)
     
 
@@ -354,6 +389,9 @@ d3.selectAll('svg').remove();
       makePlot(provData,i, "longAction",width,height,svg,participantResult.data,sortOrder);
   
   })
+
+  console.log(sortedData)
+
   
 }
 
