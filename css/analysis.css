@@ -32,7 +32,7 @@ div.tooltip {
     color:black;
     text-align: center;
     font-size:13px;
-    width: 150px;
+    width: 250px;
     border-radius: 5px;
     padding: 2px;
     background: white;
@@ -48,6 +48,20 @@ div.tooltip {
 
 .guidedtour{
     fill:rgb(128, 57, 82);
+}
+
+.nodeLink{
+    stroke:rgb(3, 126, 104);
+    opacity:.4;
+    stroke-width:10px;
+    fill:none
+}
+
+.adjMatrix{
+    stroke:rgb(255, 125, 26);
+    opacity:.4;
+    stroke-width:10px;
+    fill:none
 }
 
 .task.wrong{
@@ -248,10 +262,10 @@ div.tooltip {
     background-color:#898989;
 }
 
-.attribute{
+/* .attribute{
     font-weight:bold;
     color:#f7e671;
-}
+} */
 
 
 #start-trials{

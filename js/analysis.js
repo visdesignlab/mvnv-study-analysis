@@ -101,7 +101,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
   // set the ranges
   var x = d3.scaleLinear().range([0, width]);
 
-  x.domain([0,75*60*1000]);
+  x.domain([0,60*60*1000]);
 
   var y = d3.scaleLinear().range([height-10, 0]);
   y.domain(type === 'singleAction' ? [0,0] : [-2,2]) //provData[index].provEvents.filter(e=>e.type === type && e.level === undefined).length-1+2]);
@@ -111,7 +111,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
     .ticks(10)
     // .tickValues([0,5000,1000,15,20,30,40,50,60,70])
     .tickFormat(d=>Math.round(d/1000/60));
-  // .tickValues(provData.map(d => Date.parse(d.provEvents[0].startTime)  || Date.parse(d.provEvents[0].time)));
+  // .tickValues(provData.map(d => Date.parse(d.provEvents[0].startTime)  || Date.parse(d.provEvents[0].time))); 
 
   svg
     .append("g")
@@ -204,7 +204,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
       let tooltipContent;
       if (d.label == 'task'){
-        tooltipContent ='task:' + (d.task !== undefined ? d.task.id : '');
+        tooltipContent =(d.task !== undefined ? '<strong>' + d.task.id + '</strong>' +  '<br/>' +  d.task.data.prompt : '');
 
       } else {
         tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
@@ -309,7 +309,7 @@ async function drawProvenance(provData) {
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
-  var width = window.screen.availWidth;
+  var width = window.screen.availWidth - margin.left;
 
 
   width = width - margin.left - margin.right;
@@ -335,8 +335,17 @@ async function drawProvenance(provData) {
     .select("body")
     .append('svg')
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+    .attr("height", height + margin.top + margin.bottom);
+
+    if (participantResult){
+      svg.append('rect').attr('class', participantResult.data['S-task01'].visType )
+      .attr('x',margin.left-20)
+      .attr('y',0)
+      .attr('height',height + margin.top + margin.bottom)
+      .attr('width',width  + 20 + margin.right);
+    }
+
+    svg = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       makePlot(provData,i, "longAction",width,height,svg,participantResult ? participantResult.data : null);
@@ -361,6 +370,7 @@ async function plotParticipantActions() {
 
     return (
       isProlific(p.id) &&
+      p.id !== "5d449accde2d3a001a707892" &&
       studyDuration > 20 * 60 * 1000 &&
       startTime > pilotStartTime
     );
