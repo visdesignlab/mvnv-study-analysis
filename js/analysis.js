@@ -204,7 +204,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
       let tooltipContent;
       if (d.label == 'task'){
-        tooltipContent =(d.task !== undefined ? '<strong>' + d.task.id + '</strong>' +  '<br/>' +  d.task.data.prompt : '');
+        tooltipContent =(d.task !== undefined ? '<strong>' + d.task.id + '</strong>' + '[' + d.task.data.answer.accuracy + ']' + '<br/>' +  d.task.data.prompt : '');
 
       } else {
         tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
@@ -341,8 +341,8 @@ async function drawProvenance(provData) {
       svg.append('rect').attr('class', participantResult.data['S-task01'].visType )
       .attr('x',margin.left-20)
       .attr('y',0)
-      .attr('height',height + margin.top + margin.bottom)
-      .attr('width',width  + 20 + margin.right);
+      .attr('height',height + margin.top )
+      .attr('width',5) //width  + 20 + margin.right);
     }
 
     svg = svg.append("g")
@@ -365,16 +365,18 @@ async function plotParticipantActions() {
 
     let studyDuration = endTime - startTime;
     let pilotStartTime = Date.parse(
-      "Tue Aug 20 2019 01:00:00 GMT-0600 (Mountain Daylight Time)"
+      "Tue Aug 20 2019 00:00:00 GMT-0600 (Mountain Daylight Time)"
     );
 
     return (
       isProlific(p.id) &&
       p.id !== "5d449accde2d3a001a707892" &&
-      studyDuration > 20 * 60 * 1000 &&
-      startTime > pilotStartTime
+      studyDuration > 10 * 60 * 1000 &&
+      startTime >= pilotStartTime
     );
   });
+
+  console.log(validParticipants)
 
   let eventTypes = await d3.json("js/events.json");
 
