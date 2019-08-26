@@ -88,7 +88,7 @@ function hideTooltip(){
 
 
 
-function makePlot(provData,index,type,width,height,svg) {
+function makePlot(provData,index,type,width,height,svg,participantResults) {
 
   let dateDomain = d3.extent(provData[index].provEvents.filter(e=>e.type === type).map(e=>Date.parse(e.startTime)).concat(provData[index].provEvents.filter(e=>e.type === type).map(e=> Date.parse(e.endTime))))
 
@@ -171,6 +171,19 @@ function makePlot(provData,index,type,width,height,svg) {
     })
     .on("mouseout",hideTooltip)
 
+    participantGroups.append('text').attr('class','rank')
+    .text(participantResults ? 'Avg Accuracy:' + Math.round(participantResults.averageAccuracy*100)/100  : 'NA')
+    .attr('x',x.range()[1])
+    .attr('y',0)
+    .style('text-anchor','end')
+
+
+    participantGroups.append('text').attr('class','visType')
+    .text(participantResults ? (participantResults['S-task01'].visType == 'adjMatrix' ? 'AM' : 'NL') : 'NA')
+    .attr('x',x.range()[1])
+    .attr('y',y(1))
+    .style('text-anchor','end')
+
   let labels = participantGroups.selectAll(".label").data((d, i) =>
     d.provEvents
       .filter(e => e.type === type)
@@ -208,7 +221,7 @@ function makePlot(provData,index,type,width,height,svg) {
 
   rects = participantGroups.selectAll(".s-event").data((d, i) =>
     d.provEvents
-      .filter(e => e.type === 'singleAction')
+      .filter(e => e.type === 'singleAction' && e.label !=='submitted valid answer')
       .map(pEvent => {
         pEvent.participantOrder = i;
         return pEvent;
@@ -239,7 +252,11 @@ function makePlot(provData,index,type,width,height,svg) {
 
 }
 
-function drawProvenance(provData) {
+async function drawProvenance(provData) {
+
+  participantResults = await d3.json(
+    "results/pilot/JSON/analysisData.json"
+  );
 
       //add tooltip
       d3.select("body")
@@ -256,7 +273,21 @@ function drawProvenance(provData) {
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
 
-  provData.map((d,i)=>{
+
+
+  provData.sort((a,b)=>{
+    let aResults = participantResults.find(d=>d.data.workerID == a.id)
+    let bResults = participantResults.find(d=>d.data.workerID == b.id)
+
+    if (!aResults || !bResults){
+      return 0;
+    }
+
+    return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+
+  }).map((d,i)=>{
+    let participantResult = participantResults.find(d=>d.data.workerID == provData[i].id)
+    
 
     var svg = d3
     .select("body")
@@ -266,7 +297,7 @@ function drawProvenance(provData) {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  makePlot(provData,i, "longAction",width,height,svg);
+      makePlot(provData,i, "longAction",width,height,svg,participantResult ? participantResult.data : null);
   
   })
   
@@ -338,7 +369,6 @@ async function plotParticipantActions() {
     // console.log(participantEventArray.filter(e=>e.type === 'longAction' && e.endTime === undefined))
   });
 
-  console.log("events", events);
   drawProvenance(events);
 }
 async function startAnalysis(fetchFlag) {
@@ -695,7 +725,11 @@ async function startAnalysis(fetchFlag) {
 
         // saveCSV([rHeaders].concat(rRows), collection + ".csv");
       }
+
+      saveJSON(validData,'analysisData.json');
     });
+
+
   });
 }
 //Function to save exportedGraph to file automatically;
