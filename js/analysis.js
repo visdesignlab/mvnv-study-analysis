@@ -88,7 +88,7 @@ function hideTooltip(){
 
 
 
-function makePlot(provData,index,type,width,height,svg,participantResults) {
+function makePlot(provData,index,type,width,height,svg,participantResults,sortOrder) {
 
   let dateDomain = d3.extent(provData[index].provEvents.filter(e=>e.type === type).map(e=>Date.parse(e.startTime)).concat(provData[index].provEvents.filter(e=>e.type === type).map(e=> Date.parse(e.endTime))))
 
@@ -198,6 +198,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""))
     .classed('wrong',d=>d.task && d.task.data.answer ? d.task.data.answer.correct == 0 : false)
+    .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
     rects
     .on('mouseover',d=>{
@@ -212,6 +213,9 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
       showTooltip(d.endTime ? tooltipContent : d.label)
     })
     .on("mouseout",hideTooltip)
+    .on("click",d=>{
+      drawProvenance(provData,d.task.id)
+    })
 
     participantGroups.append('text').attr('class','rank')
     .text(participantResults ? 'Avg Accuracy:' + Math.round(participantResults.averageAccuracy*100)/100  : 'NA')
@@ -222,8 +226,8 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
     participantGroups.append('text').attr('class','visType')
     .text(participantResults ? (participantResults['S-task01'].visType == 'adjMatrix' ? 'AM' : 'NL') : 'NA')
-    .attr('x',x.range()[1])
-    .attr('y',y(1))
+    .attr('x',x.range()[0]-30)
+    .attr('y',y(.8))
     .style('text-anchor','end')
 
   let labels = participantGroups.selectAll(".label").data((d, i) =>
@@ -294,18 +298,13 @@ function makePlot(provData,index,type,width,height,svg,participantResults) {
 
 }
 
-async function drawProvenance(provData) {
+async function drawProvenance(provData,sortOrder) {
 
   participantResults = await d3.json(
     "results/pilot/JSON/analysisData.json"
   );
 
-      //add tooltip
-      d3.select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0);
-  
+     
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
@@ -315,7 +314,7 @@ async function drawProvenance(provData) {
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
 
-
+d3.selectAll('svg').remove();
 
   provData.sort((a,b)=>{
     let aResults = participantResults.find(d=>d.data.workerID == a.id)
@@ -325,7 +324,11 @@ async function drawProvenance(provData) {
       return 0;
     }
 
-    return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+    if (sortOrder){
+      return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
+    } else{
+      return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+    }
 
   }).map((d,i)=>{
     let participantResult = participantResults.find(d=>d.data.workerID == provData[i].id)
@@ -348,7 +351,7 @@ async function drawProvenance(provData) {
     svg = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-      makePlot(provData,i, "longAction",width,height,svg,participantResult ? participantResult.data : null);
+      makePlot(provData,i, "longAction",width,height,svg,participantResult.data,sortOrder);
   
   })
   
@@ -422,6 +425,13 @@ async function plotParticipantActions() {
     events.push({ id: participant.id, provEvents: participantEventArray });
     // console.log(participantEventArray.filter(e=>e.type === 'longAction' && e.endTime === undefined))
   });
+
+   //add tooltip
+   d3.select("body")
+   .append("div")
+   .attr("class", "tooltip")
+   .style("opacity", 0);
+
 
   drawProvenance(events);
 }

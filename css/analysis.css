@@ -75,7 +75,7 @@ div.tooltip {
 .event{
     opacity:.5;
     stroke:white;
-    stroke-width:5px;
+    stroke-width:3px;
 }
 
 .browseaway{
@@ -262,6 +262,10 @@ div.tooltip {
     background-color:#898989;
 }
 
+.event.sortedOn{
+    stroke-width:4px;
+    stroke:black;
+}
 /* .attribute{
     font-weight:bold;
     color:#f7e671;
