@@ -356,7 +356,9 @@ d3.selectAll('svg').remove();
     }
 
     if (sortOrder){
-      return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
+      return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+
+      // return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
     } else{
  
       // return Date.parse(aResults.data['S-task01'].startTime) < Date.parse(bResults.data['S-task01'].startTime) ? -1 : 1 
