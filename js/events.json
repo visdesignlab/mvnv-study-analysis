@@ -3,6 +3,13 @@
         "type":"singleAction",
         "level":0
     },
+    "started training": {
+        "label":"training",
+        "type":"longAction",
+        "start":" started training",
+        "end":["finished training","started trials"],
+        "level":0
+    },
     " started training": {
         "label":"training",
         "type":"longAction",
@@ -28,7 +35,7 @@
         "label":"task",
         "type":"longAction",
         "start":" started Task",
-        "end":["ended Task","ended task - submitted feedback","submitted correct answer"],
+        "end":["ended Task","ended task - submitted feedback","submitted correct answer","ended task"],
         "level":1
     },
     "started guided tour":  {
@@ -38,11 +45,31 @@
         "end":["ended guided tour"],
         "level":2
     },
+    "control F used": {
+        "type":"singleAction",
+        "level":0
+    },
+    "control Z used": {
+        "type":"singleAction",
+        "level":0
+    },
+    "exited tour": {
+        "type":"singleAction",
+        "level":0
+    },
     "searched for node": {
         "type":"singleAction",
         "level":0
     },
     "submitted incorrect answer": {
+        "type":"singleAction",
+        "level":0
+    },
+    "next": {
+        "type":"singleAction",
+        "level":0
+    },
+    "back": {
         "type":"singleAction",
         "level":0
     },

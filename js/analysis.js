@@ -51,7 +51,8 @@ function setNested(obj, path, value) {
 
 //checks if member is is from prolific (only contains numbers)
 function isProlific(id) {
-  return id[0] == "5";
+  return mode === 'pilot' ? id[0] == "5" : id[0] === 'C'
+  // return id[0] == "5";
 }
 
 function getProlificParticipants(study_participants) {
@@ -127,9 +128,13 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
        }
      });
 
+     //remove the startedTaskEvent right before a reload;
+
        //compute taskOrder in provData
     provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted).map((e,i)=>{
       e.order=i
+      // console.log(e)
+      // e.order = e.task || i; //e.task.data.order
     });
 
     // console.log(provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted))
@@ -140,10 +145,13 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
       resultsArray = Object.entries(participantResults);
     }
 
+
     //associate results data for each task
     provData[index].provEvents.map(e=>{
       if (e.order!== undefined && resultsArray){
         let data = resultsArray.filter(r=> r[1].order == e.order)[0];
+        // console.log(e,resultsArray,data)
+
         e.task = {id:data[0],data:data[1]};
       }
     })
@@ -245,14 +253,16 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     })
     .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
-
-
-    
-
     participantGroups.append('text').attr('class','rank')
     .text(participantResults ? 'Avg Accuracy:' + Math.round(participantResults.averageAccuracy*100)/100  : 'NA')
     .attr('x',x.range()[1])
     .attr('y',0)
+    .style('text-anchor','end')
+
+    participantGroups.append('text').attr('class','id')
+    .text(d=>d.id)
+    .attr('x',x.range()[1])
+    .attr('y',y(1))
     .style('text-anchor','end')
 
 
@@ -333,14 +343,16 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
 async function drawProvenance(provData,sortOrder) {
 
   participantResults = await d3.json(
-    "results/pilot/JSON/analysisData.json"
+    "results/" + mode + "/JSON/analysisData.json"
   );
+
+  console.log(participantResults)
 
      
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
-  var width = window.screen.availWidth - margin.left;
+  var width = (window.screen.availWidth - margin.left)/2;
 
 
   width = width - margin.left - margin.right;
@@ -356,10 +368,23 @@ d3.selectAll('svg').remove();
     }
 
     if (sortOrder){
-      return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+      let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
+      let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
+
+      console.log(aResults.data['S-task01'].visType)
+
+      return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
+
+      // return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
 
       // return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
     } else{
+      let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
+      let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
+
+      return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
+
+
  
       // return Date.parse(aResults.data['S-task01'].startTime) < Date.parse(bResults.data['S-task01'].startTime) ? -1 : 1 
       return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
@@ -398,8 +423,14 @@ d3.selectAll('svg').remove();
 }
 
 async function plotParticipantActions() {
+
+  // let provenance = participant_actions = await d3.json(
+  //   "results/" + mode + "/JSON/provenance.json"
+  // );
+
+  // console.log(provenance);
   participant_actions = await d3.json(
-    "results/pilot/JSON/participant_actions.json"
+    "results/" + mode + "/JSON/participant_actions.json"
   );
 
   let validParticipants = participant_actions.filter(p => {
@@ -411,15 +442,18 @@ async function plotParticipantActions() {
       "Tue Aug 20 2019 00:00:00 GMT-0600 (Mountain Daylight Time)"
     );
 
+    let studyStartTime = Date.parse("Mon Aug 26 2019 19:20:55 GMT-0600 (Mountain Daylight Time)");
+
     return (
       isProlific(p.id) &&
       p.id !== "5d449accde2d3a001a707892" &&
       studyDuration > 10 * 60 * 1000 &&
-      startTime >= pilotStartTime
+      startTime >= (mode  == 'pilot' ? pilotStartTime : studyStartTime)
     );
   });
 
   console.log(validParticipants)
+
 
   let eventTypes = await d3.json("js/events.json");
 
@@ -457,7 +491,10 @@ async function plotParticipantActions() {
               return value;
             })
             .pop();
-          startObj.endTime = action.time;
+            if (startObj === undefined){
+              debugger;
+            }
+            startObj.endTime = action.time;
         }
       }
     });
@@ -490,48 +527,48 @@ async function startAnalysis(fetchFlag) {
 
   let allDocs = collectionNames.map(async collectionName => {
     if (fetchFlag) {
-      let taskNames = {
-        "S-task1": "S-task01",
-        "S-task1A": "S-task02",
-        "S-task3": "S-task03",
-        "S-task4": "S-task04",
-        "S-task4A": "S-task05",
-        "S-task5": "S-task06",
-        "S-task6": "S-task07",
-        "S-task7": "S-task08",
-        "S-task8": "S-task09",
-        "S-task9": "S-task10",
-        "S-task9A": "S-task11",
-        "S-task11": "S-task12",
-        "S-task12": "S-task13",
-        "S-task12A": "S-task14",
-        "S-task13": "S-task15",
-        "S-taskExplore": "S-task16",
-        "S-task10": "S-task-10"
-      };
+      // let taskNames = {
+      //   "S-task1": "S-task01",
+      //   "S-task1A": "S-task02",
+      //   "S-task3": "S-task03",
+      //   "S-task4": "S-task04",
+      //   "S-task4A": "S-task05",
+      //   "S-task5": "S-task06",
+      //   "S-task6": "S-task07",
+      //   "S-task7": "S-task08",
+      //   "S-task8": "S-task09",
+      //   "S-task9": "S-task10",
+      //   "S-task9A": "S-task11",
+      //   "S-task11": "S-task12",
+      //   "S-task12": "S-task13",
+      //   "S-task12A": "S-task14",
+      //   "S-task13": "S-task15",
+      //   "S-taskExplore": "S-task16",
+      //   "S-task10": "S-task-10"
+      // };
 
       let querySnapshot = await db.collection(collectionName).get();
 
       allData[collectionName] = [];
       querySnapshot.forEach(function(doc) {
         let data = doc.data();
-        //create temporary keys
-        Object.keys(data).map(key => {
-          //rename tasks;
-          delete data[key].taskID;
-          if (taskNames[key]) {
-            let tempKey = taskNames[key].split("-")[1];
-            data[tempKey] = data[key];
-            delete data[key];
-          }
-        });
-        //replace with actual new keys
-        Object.keys(data).map(key => {
-          if (Object.values(taskNames).includes("S-" + key)) {
-            data["S-" + key] = data[key];
-            delete data[key];
-          }
-        });
+        // //create temporary keys
+        // Object.keys(data).map(key => {
+        //   //rename tasks;
+        //   delete data[key].taskID;
+        //   if (taskNames[key]) {
+        //     let tempKey = taskNames[key].split("-")[1];
+        //     data[tempKey] = data[key];
+        //     delete data[key];
+        //   }
+        // });
+        // //replace with actual new keys
+        // Object.keys(data).map(key => {
+        //   if (Object.values(taskNames).includes("S-" + key)) {
+        //     data["S-" + key] = data[key];
+        //     delete data[key];
+        //   }
+        // });
         allData[collectionName].push({ id: doc.id, data });
       });
 
@@ -590,6 +627,7 @@ async function startAnalysis(fetchFlag) {
 
             //compute accuracy and add to data structure;
             let answer = p.data[key].answer;
+            console.log(key,answer)
             answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
             answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
           }
