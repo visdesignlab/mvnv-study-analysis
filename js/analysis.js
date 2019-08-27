@@ -181,10 +181,6 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
         }         
       }
     })
-
-    // console.log(provData[index])
-
-    // console.log(provData[index].provEvents);
    
 
   let participantGroups = svg
@@ -241,7 +237,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
 
       } else {
         tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
-            }
+      }
       showTooltip(d.endTime ? tooltipContent : d.label)
     })
     .on("mouseout",hideTooltip)
@@ -293,7 +289,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     participantGroups.append('text').attr('class','visType')
     .text(participantResults ? (participantResults['S-task01'].visType == 'adjMatrix' ? 'AM' : 'NL') : 'NA')
     .attr('x',x.range()[0]-30)
-    .attr('y',y(.8))
+    .attr('y',y(-.3))
     .style('text-anchor','end')
 
   let labels = participantGroups.selectAll(".label").data((d, i) =>
@@ -397,19 +393,19 @@ d3.selectAll('svg').remove();
     }
 
     if (sortOrder){
-      let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
-      let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
+      // let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
+      // let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
 
-      return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
+      // return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
 
-      // return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
+      return aResults.data.averageAccuracy > bResults.data.averageAccuracy ? -1 : 1 
 
       // return aResults.data[sortOrder].answer.accuracy > bResults.data[sortOrder].answer.accuracy ? -1 : 1 
     } else{
-      let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
-      let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
+      // let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
+      // let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
 
-      return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
+      // return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
 
 
  
@@ -432,8 +428,8 @@ d3.selectAll('svg').remove();
     if (participantResult){
       svg.append('rect').attr('class', participantResult.data['S-task01'].visType )
       .attr('x',margin.left-20)
-      .attr('y',0)
-      .attr('height',height + margin.top )
+      .attr('y',margin.top)
+      .attr('height',height )
       .attr('width',5) //width  + 20 + margin.right);
     }
 

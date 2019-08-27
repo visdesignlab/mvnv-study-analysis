@@ -11,6 +11,28 @@ const fs = require("fs");
 let firestore = require("./firebaseApi.js");
 let db = firestore.connect();
 
+(async function() {
+  let mode = process.argv[2];
+  console.log("mode is ", mode);
+  switch (mode) {
+    case "fetchData":
+      await fetchData();
+      break;
+    case "fixData":
+      // updateDatabase();
+      break;
+    case "process":
+      processData();
+      break;
+    case "provenance":
+      processProvenance();
+      break;
+    case "export":
+      exportResults();
+      break;
+  }
+})();
+
 function updateDatabase() {
   //ammend provenance data for participants
   let nlParticipants = [
@@ -93,7 +115,10 @@ async function fetchData() {
   //array of ids for valid participants;
   let participantIDs = studyParticipants.map(p => p.id);
 
-  fs.writeFileSync("study_participants.json", JSON.stringify(studyParticipants));
+  fs.writeFileSync(
+    "study_participants.json",
+    JSON.stringify(studyParticipants)
+  );
 
   let collectionNames = [
     "results",
@@ -137,80 +162,350 @@ async function fetchData() {
 async function processData() {
   //load data;
 
-    let rawdata;
-    
-    rawdata= fs.readFileSync('results/study/JSON/study_participants.json');
-    let participant_info = JSON.parse(rawdata);
+  let rawdata;
 
-    rawdata = fs.readFileSync('results/study/JSON/results.json');
-    let results = JSON.parse(rawdata);
+  rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
+  let participant_info = JSON.parse(rawdata);
 
-    // rawdata = fs.readFileSync('results/study/JSON/participant_actions.json');
-    // let provenance = JSON.parse(rawdata);
+  rawdata = fs.readFileSync("results/study/JSON/results.json");
+  let results = JSON.parse(rawdata);
 
+  // rawdata = fs.readFileSync('results/study/JSON/participant_actions.json');
+  // let provenance = JSON.parse(rawdata);
 
-   results.map(p => {
-      //flatten answer.nodes, then flatten the whole data;
-      Object.keys(p.data).map(key => {
-        delete p.data[key].replyCount;
-        delete p.data[key].replyType;
-        delete p.data[key].answerKey;
+  results.map(p => {
+    //flatten answer.nodes, then flatten the whole data;
+    Object.keys(p.data).map(key => {
+      delete p.data[key].replyCount;
+      delete p.data[key].replyType;
+      delete p.data[key].answerKey;
 
-        if (p.data[key].answer) {
-          ["answer"].map(answer => {
-            //answerKey as well?
-            p.data[key][answer].ids = p.data[key][answer].nodes
-              .map(n => n.id)
-              .join("; ");
-            p.data[key][answer].nodes = p.data[key][answer].nodes
-              .map(n => n.name)
-              .join("; ");
-          });
+      if (p.data[key].answer) {
+        ["answer"].map(answer => {
+          //answerKey as well?
+          p.data[key][answer].ids = p.data[key][answer].nodes
+            .map(n => n.id)
+            .join("; ");
+          p.data[key][answer].nodes = p.data[key][answer].nodes
+            .map(n => n.name)
+            .join("; ");
+        });
 
-          //compute accuracy and add to data structure;
-          let answer = p.data[key].answer;
-          answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
-          // console.log('accuracy for task ', key ,  ' is ', answer.accuracy)
-          answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
-        }
+        //compute accuracy and add to data structure;
+        let answer = p.data[key].answer;
+        answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
+        // console.log('accuracy for task ', key ,  ' is ', answer.accuracy)
+        answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
+      }
 
-        p.data[key].taskID = key;
-      });
-
-      //compute average accuracy for this participant;
-      p.data.averageAccuracy =
-        Object.keys(p.data).reduce((acc, key) => {
-          return acc + p.data[key].answer.accuracy;
-        }, 0) / Object.keys(p.data).length;
-
-        console.log('average accuracy for ', p.id ,  ' is ', p.data.averageAccuracy)
-
-      p.data.workerID = p.id;
-      delete p.id;
-
-      p.data.overallMinutesToComplete = participant_info.find(
-        pt => pt.id === p.data.workerID
-      ).data.minutesToComplete;
-
-      //add demographic information for this participant;
-      p.data.demographics = participant_info.find(
-        pt => pt.id === p.data.workerID
-      ).data.demographics;
-      p.data.overallFeedback = participant_info.find(
-        pt => pt.id === p.data.workerID
-      ).data.feedback;
-
-      return p.data;
+      p.data[key].taskID = key;
     });
 
-    fs.writeFileSync("processed_results.json", JSON.stringify(results));
+    //compute average accuracy for this participant;
+    p.data.averageAccuracy =
+      Object.keys(p.data).reduce((acc, key) => {
+        return acc + p.data[key].answer.accuracy;
+      }, 0) / Object.keys(p.data).length;
 
+    console.log("average accuracy for ", p.id, " is ", p.data.averageAccuracy);
+
+    p.data.workerID = p.id;
+    delete p.id;
+
+    p.data.overallMinutesToComplete = participant_info.find(
+      pt => pt.id === p.data.workerID
+    ).data.minutesToComplete;
+
+    //add demographic information for this participant;
+    p.data.demographics = participant_info.find(
+      pt => pt.id === p.data.workerID
+    ).data.demographics;
+    p.data.overallFeedback = participant_info.find(
+      pt => pt.id === p.data.workerID
+    ).data.feedback;
+
+    return p.data;
+  });
+
+  fs.writeFileSync("processed_results.json", JSON.stringify(results));
 }
 
+async function exportResults() {
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+  let csvWriter;
+
+  let rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
+  let results = JSON.parse(rawdata);
+
+  
+
+  let csvKeys = [];
+  
+  results.map(r=>{
+    Object.keys(flatten(r.data)).map(key=>{
+      if (!csvKeys.includes(key)){
+        csvKeys.push(key)
+      }
+    })
+    
+  })
+
+  csvKeys = csvKeys.filter(k => {
+    return (
+      k.includes("answer.nodes") ||
+      k.includes("answer.accuracy") ||
+      k.includes("answer.correct") ||
+      k.includes("answer.radio") ||
+      k.includes("answer.value") ||
+      k.includes("feedback") ||
+      k.includes("minutesToComplete") ||
+      k.includes("order") ||
+      k.includes("prompt") ||
+      k.includes("workerID") ||
+      k.includes("overall") ||
+      k.includes("averageAccuracy") ||
+      k.includes("demographics") ||
+      k.includes("visType") ||
+      k.includes("taskID")
+    );
+  });
+
+  // console.log(csvKeys)
+
+  csvWriter = createCsvWriter({
+    path: "results.csv",
+    header: csvKeys.map(key => {
+      return { id: key, title: key };
+    })
+  });
+
+  let sorted = results
+    //sort by visType
+    .sort((a, b) => (a.data["S-task01"].visType === "nodeLink" ? 1 : -1));
+
+    let csvValues = sorted.map(p => {
+      //fill in missing values;
+      let obj={}
+      csvKeys.map(key => {
+        let value = nameSpace(p.data, key);
+        // console.log(key, value)
+        //user did not take that task
+        if (value === undefined) {
+          console.log('missing value for ', key)
+          setNested(p.data, key, "");
+        }
+
+        let v = nameSpace(p.data, key);
+
+        //remove commas, newlines, and html markup
+        if (typeof v === "string") {
+          v = v.replace(/,/g, "");
+          v = v.replace(/\r?\n|\r/g, "");
+          v = v.replace(/<span class='attribute'>/g, "");
+          v = v.replace(/<span class='attribute' >/g, "");
+          v = v.replace(/<\/span>/g, "");
+        }
+        // return v.toString();
+        obj[key]=v
+      });
+      return obj
+    });
+
+    // csvKeys = csvKeys.map(k => k.split(".").pop());
+    // let csvData = [csvKeys].concat(csvValues);
+
+    // saveCSV(csvData, collection + ".csv");
+
+    // saveCSV([rHeaders].concat(rRows), collection + ".csv");
+  // }
+
+  csvWriter
+  .writeRecords(csvValues)
+  .then(()=> console.log('The CSV file was written successfully'));
+
+  console.log(csvValues)
+  let rHeaders = [
+    "prolificId",
+    "taskId",
+    "visType",
+    "taskType",
+    "topology",
+    "hypothesis_1",
+    "hypothesis_2",
+    "measure",
+    "value"
+  ];
+  let rRows = [];
+
+  // console.log(layout.elements.nodes)
+
+  // results.map(participantData => {
+  //   let id = participantData.data.workerID;
+
+  //   Object.keys(participantData.data)
+  //     .filter(key => key[0] === "S")
+  //     .map(taskId => {
+  //       let data = participantData.data[taskId];
+  //       let visType = data.visType;
+  //       let taskType = data.taxonomy.type;
+  //       let topology = data.taxonomy.target;
+  //       let hypothesis = data.hypothesis.split(",");
+  //       let hypothesis_1 = hypothesis[0];
+  //       let hypothesis_2 = hypothesis[1] ? hypothesis[1] : "";
+
+  //       //create a row for every relevant value;
+  //       data.answer.nodes
+  //         .split(";")
+  //         .map(n => n.trim())
+  //         .map(node => {
+  //           rRows.push([
+  //             id,
+  //             taskId,
+  //             visType,
+  //             taskType,
+  //             topology,
+  //             hypothesis_1,
+  //             hypothesis_2,
+  //             "nodeAnswer",
+  //             node
+  //           ]);
+  //         });
+
+  //       data.answer.value
+  //         .split(";")
+  //         .map(n => n.trim())
+  //         .map(v => {
+  //           if (v.length > 0) {
+  //             v = v.replace(/,/g, "");
+  //             v = v.replace(/\r?\n|\r/g, "");
+
+  //             rRows.push([
+  //               id,
+  //               taskId,
+  //               visType,
+  //               taskType,
+  //               topology,
+  //               hypothesis_1,
+  //               hypothesis_2,
+  //               "valueAnswer",
+  //               v
+  //             ]);
+  //           }
+  //         });
+  //       if (data.answer.radio) {
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "valueAnswer",
+  //           data.answer.radio
+  //         ]);
+  //       }
+
+  //       {
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "accuracy",
+  //           data.answer.accuracy
+  //         ]);
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "correct",
+  //           data.answer.correct
+  //         ]);
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "difficulty",
+  //           data.feedback.difficulty
+  //         ]);
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "confidence",
+  //           data.feedback.confidence
+  //         ]);
+  //         rRows.push([
+  //           id,
+  //           taskId,
+  //           visType,
+  //           taskType,
+  //           topology,
+  //           hypothesis_1,
+  //           hypothesis_2,
+  //           "minutesToComplete",
+  //           data.minutesToComplete
+  //         ]);
+  //       }
+  //     });
+  // });
+
+  [].map(p => {
+    console.log(p);
+    // //remove commas, newlines, and html markup
+    // if (typeof v === "string") {
+    //   v = v.replace(/,/g, "");
+    //   v = v.replace(/\r?\n|\r/g, "");
+    //   v = v.replace(/<span class='attribute'>/g, "");
+    //   v = v.replace(/<span class='attribute' >/g, "");
+    //   v = v.replace(/<\/span>/g, "");
+    // }
+    // return v.toString();
+  });
+
+  // let csvValues = sorted.map(p => {
+  //   //fill in missing values;
+  //   let values = csvKeys.map(key => {
+  //     let v = nameSpace(p.data, key);
+
+  //     //remove commas, newlines, and html markup
+  //     if (typeof v === "string") {
+  //       v = v.replace(/,/g, "");
+  //       v = v.replace(/\r?\n|\r/g, "");
+  //       v = v.replace(/<span class='attribute'>/g, "");
+  //       v = v.replace(/<span class='attribute' >/g, "");
+  //       v = v.replace(/<\/span>/g, "");
+  //     }
+  //     return v.toString();
+  //   });
+  //   return values;
+  // });
+
+  // csvKeys = csvKeys.map(k => k.split(".").pop());
+  // let csvData = [csvKeys].concat(csvValues);
+
+  // saveCSV(csvData, collection + ".csv");
+
+  // saveCSV([rHeaders].concat(rRows), collection + ".csv");
+}
 
 function computeAccuracy(taskID, answerObj) {
-
-
   //dictionary of functions that compute the accuracy for each task; Each function
   // returns a score between 0 and 1
 
@@ -292,11 +587,10 @@ function computeAccuracy(taskID, answerObj) {
 
       if (answer.ids.includes("395853499")) {
         //Marc
-        score = score+0.5;
+        score = score + 0.5;
       }
 
       return score;
-
     },
     "S-task08": function(answer) {
       if (answer.ids === "78865306") {
@@ -342,9 +636,15 @@ function computeAccuracy(taskID, answerObj) {
       return scoreList(correctAnswers, answer);
     },
     "S-task12": function(answer) {
-
-      //Jason, giCentre, Noeska, Alex, EVis19, Robert, 
-      let correctAnswers = ["19299318","19283433","40219508","81658145","1085199426837188600","16112517"];
+      //Jason, giCentre, Noeska, Alex, EVis19, Robert,
+      let correctAnswers = [
+        "19299318",
+        "19283433",
+        "40219508",
+        "81658145",
+        "1085199426837188600",
+        "16112517"
+      ];
       let part1Score = scoreList(correctAnswers, answer);
 
       return answer.value >= 400 && answer.value <= 600 ? 1 : 0;
@@ -357,7 +657,7 @@ function computeAccuracy(taskID, answerObj) {
 
       if (answer.ids.includes("191257554")) {
         //AA
-        score = score+0.5;
+        score = score + 0.5;
       }
 
       return score;
@@ -370,7 +670,7 @@ function computeAccuracy(taskID, answerObj) {
 
       if (answer.ids.includes("1085199426837188600")) {
         //EVis19
-        score = score+0.5;
+        score = score + 0.5;
       }
 
       return score;
@@ -388,7 +688,6 @@ function computeAccuracy(taskID, answerObj) {
     //+.25 points for each correct answer -.1 point for each incorrect answer;
     let ids = answer.ids.split(";").map(a => a.trim());
 
-
     let score = ids.reduce(
       (acc, cValue) =>
         correctAnswers.find(a => a == cValue)
@@ -404,16 +703,15 @@ function computeAccuracy(taskID, answerObj) {
 }
 
 function processProvenance() {
-
   let rawdata;
-    rawdata= fs.readFileSync('results/events.json');
-    let eventTypes = JSON.parse(rawdata);
+  rawdata = fs.readFileSync("results/events.json");
+  let eventTypes = JSON.parse(rawdata);
 
-    rawdata= fs.readFileSync('results/study/JSON/processed_results.json');
-    let results = JSON.parse(rawdata);
+  rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
+  let results = JSON.parse(rawdata);
 
-    rawdata= fs.readFileSync('results/study/JSON/participant_actions.json');
-    let provenance = JSON.parse(rawdata);
+  rawdata = fs.readFileSync("results/study/JSON/participant_actions.json");
+  let provenance = JSON.parse(rawdata);
 
   //create events objects per participant;
   let events = [];
@@ -430,7 +728,7 @@ function processProvenance() {
         let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
         eventObj.label = action.event;
         eventObj.time = action.time;
-        if (eventObj.label !== 'next' && eventObj.label !== 'back'){
+        if (eventObj.label !== "next" && eventObj.label !== "back") {
           participantEventArray.push(eventObj);
         }
       } else {
@@ -449,14 +747,14 @@ function processProvenance() {
                 e.type === "longAction" &&
                 Array.isArray(e.end) &&
                 e.end.includes(action.event) &&
-                (e.label === "task" ? e.task === action.task : true)
+                (e.label === "task" ? e.task === action.task : true);
               return value;
             })
             .pop();
-            if (startObj === undefined){
-              console.log('could not find start event for ' , action)
-            }
-            startObj.endTime = action.time;
+          if (startObj === undefined) {
+            console.log("could not find start event for ", action);
+          }
+          startObj.endTime = action.time;
         }
       }
     });
@@ -467,25 +765,55 @@ function processProvenance() {
 
   // console.log(events)
   fs.writeFileSync("provenance_events.json", JSON.stringify(events));
-
-
 }
 
-(async function() {
-  let mode = process.argv[2];
-  console.log("mode is ", mode);
-  switch (mode) {
-    case "fetchData":
-      await fetchData();
-      break;
-    case "fixData":
-      // updateDatabase();
-      break;
-    case "process":
-      processData();
-      break;
-    case "provenance":
-        processProvenance();
-        break;
+function flatten(data) {
+  var result = {};
+  function recurse(cur, prop) {
+    if (Object(cur) !== cur) {
+      result[prop] = cur;
+    } else if (Array.isArray(cur)) {
+      for (var i = 0, l = cur.length; i < l; i++)
+        recurse(cur[i], prop + "[" + i + "]");
+      if (l == 0) result[prop] = [];
+    } else {
+      var isEmpty = true;
+      for (var p in cur) {
+        isEmpty = false;
+        recurse(cur[p], prop ? prop + "." + p : p);
+      }
+      if (isEmpty && prop) result[prop] = {};
+    }
   }
-})();
+  recurse(data, "");
+  return result;
+};
+
+function nameSpace(obj, path) {
+  var property,
+    path = path.split(".");
+  while ((property = path.shift())) {
+    if (typeof obj[property] === "undefined") return undefined;
+    obj = obj[property];
+  }
+  return obj;
+}
+
+function setNested(obj, path, value) {
+  var property,
+    path = path.split(".");
+  while ((property = path.shift())) {
+    if (typeof obj[property] === "undefined") {
+      if (path.length > 0) {
+        obj[property] = {};
+      }
+    }
+
+    if (path.length === 0) {
+      obj[property] = value;
+    } else {
+      obj = obj[property];
+    }
+    // console.log(obj,property,obj[property])
+  }
+}
