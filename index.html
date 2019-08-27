@@ -17,7 +17,7 @@
 
 <!-- For the guided tour -->
 <script src="libs/shepherd.js"></script>
-<script src="js/firebaseApi.js" type="text/javascript"></script>
+<!-- <script src="js/firebaseApi.js" type="text/javascript"></script> -->
 
 
 <body>    
@@ -27,8 +27,8 @@
 <!-- <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-firestore.js"></script> -->
 
-<script src="libs/firebase-app.js"></script>
-<script src="libs/firebase-firestore.js"></script>
+<!-- <script src="libs/firebase-app.js"></script>
+<script src="libs/firebase-firestore.js"></script> -->
 
 <script src="js/analysis.js" type="text/javascript"></script>
 
@@ -36,27 +36,30 @@
 <!-- <script src="https://d3js.org/d3-fetch.v1.min.js"></script> -->
 
 <script>
-    function getUrlVars() {
-        var vars = {};
-        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
-            vars[key] = value;
-        });
-        return vars;
-    }
+    let mode='study';
+    // function getUrlVars() {
+    //     var vars = {};
+    //     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&*#]*)/gi, function (m, key, value) {
+    //         vars[key] = value;
+    //     });
+    //     return vars;
+    // }
 
-    // see whether to fetch the data from the db or from local files.
-    let {fetchFlag,saveFlag,mode} = getUrlVars();
-    console.log(fetchFlag,saveFlag,mode)
+    // // see whether to fetch the data from the db or from local files.
+    // let {fetchFlag,saveFlag,mode} = getUrlVars();
+    // console.log(fetchFlag,saveFlag,mode)
 
-    fetchFlag = fetchFlag || false;
-    saveFlag = saveFlag || false;
-    mode = mode || 'pre-trials'
+    // fetchFlag = fetchFlag || false;
+    // saveFlag = saveFlag || false;
+    // mode = mode || 'pre-trials'
 
-    //connect to firestore;
-    fireStore.connect();
+    // //connect to firestore;
+    // fireStore.connect();
 
+    // fetchData();
     // startAnalysis(fetchFlag,saveFlag);
     // exportForVisone();
         // importLayout();
-        plotParticipantActions();
+        // plotParticipantActions();
+        drawProvenance();
 </script> 

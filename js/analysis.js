@@ -88,6 +88,39 @@ function hideTooltip(){
 }
 
 
+function fetchData(){
+
+  let collectionNames = [
+    // "heuristics_participants",
+    // "results",
+    "provenance",
+    // "trial_provenance",
+    // "trial_results",
+    // "participant_actions",
+    // "study_participants"
+  ];
+
+  let allData = {};
+
+  let allDocs = collectionNames.map(async collectionName => {
+
+  let querySnapshot = await db.collection(collectionName).get();
+
+  allData[collectionName] = [];
+  querySnapshot.forEach(function(doc) {
+    let data = doc.data();
+    allData[collectionName].push({ id: doc.id, data });
+  });
+
+    saveJSON(
+      JSON.stringify(allData[collectionName]),
+      collectionName + ".json"
+    );
+  })
+
+
+}
+  
 
 function makePlot(provData,index,type,width,height,svg,participantResults,sortOrder) {
 
@@ -102,7 +135,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
   // set the ranges
   var x = d3.scaleLinear().range([0, width]);
 
-  x.domain([0,60*60*1000]);
+  x.domain([0,75*60*1000]);
 
   var y = d3.scaleLinear().range([height-10, 0]);
   y.domain(type === 'singleAction' ? [0,0] : [-2,2]) //provData[index].provEvents.filter(e=>e.type === type && e.level === undefined).length-1+2]);
@@ -128,33 +161,28 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
        }
      });
 
-     //remove the startedTaskEvent right before a reload;
-
-       //compute taskOrder in provData
-    provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted).map((e,i)=>{
-      e.order=i
-      // console.log(e)
-      // e.order = e.task || i; //e.task.data.order
-    });
-
-    // console.log(provData[index].provEvents.filter((e,i)=>e.label === 'task' && i>=studyStarted))
-
-    // console.log(participantResults);
     let resultsArray;
     if (participantResults){
       resultsArray = Object.entries(participantResults);
     }
 
+    // console.log(provData[index].provEvents)
 
     //associate results data for each task
     provData[index].provEvents.map(e=>{
-      if (e.order!== undefined && resultsArray){
-        let data = resultsArray.filter(r=> r[1].order == e.order)[0];
-        // console.log(e,resultsArray,data)
+      if (e.label === "task" && resultsArray){
 
-        e.task = {id:data[0],data:data[1]};
+        // debugger;
+        let data = resultsArray.filter(r=> r[0]===e.task)[0];
+        // console.log(e,resultsArray,data)
+        if (data){
+          e.order = data[1].order;
+          e.task = {id:data[0],data:data[1]};
+        }         
       }
     })
+
+    // console.log(provData[index])
 
     // console.log(provData[index].provEvents);
    
@@ -176,17 +204,14 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
   let rects = participantGroups.selectAll(".event").data((d, i) =>
     d.provEvents
       .filter(e => e.type === type)
-      .map(pEvent => {
-        pEvent.participantOrder = i;
-        return pEvent;
-      })
-  );
+        );
 
   let rectsEnter = rects
     .enter()
     .append("rect")
     .attr("class", "event")
-    .style('opacity',d=>d.task ? opacityScale(d.task.id.match(/\d+/g).map(Number)):'');
+    .style('opacity',d=>{      
+      return d.task && d.task.id ? opacityScale(d.task.id.match(/\d+/g).map(Number)):''});
 
   rects.exit().remove();
 
@@ -205,15 +230,14 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
       return diff || 0;
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""))
-    .classed('wrong',d=>d.task && d.task.data.answer ? d.task.data.answer.correct == 0 : false)
+    .classed('wrong',d=>d.task && d.task.data && d.task.data.answer ? d.task.data.answer.correct == 0 : false)
     // .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
     rects
     .on('mouseover',d=>{
-
       let tooltipContent;
       if (d.label == 'task'){
-        tooltipContent =(d.task !== undefined ? '<strong>' + d.task.id + '</strong>' + '[' + d.task.data.answer.accuracy + ']' + '<br/>' +  d.task.data.prompt : '');
+        tooltipContent =(d.task && d.task.id !== undefined ? '<strong>' + d.task.id + '</strong>' + '[' + d.task.data.answer.accuracy + ']' + '<br/>' +  d.task.data.prompt : '');
 
       } else {
         tooltipContent = d.label + ':' + (Math.round((Date.parse(d.endTime) - Date.parse(d.startTime))/1000/6)/10)  +  'min';
@@ -223,7 +247,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     .on("mouseout",hideTooltip)
     .on("click",d=>{
       if (d.order!==undefined){
-        drawProvenance(provData,d.task.id)
+        drawProvenance(d.task.id)
       }
     })
 
@@ -275,10 +299,6 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
   let labels = participantGroups.selectAll(".label").data((d, i) =>
     d.provEvents
       .filter(e => e.type === type)
-      .map(pEvent => {
-        pEvent.participantOrder = i;
-        return pEvent;
-      })
   );
 
 
@@ -304,7 +324,7 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
     .style("text-anchor", "start")
     .style("font-size", 12)
     .attr("class", d => "label " + d.label.replace(/ /g, ""))
-    .text(d => d.level == 0 ? d.label : '')
+    .text(d => d.level == 0 && d.label !== 'browse away' ? d.label : '')
 
 
   rects = participantGroups.selectAll(".s-event").data((d, i) =>
@@ -340,14 +360,23 @@ function makePlot(provData,index,type,width,height,svg,participantResults,sortOr
 
 }
 
-async function drawProvenance(provData,sortOrder) {
+async function drawProvenance(sortOrder) {
 
-  participantResults = await d3.json(
-    "results/" + mode + "/JSON/analysisData.json"
-  );
+     //add tooltip
+     d3.select("body")
+     .append("div")
+     .attr("class", "tooltip")
+     .style("opacity", 0);
+  
+  
+    let provData = await d3.json(
+      "results/" + mode + "/JSON/provenance_events.json"
+    );
+ 
 
-  console.log(participantResults)
-
+    participantResults = await d3.json(
+      "results/" + mode + "/JSON/processed_results.json"
+    );
      
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
@@ -370,8 +399,6 @@ d3.selectAll('svg').remove();
     if (sortOrder){
       let isANodeLink = aResults.data['S-task01'].visType === 'nodeLink';
       let isBNodeLink = bResults.data['S-task01'].visType === 'nodeLink';
-
-      console.log(aResults.data['S-task01'].visType)
 
       return (isANodeLink && isBNodeLink) ? 0 : isANodeLink ? -1 : 1
 
@@ -416,101 +443,12 @@ d3.selectAll('svg').remove();
       makePlot(provData,i, "longAction",width,height,svg,participantResult.data,sortOrder);
   
   })
-
-  console.log(sortedData)
-
   
 }
 
 async function plotParticipantActions() {
 
-  // let provenance = participant_actions = await d3.json(
-  //   "results/" + mode + "/JSON/provenance.json"
-  // );
 
-  // console.log(provenance);
-  participant_actions = await d3.json(
-    "results/" + mode + "/JSON/participant_actions.json"
-  );
-
-  let validParticipants = participant_actions.filter(p => {
-    let startTime = Date.parse(p.data.initialSetup);
-    let endTime = Date.parse(p.data.update);
-
-    let studyDuration = endTime - startTime;
-    let pilotStartTime = Date.parse(
-      "Tue Aug 20 2019 00:00:00 GMT-0600 (Mountain Daylight Time)"
-    );
-
-    let studyStartTime = Date.parse("Mon Aug 26 2019 19:20:55 GMT-0600 (Mountain Daylight Time)");
-
-    return (
-      isProlific(p.id) &&
-      p.id !== "5d449accde2d3a001a707892" &&
-      studyDuration > 10 * 60 * 1000 &&
-      startTime >= (mode  == 'pilot' ? pilotStartTime : studyStartTime)
-    );
-  });
-
-  console.log(validParticipants)
-
-
-  let eventTypes = await d3.json("js/events.json");
-
-  //create events objects per participant;
-  let events = [];
-
-  validParticipants.map(participant => {
-    participantEventArray = [];
-
-    participant.data.provGraphs.map(action => {
-      //see if this a single event, or the start/end of a long event;
-      let event = eventTypes[action.event];
-
-      if (event && event.type === "singleAction") {
-        //create copy of event template
-        let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
-        eventObj.label = action.event;
-        eventObj.time = action.time;
-        participantEventArray.push(eventObj);
-      } else {
-        //at the start of an event;
-        if (event && event.start.trim() == action.event.trim()) {
-          let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
-          eventObj.startTime = action.time;
-          participantEventArray.push(eventObj);
-        } else {
-          //at the end of an event;
-          //find the 'start' eventObj;
-          let startObj = participantEventArray
-            .filter(e => {
-              let value =
-                e.type === "longAction" &&
-                Array.isArray(e.end) &&
-                e.end.includes(action.event);
-              return value;
-            })
-            .pop();
-            if (startObj === undefined){
-              debugger;
-            }
-            startObj.endTime = action.time;
-        }
-      }
-    });
-
-    events.push({ id: participant.id, provEvents: participantEventArray });
-    // console.log(participantEventArray.filter(e=>e.type === 'longAction' && e.endTime === undefined))
-  });
-
-   //add tooltip
-   d3.select("body")
-   .append("div")
-   .attr("class", "tooltip")
-   .style("opacity", 0);
-
-
-  drawProvenance(events);
 }
 async function startAnalysis(fetchFlag) {
   let collectionNames = [
@@ -627,7 +565,6 @@ async function startAnalysis(fetchFlag) {
 
             //compute accuracy and add to data structure;
             let answer = p.data[key].answer;
-            console.log(key,answer)
             answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
             answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
           }
@@ -944,161 +881,6 @@ function saveCSV(data, filename) {
   a.dispatchEvent(e);
 }
 
-function computeAccuracy(task, answerObj) {
-  //dictionary of functions that compute the accuracy for each task; Each function
-  // returns a score between 0 and 1
-
-  let second = 0.8; //credit given for second best answer;
-  let third = 0.6; //credit given for second best answer;
-
-  let answers = {
-    "S-task01": function(answer) {
-      if (answer.ids.includes("18704160")) {
-        //T.J - 5151 tweets
-        return 1;
-      }
-
-      if (answer.nodes.includes("9527212")) {
-        //Arvind - 4812 tweets
-        return second;
-      }
-
-      if (answer.nodes.includes("44195788")) {
-        //Carlos - 4787 tweets
-        return third;
-      }
-      return 0;
-    },
-    "S-task02": function(answer) {
-      if (answer.ids.includes("909697437694087200")) {
-        //Evis2018
-        return 1;
-      }
-      if (
-        //Jason - 7 likes and european
-        answer.ids.includes("19299318") ||
-        //EVision - 7 lkes and european
-        answer.ids.includes("190726679")
-      ) {
-        return second;
-      }
-
-      return 0;
-    },
-    "S-task03": function(answer) {
-      //Jeffrey or Alex
-      let correctAnswers = ["247943631", "81658145", "208312922", "40219508"];
-      if (correctAnswers.find(a => a == answer.ids)) {
-        return 1;
-      }
-
-      return 0;
-    },
-    "S-task04": function(answer) {
-      // 'AA','Noeska', 'Till', 'Joe'
-      let correctAnswers = ["191257554", "40219508", "36853217", "15208867"];
-      return scoreList(correctAnswers, answer);
-    },
-    "S-task05": function(answer) {
-      //Robert 16112517
-      let score = answer.ids
-        .split(";")
-        .map(a => a.trim())
-        .reduce((acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1), 0);
-      return d3.max([0, score]);
-    },
-    "S-task06": function(answer) {
-      //Robert 16112517
-      let score = answer.ids
-        .split(";")
-        .reduce((acc, cValue) => (cValue == "16112517" ? acc + 1 : acc - 1), 0);
-      return d3.max([0, score]);
-    },
-    "S-task07": function(answer) {
-      return answer.radio == "European" ? 1 : 0;
-    },
-    "S-task08": function(answer) {
-      if (answer.ids === "78865306") {
-        //Chris
-        return 1;
-      }
-
-      if (answer.ids === "1652270612") {
-        //Tamara
-        return second;
-      }
-
-      if (answer.ids === "16112517") {
-        //Robert
-        return third;
-      }
-      return 0;
-    },
-    "S-task09": function(answer) {
-      let score = 0;
-      if (answer.radio === "Mentions") {
-        score = score + 0.5; //score for getting the type right
-      }
-      if (answer.value == 4) {
-        score = score + 0.5; //score for getting the weight right
-      }
-
-      return score;
-    },
-    "S-task10": function(answer) {
-      // 'Lonni','Thomas', 'Anna', 'Klaus'
-      let correctAnswers = [
-        "2924711485",
-        "2527017636",
-        "446672281",
-        "270431596"
-      ];
-      return scoreList(correctAnswers, answer);
-    },
-    "S-task11": function(answer) {
-      //  'Anna'
-      let correctAnswers = ["446672281"];
-      return scoreList(correctAnswers, answer);
-    },
-    "S-task12": function(answer) {
-      return answer.value >= 1500 && answer.value <= 2500 ? 1 : 0;
-    },
-    "S-task13": function(answer) {
-      //EVis19, Mandy
-      let correctAnswers = ["1085199426837188600", "1035496563743842300"];
-      return scoreList(correctAnswers, answer);
-    },
-    "S-task14": function(answer) {
-      //Rob, Micah
-      let correctAnswers = ["208312922", "84043985"];
-      return scoreList(correctAnswers, answer);
-    },
-    "S-task15": function(answer) {
-      //Robert 16112517
-      return answer.ids.includes("16112517") ? 1 : 0;
-    },
-    "S-task16": function(answer) {
-      return 1;
-    }
-  };
-
-  function scoreList(correctAnswers, answer) {
-    //+.25 points for each correct answer -.1 point for each incorrect answer;
-    let ids = answer.ids.split(";").map(a => a.trim());
-
-    let score = ids.reduce(
-      (acc, cValue) =>
-        correctAnswers.find(a => a === cValue)
-          ? acc + 1 / correctAnswers.length
-          : acc - 1 / correctAnswers.length,
-      0
-    );
-
-    return d3.max([0, score]);
-  }
-
-  return answers[task](answerObj);
-}
 
 async function exportForVisone() {
   let graph = await d3.json("network_large_undirected_singleEdge.json");

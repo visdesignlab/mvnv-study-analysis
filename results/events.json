@@ -1,0 +1,120 @@
+{
+    "signed consent form":{
+        "type":"singleAction",
+        "level":0
+    },
+    "started training": {
+        "label":"training",
+        "type":"longAction",
+        "start":" started training",
+        "end":["finished training","started trials"],
+        "level":0
+    },
+    " started training": {
+        "label":"training",
+        "type":"longAction",
+        "start":" started training",
+        "end":["finished training","started trials"],
+        "level":0
+    },
+    "Unfocused Tab": {
+        "label":"browse away",
+        "type":"longAction",
+        "start":"Unfocused Tab",
+        "end":["Focused Tab"],
+        "level":0
+    },
+    "started trials": {
+        "label":"trials",
+        "type":"longAction",
+        "start":" started trials",
+        "end":["ended trials"],
+        "level":0
+    },
+    "started Task": {
+        "label":"task",
+        "type":"longAction",
+        "start":" started Task",
+        "end":["ended Task","ended task - submitted feedback","submitted correct answer","ended task"],
+        "level":1
+    },
+    "started guided tour":  {
+        "label":"guided tour",
+        "type":"longAction",
+        "start":"started guided tour",
+        "end":["ended guided tour"],
+        "level":2
+    },
+    "control F used": {
+        "type":"singleAction",
+        "level":0
+    },
+    "control Z used": {
+        "type":"singleAction",
+        "level":0
+    },
+    "exited tour": {
+        "type":"singleAction",
+        "level":1
+    },
+    "searched for node": {
+        "type":"singleAction",
+        "level":0
+    },
+    "submitted incorrect answer": {
+        "type":"singleAction",
+        "level":0
+    },
+    "next": {
+        "type":"singleAction",
+        "level":0
+    },
+    "back": {
+        "type":"singleAction",
+        "level":0
+    },
+    "cleared all selections": {
+        "type":"singleAction",
+        "level":0
+    },
+    "opened Help": {
+        "label":"help",
+        "type":"longAction",
+        "start":"opened Help",
+        "end":["closed Help"],
+        "level":2
+    },
+    "started study": {
+        "label":"study",
+        "type":"longAction",
+        "start":"started study",
+        "end":["ended Study"],
+        "level":0
+    },
+    "submitted valid answer": {
+        "type":"singleAction",
+        "level":0
+    },
+    "submitted invalid answer": {
+        "type":"singleAction",
+        "level":0
+    },
+    "started Feedback":  {
+        "label":"feedback",
+        "type":"longAction",
+        "start":"started Feedback",
+        "end":["submitted feedback"],
+        "level":0
+    },
+    "started second guided tour":  {
+        "label":"second guided tour",
+        "type":"longAction",
+        "start":"started second guided tour",
+        "end":["ended second guided tour"],
+        "level":2
+    },
+    "reloaded page": {
+        "type":"singleAction",
+        "level":0
+    }
+}

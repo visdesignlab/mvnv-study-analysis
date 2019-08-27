@@ -46,9 +46,9 @@ div.tooltip {
     fill:purple
 }
 
-.guidedtour,.secondguidedtour{
+/* .guidedtour,.secondguidedtour{
     fill:rgb(128, 57, 82);
-}
+} */
 
 .nodeLink{
     stroke:rgb(3, 126, 104);
@@ -64,7 +64,7 @@ div.tooltip {
     fill:none
 }
 
-.task.wrong{
+.task.wrong, .exitedtour{
     fill:rgb(179, 0, 0);
 }
 
@@ -79,7 +79,9 @@ div.tooltip {
 }
 
 .browseaway{
-    fill:rgb(193, 135, 64);
+    fill:rgb(59, 59, 59);
+    stroke:none;
+    opacity:1;
 }
 
 .rank,.visType{
@@ -123,7 +125,7 @@ div.tooltip {
     color:black;
     text-align: center;
     font-size:13px;
-    width: 100px;
+    width: 200px;
     border-radius: 5px;
     padding: 2px;
     background: white;

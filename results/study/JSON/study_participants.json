@@ -1,0 +1,401 @@
+[{
+    "id": "58c84d506d1c600001a09319",
+    "data": {
+        "PROLIFIC_PID": "58c84d506d1c600001a09319",
+        "SESSION_ID": "5d64aaf610179600174ad80d",
+        "STUDY_ID": "5d602adfd556f20017807500",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "ILQk5U",
+        "demographics": {
+            "age": "25",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "1"
+        },
+        "endTime": "Mon Aug 26 2019 21:44:16 GMT-0700 (Pacific Daylight Time)",
+        "feedback": {
+            "overall": "",
+            "training": {
+                "explanation": "",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 33.63333333333333,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1400,
+            "availWidth": 2560,
+            "colorDepth": 24,
+            "height": 1440,
+            "pixelDepth": 24,
+            "width": 2560
+        },
+        "startTime": "Mon Aug 26 2019 21:10:38 GMT-0700 (Pacific Daylight Time)"
+    }
+}, {
+    "id": "5b1087bce9270900013c1730",
+    "data": {
+        "PROLIFIC_PID": "5b1087bce9270900013c1730",
+        "SESSION_ID": "5d64a725855d77000110da6d",
+        "STUDY_ID": "5d649d79de43bb0001494946",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "iJSvSa",
+        "demographics": {
+            "age": "31",
+            "degree": "PhD",
+            "sex": "Female",
+            "vis_experience": "7"
+        },
+        "endTime": "Mon Aug 26 2019 23:48:06 GMT-0500 (hora de verano central)",
+        "feedback": {
+            "overall": "I would like to get involved in more surveys like this one",
+            "training": {
+                "explanation": "I really enjoyed this survey.  ",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 55.46666666666667,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Mon Aug 26 2019 22:52:38 GMT-0500 (hora de verano central)"
+    }
+}, {
+    "id": "5b90bf1a42e93f00017cc9e9",
+    "data": {
+        "PROLIFIC_PID": "5b90bf1a42e93f00017cc9e9",
+        "SESSION_ID": "5d64ab6f81f957001b456176",
+        "STUDY_ID": "5d649d79de43bb0001494946",
+        "browserInfo": {
+            "Browser name": "Firefox",
+            "Full version": "68.0",
+            "Major version": 68,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0"
+        },
+        "completionCode": "ucZJj1",
+        "demographics": {
+            "age": "28",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "6"
+        },
+        "endTime": "Tue Aug 27 2019 00:28:01 GMT-0400 (Eastern Daylight Time)",
+        "feedback": {
+            "overall": "Not bad. Hopefully this doesn't get used for the wrong reasons.",
+            "training": {
+                "explanation": "I was able to use the platform with ease after what was an abnormally short training video.",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 22.833333333333332,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 952,
+            "availWidth": 1768,
+            "colorDepth": 24,
+            "height": 992,
+            "pixelDepth": 24,
+            "width": 1768
+        },
+        "startTime": "Tue Aug 27 2019 00:05:11 GMT-0400 (Eastern Daylight Time)"
+    }
+}, {
+    "id": "5bb279805a4ee80001c39a8c",
+    "data": {
+        "PROLIFIC_PID": "5bb279805a4ee80001c39a8c",
+        "SESSION_ID": "5d64b90a0afc010019379a4b",
+        "STUDY_ID": "5d602adfd556f20017807500",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "VPtGzW",
+        "demographics": {
+            "age": "20",
+            "degree": "High School",
+            "sex": "Male",
+            "vis_experience": "1"
+        },
+        "endTime": "Mon Aug 26 2019 22:42:59 GMT-0700 (Pacific Daylight Time)",
+        "feedback": {
+            "overall": "A lot of information on the charts, gets very confusing and hard to see",
+            "training": {
+                "explanation": "",
+                "helpful": "4"
+            }
+        },
+        "minutesToComplete": 41.81666666666667,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 860,
+            "availWidth": 1600,
+            "colorDepth": 24,
+            "height": 900,
+            "pixelDepth": 24,
+            "width": 1600
+        },
+        "startTime": "Mon Aug 26 2019 22:01:10 GMT-0700 (Pacific Daylight Time)"
+    }
+}, {
+    "id": "5c2c888df42a780001468c5f",
+    "data": {
+        "PROLIFIC_PID": "5c2c888df42a780001468c5f",
+        "SESSION_ID": "5d64c9df2795b00018f86aa5",
+        "STUDY_ID": "5d649d79de43bb0001494946",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "WWSsHw",
+        "demographics": {
+            "age": "41",
+            "degree": "Masters",
+            "sex": "Male",
+            "vis_experience": "5"
+        },
+        "endTime": "Tue Aug 27 2019 09:23:27 GMT+0200 (közép-európai nyári idő)",
+        "feedback": {
+            "overall": "",
+            "training": {
+                "explanation": "",
+                "helpful": "6"
+            }
+        },
+        "minutesToComplete": 70.06666666666666,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Tue Aug 27 2019 08:13:23 GMT+0200 (közép-európai nyári idő)"
+    }
+}, {
+    "id": "5c671a76085e6a0001fed1bc",
+    "data": {
+        "PROLIFIC_PID": "5c671a76085e6a0001fed1bc",
+        "SESSION_ID": "5d64a0bd4f15b2001af7496d",
+        "STUDY_ID": "5d602adfd556f20017807500",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "Vatf6x",
+        "demographics": {
+            "age": "22",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "4"
+        },
+        "endTime": "Tue Aug 27 2019 05:05:30 GMT+0100 (Hora de verão da Europa Ocidental)",
+        "feedback": {
+            "overall": "cool and insightful",
+            "training": {
+                "explanation": "",
+                "helpful": "3"
+            }
+        },
+        "minutesToComplete": 47.68333333333333,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 860,
+            "availWidth": 1440,
+            "colorDepth": 24,
+            "height": 900,
+            "pixelDepth": 24,
+            "width": 1440
+        },
+        "startTime": "Tue Aug 27 2019 04:17:49 GMT+0100 (Hora de verão da Europa Ocidental)"
+    }
+}, {
+    "id": "5cf2d589239c60001a088f03",
+    "data": {
+        "PROLIFIC_PID": "5cf2d589239c60001a088f03",
+        "SESSION_ID": "5d649ec305c4060001a8ba0c",
+        "STUDY_ID": "5d602adfd556f20017807500",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "Wa1saO",
+        "demographics": {
+            "age": "32",
+            "degree": "Bachelors",
+            "sex": "Female",
+            "vis_experience": "1"
+        },
+        "endTime": "Mon Aug 26 2019 20:41:20 GMT-0700 (Pacific Daylight Time)",
+        "feedback": {
+            "overall": "That was so hard and I'm leaving pretty confused. ",
+            "training": {
+                "explanation": "",
+                "helpful": "5"
+            }
+        },
+        "minutesToComplete": 30.916666666666668,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 980,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Mon Aug 26 2019 20:10:25 GMT-0700 (Pacific Daylight Time)"
+    }
+}, {
+    "id": "5d1db2c56d66ec001904e555",
+    "data": {
+        "PROLIFIC_PID": "5d1db2c56d66ec001904e555",
+        "SESSION_ID": "5d64bc5d4a56cd0015627bd0",
+        "STUDY_ID": "5d602adfd556f20017807500",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "MefEFD",
+        "demographics": {
+            "age": "18",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "3"
+        },
+        "endTime": "Tue Aug 27 2019 07:17:38 GMT+0100 (Hora de verão da Europa Ocidental)",
+        "feedback": {
+            "overall": "",
+            "training": {
+                "explanation": "",
+                "helpful": "6"
+            }
+        },
+        "minutesToComplete": 56.916666666666664,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Tue Aug 27 2019 06:20:43 GMT+0100 (Hora de verão da Europa Ocidental)"
+    }
+}, {
+    "id": "5d4dc127a370c600156b255b",
+    "data": {
+        "PROLIFIC_PID": "5d4dc127a370c600156b255b",
+        "SESSION_ID": "5d64b558169e9100199d17e9",
+        "STUDY_ID": "5d649d79de43bb0001494946",
+        "browserInfo": {
+            "Browser name": "Firefox",
+            "Full version": "68.0",
+            "Major version": 68,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0"
+        },
+        "completionCode": "RpsNpe",
+        "demographics": {
+            "age": "21",
+            "degree": "Bachelors",
+            "sex": "Male",
+            "vis_experience": "4"
+        },
+        "endTime": "Tue Aug 27 2019 15:23:10 GMT+1000 (Australian Eastern Standard Time)",
+        "feedback": {
+            "overall": "It was surprisingly fun to go through the tests, and i thought i did well for data interpretation.",
+            "training": {
+                "explanation": "",
+                "helpful": "6"
+            }
+        },
+        "minutesToComplete": 32.666666666666664,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Tue Aug 27 2019 14:50:30 GMT+1000 (Australian Eastern Standard Time)"
+    }
+}, {
+    "id": "5d64759fedf23500018f9334",
+    "data": {
+        "PROLIFIC_PID": "5d64759fedf23500018f9334",
+        "SESSION_ID": "5d64a2572721a700192dd05d",
+        "STUDY_ID": "5d649d79de43bb0001494946",
+        "browserInfo": {
+            "Browser name": "Chrome",
+            "Full version": "76.0.3809.100",
+            "Major version": 76,
+            "navigatorAppName": "Netscape",
+            "navigatorUserAgent": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36"
+        },
+        "completionCode": "FuHwcO",
+        "demographics": {
+            "age": "49",
+            "degree": "Masters",
+            "sex": "Female",
+            "vis_experience": "1"
+        },
+        "endTime": "Mon Aug 26 2019 22:55:58 GMT-0500 (Central Daylight Time)",
+        "feedback": {
+            "overall": "This was like nothing I've ever seen before. I hope I understood the questions and supplied correct answers.",
+            "training": {
+                "explanation": "",
+                "helpful": "7"
+            }
+        },
+        "minutesToComplete": 30.85,
+        "mode": "study",
+        "screenSize": {
+            "availHeight": 1040,
+            "availWidth": 1920,
+            "colorDepth": 24,
+            "height": 1080,
+            "pixelDepth": 24,
+            "width": 1920
+        },
+        "startTime": "Mon Aug 26 2019 22:25:07 GMT-0500 (Central Daylight Time)"
+    }
+}]
