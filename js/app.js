@@ -193,6 +193,7 @@ async function processData() {
 
         //compute accuracy and add to data structure;
         let answer = p.data[key].answer;
+        // console.log('user id', p.data[key].workerID)
         answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
         // console.log('accuracy for task ', key ,  ' is ', answer.accuracy)
         answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
@@ -207,7 +208,7 @@ async function processData() {
         return acc + p.data[key].answer.accuracy;
       }, 0) / Object.keys(p.data).length;
 
-    console.log("average accuracy for ", p.id, " is ", p.data.averageAccuracy);
+    // console.log("average accuracy for ", p.id, " is ", p.data.averageAccuracy);
 
     p.data.workerID = p.id;
     delete p.id;
@@ -648,7 +649,11 @@ function computeAccuracy(taskID, answerObj) {
       ];
       let score = scoreList(correctAnswers, answer);
 
-      return answer.value >= 400 && answer.value <= 600 ? score+.5 : score;
+      // console.log('score is ', score)
+      score =  answer.value >= 400 && answer.value <= 800 ? (score+0.5) : score;
+      // console.log('score is ', score)
+
+      return score;
     },
     "S-task13": function(answer) {
       let score = 0;
