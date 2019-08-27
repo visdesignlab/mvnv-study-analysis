@@ -228,6 +228,7 @@ async function processData() {
   });
 
   fs.writeFileSync("processed_results.json", JSON.stringify(results));
+  console.log('exported processed_results.json');
 }
 
 async function exportResults() {
@@ -323,7 +324,7 @@ async function exportResults() {
   .writeRecords(csvValues)
   .then(()=> console.log('The CSV file was written successfully'));
 
-  console.log(csvValues)
+
   let rHeaders = [
     "prolificId",
     "taskId",
@@ -645,9 +646,9 @@ function computeAccuracy(taskID, answerObj) {
         "1085199426837188600",
         "16112517"
       ];
-      let part1Score = scoreList(correctAnswers, answer);
+      let score = scoreList(correctAnswers, answer);
 
-      return answer.value >= 400 && answer.value <= 600 ? 1 : 0;
+      return answer.value >= 400 && answer.value <= 600 ? score+.5 : score;
     },
     "S-task13": function(answer) {
       let score = 0;
@@ -765,6 +766,9 @@ function processProvenance() {
 
   // console.log(events)
   fs.writeFileSync("provenance_events.json", JSON.stringify(events));
+  console.log('exported provenance_events.json');
+
+
 }
 
 function flatten(data) {
