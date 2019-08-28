@@ -123,10 +123,10 @@ async function fetchData() {
   );
 
   let collectionNames = [
-    "results",
-    "participant_actions"
+    // "results",
+    // "participant_actions"
     // "heuristics_participants",
-    // "provenance"
+    "provenance"
     // "trial_provenance",
     // "trial_results",
   ];
@@ -316,18 +316,9 @@ async function exportResults() {
       return obj
     });
 
-    // csvKeys = csvKeys.map(k => k.split(".").pop());
-    // let csvData = [csvKeys].concat(csvValues);
-
-    // saveCSV(csvData, collection + ".csv");
-
-    // saveCSV([rHeaders].concat(rRows), collection + ".csv");
-  // }
-
   csvWriter
   .writeRecords(csvValues)
-  .then(()=> console.log('The CSV file was written successfully'));
-
+  .then(()=> console.log('results.csv was written successfully'));
 
   let rHeaders = [
     "prolificId",
@@ -340,174 +331,149 @@ async function exportResults() {
     "measure",
     "value"
   ];
-  let rRows = [];
 
-  // console.log(layout.elements.nodes)
-
-  // results.map(participantData => {
-  //   let id = participantData.data.workerID;
-
-  //   Object.keys(participantData.data)
-  //     .filter(key => key[0] === "S")
-  //     .map(taskId => {
-  //       let data = participantData.data[taskId];
-  //       let visType = data.visType;
-  //       let taskType = data.taxonomy.type;
-  //       let topology = data.taxonomy.target;
-  //       let hypothesis = data.hypothesis.split(",");
-  //       let hypothesis_1 = hypothesis[0];
-  //       let hypothesis_2 = hypothesis[1] ? hypothesis[1] : "";
-
-  //       //create a row for every relevant value;
-  //       data.answer.nodes
-  //         .split(";")
-  //         .map(n => n.trim())
-  //         .map(node => {
-  //           rRows.push([
-  //             id,
-  //             taskId,
-  //             visType,
-  //             taskType,
-  //             topology,
-  //             hypothesis_1,
-  //             hypothesis_2,
-  //             "nodeAnswer",
-  //             node
-  //           ]);
-  //         });
-
-  //       data.answer.value
-  //         .split(";")
-  //         .map(n => n.trim())
-  //         .map(v => {
-  //           if (v.length > 0) {
-  //             v = v.replace(/,/g, "");
-  //             v = v.replace(/\r?\n|\r/g, "");
-
-  //             rRows.push([
-  //               id,
-  //               taskId,
-  //               visType,
-  //               taskType,
-  //               topology,
-  //               hypothesis_1,
-  //               hypothesis_2,
-  //               "valueAnswer",
-  //               v
-  //             ]);
-  //           }
-  //         });
-  //       if (data.answer.radio) {
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "valueAnswer",
-  //           data.answer.radio
-  //         ]);
-  //       }
-
-  //       {
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "accuracy",
-  //           data.answer.accuracy
-  //         ]);
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "correct",
-  //           data.answer.correct
-  //         ]);
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "difficulty",
-  //           data.feedback.difficulty
-  //         ]);
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "confidence",
-  //           data.feedback.confidence
-  //         ]);
-  //         rRows.push([
-  //           id,
-  //           taskId,
-  //           visType,
-  //           taskType,
-  //           topology,
-  //           hypothesis_1,
-  //           hypothesis_2,
-  //           "minutesToComplete",
-  //           data.minutesToComplete
-  //         ]);
-  //       }
-  //     });
-  // });
-
-  [].map(p => {
-    console.log(p);
-    // //remove commas, newlines, and html markup
-    // if (typeof v === "string") {
-    //   v = v.replace(/,/g, "");
-    //   v = v.replace(/\r?\n|\r/g, "");
-    //   v = v.replace(/<span class='attribute'>/g, "");
-    //   v = v.replace(/<span class='attribute' >/g, "");
-    //   v = v.replace(/<\/span>/g, "");
-    // }
-    // return v.toString();
+  csvWriter = createCsvWriter({
+    path: "TidyR.csv",
+    header: rHeaders.map(key => {
+      return { id: key, title: key };
+    })
   });
 
-  // let csvValues = sorted.map(p => {
-  //   //fill in missing values;
-  //   let values = csvKeys.map(key => {
-  //     let v = nameSpace(p.data, key);
 
-  //     //remove commas, newlines, and html markup
-  //     if (typeof v === "string") {
-  //       v = v.replace(/,/g, "");
-  //       v = v.replace(/\r?\n|\r/g, "");
-  //       v = v.replace(/<span class='attribute'>/g, "");
-  //       v = v.replace(/<span class='attribute' >/g, "");
-  //       v = v.replace(/<\/span>/g, "");
-  //     }
-  //     return v.toString();
-  //   });
-  //   return values;
-  // });
+ 
+  let rRows = [];
 
-  // csvKeys = csvKeys.map(k => k.split(".").pop());
-  // let csvData = [csvKeys].concat(csvValues);
+  results.map(participantData => {
+    let id = participantData.data.workerID;
 
-  // saveCSV(csvData, collection + ".csv");
+    Object.keys(participantData.data)
+      .filter(key => key[0] === "S") //only look at task keys
+      .map(taskId => {
+        let data = participantData.data[taskId];
+        let visType = data.visType;
+        let taskType = data.taxonomy.type;
+        let topology = data.taxonomy.target;
+        let hypothesis = data.hypothesis.split(",");
+        let hypothesis_1 = hypothesis[0];
+        let hypothesis_2 = hypothesis[1] ? hypothesis[1] : "";
 
-  // saveCSV([rHeaders].concat(rRows), collection + ".csv");
+        //create a row for every relevant value;
+        data.answer.nodes
+          .split(";")
+          .map(n => n.trim())
+          .map(node => {
+            rRows.push({
+              "prolificId":id,
+              "taskId":taskId,
+              "visType":visType,
+              "taskType":taskType,
+              "topology":topology,
+              "hypothesis_1":hypothesis_1,
+              "hypothesis_2":hypothesis_2,
+              "measure":'nodeAnswer',
+              "value":node            
+            });
+          });
+
+        data.answer.value
+          .split(";")
+          .map(n => n.trim())
+          .map(v => {
+            if (v.length > 0) {
+              v = v.replace(/,/g, "");
+              v = v.replace(/\r?\n|\r/g, "");
+
+              rRows.push({
+                "prolificId":id,
+                "taskId":taskId,
+                "visType":visType,
+                "taskType":taskType,
+                "topology":topology,
+                "hypothesis_1":hypothesis_1,
+                "hypothesis_2":hypothesis_2,
+                "measure":'valueAnswer',
+                "value":v            
+              });
+            }
+          });
+        if (data.answer.radio) {
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'valueAnswer',
+            "value":data.answer.radio            
+          });
+        }
+        {
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'accuracy',
+            "value":data.answer.accuracy            
+          });
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'correct',
+            "value":data.answer.correct            
+          });
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'difficulty',
+            "value":data.feedback.difficulty            
+          });
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'confidence',
+            "value":data.feedback.confidence            
+          });
+          rRows.push({
+            "prolificId":id,
+            "taskId":taskId,
+            "visType":visType,
+            "taskType":taskType,
+            "topology":topology,
+            "hypothesis_1":hypothesis_1,
+            "hypothesis_2":hypothesis_2,
+            "measure":'minutesToComplete',
+            "value":data.minutesToComplete            
+          });
+        }
+      });
+  });
+
+  csvWriter
+  .writeRecords(rRows)
+  .then(()=> console.log('TidyR.csv was written successfully'));
+
+
 }
 
 function computeAccuracy(taskID, answerObj) {
