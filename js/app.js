@@ -15,7 +15,7 @@ let db = firestore.connect();
   let mode = process.argv[2];
   console.log("mode is ", mode);
   switch (mode) {
-    case "fetchData":
+    case "fetch":
       await fetchData();
       break;
     case "fixData":
@@ -98,7 +98,7 @@ function updateDatabase() {
 
 //function to filter out only valid participants;
 function isValidParticipant(d) {
-  return d.data.mode === "study"; // && d.id[0] === "5";
+  return d.data.mode === "study" && d.id[0] === "5" && d.data.demographics;
 }
 
 async function fetchData() {
@@ -111,6 +111,8 @@ async function fetchData() {
   });
 
   studyParticipants = studyParticipants.filter(isValidParticipant);
+
+  console.log('fetched', studyParticipants.length , 'valid participants')
 
   //array of ids for valid participants;
   let participantIDs = studyParticipants.map(p => p.id);
@@ -228,6 +230,7 @@ async function processData() {
     return p.data;
   });
 
+  console.log('found ', results.length ,' participantData')
   fs.writeFileSync("processed_results.json", JSON.stringify(results));
   console.log('exported processed_results.json');
 }
@@ -759,8 +762,9 @@ function processProvenance() {
             .pop();
           if (startObj === undefined) {
             console.log("could not find start event for ", action);
-          }
-          startObj.endTime = action.time;
+          } else {
+            startObj.endTime = action.time;
+          } 
         }
       }
     });
