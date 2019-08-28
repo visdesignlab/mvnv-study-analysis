@@ -102,6 +102,25 @@ function isValidParticipant(d) {
 }
 
 async function fetchData() {
+
+  let taskNames = [
+    "S-task01",
+    "S-task02",
+    "S-task03",
+    "S-task04",
+    "S-task05",
+    "S-task06",
+    "S-task07",
+    "S-task08",
+    "S-task09",
+    "S-task10",
+    "S-task011",
+    "S-task012",
+    "S-task013",
+    "S-task014",
+    "S-task015",
+    "S-task016"
+  ];
   let querySnapshot = await db.collection("study_participants").get();
 
   let studyParticipants = [];
@@ -122,11 +141,37 @@ async function fetchData() {
     JSON.stringify(studyParticipants)
   );
 
+  // let collectionName = 'provenance';
+  //fetch provenance; 
+  // let collectionRef, queryRef;
+  // collectionRef = db.collection(collectionName);
+  //   queryRef = collectionRef.where(
+  //     new firebase.firestore.FieldPath("mode"),
+  //     "==",
+  //     "study"
+  //   );
+
+  // participantIDs.map(id=>{
+  //   let participantProvenance=[];
+  //   let allTasks = taskNames.map(async task=>{
+  //     let ref = db.collection('provenance').doc(id + '_'+task);
+  //     let doc = await ref.get();
+  //     participantProvenance.push(doc.data())
+  //   })
+
+  //   Promise.all(allTasks).then((values)=>{
+  //     fs.writeFileSync(id + ".json", data);
+  //   })
+  // })
+  
+
+
+
   let collectionNames = [
-    // "results",
-    // "participant_actions"
+    "results",
+    "participant_actions"
     // "heuristics_participants",
-    "provenance"
+    // "provenance"
     // "trial_provenance",
     // "trial_results",
   ];
@@ -134,16 +179,8 @@ async function fetchData() {
   await collectionNames.map(async collectionName => {
     let collectionRef, queryRef;
     collectionRef = db.collection(collectionName);
-    if (collectionName === "provenance") {
-      queryRef = collectionRef.where(
-        new firebase.firestore.FieldPath("mode"),
-        "==",
-        "study"
-      );
-    } else {
       queryRef = collectionRef;
-    }
-
+    
     let querySnapshot = await queryRef.get();
 
     let allData = [];
