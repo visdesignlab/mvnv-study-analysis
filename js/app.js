@@ -11,12 +11,34 @@ const fs = require("fs");
 let firestore = require("./firebaseApi.js");
 let db = firestore.connect();
 
+let taskTitles = {
+  "S-task01": "NA with most tweets",
+  "S-task02": "EU with least likes [Distractors]",
+  "S-task03": "Well connected with few likes/tweets",
+  "S-task04": "Lane's EU neighbors",
+  "S-task05": "giCentre's NA neighbors [Distractors]",
+  "S-task06": "Most mentions with Jeffrey",
+  "S-task07": "Alex more EU or NA interactions? Most mentions with Alex. ",
+  "S-task08": "Most followers among common neighbors of Jeffrey and Robert",
+  "S-task09": "Most common/how many interactions between Evis19 and Jon",
+  "S-task10": "Noeska's neighbors with more friends than followers",
+  "S-task11": "Thomas' neighbors with more friends than followers [small]",
+  "S-task12": "Alex cluster / average number of followers.",
+  "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
+  "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
+  "S-task15": "Oldes account of all NA two interactions from Sereno",
+  "S-task16": "Free Explore"
+};
+
 (async function() {
   let mode = process.argv[2];
   console.log("mode is ", mode);
   switch (mode) {
     case "fetch":
       await fetchData();
+      break;
+    case "fetchProvenance":
+      await fetchProvenance();
       break;
     case "fixData":
       // updateDatabase();
@@ -101,26 +123,48 @@ function isValidParticipant(d) {
   return d.data.mode === "study" && d.id[0] === "5" && d.data.demographics;
 }
 
-async function fetchData() {
+async function fetchProvenance() {
+  paginate(0);
+}
 
-  let taskNames = [
-    "S-task01",
-    "S-task02",
-    "S-task03",
-    "S-task04",
-    "S-task05",
-    "S-task06",
-    "S-task07",
-    "S-task08",
-    "S-task09",
-    "S-task10",
-    "S-task011",
-    "S-task012",
-    "S-task013",
-    "S-task014",
-    "S-task015",
-    "S-task016"
-  ];
+async function paginate(i, lastDoc) {
+  let ref;
+
+  if (lastDoc) {
+    ref = db
+      .collection("provenance")
+      .orderBy("initialSetup")
+      .startAfter(lastDoc.data().initialSetup)
+      .limit(1000);
+  } else {
+    ref = db
+      .collection("provenance")
+      .orderBy("initialSetup")
+      .limit(1000);
+  }
+
+  ref.get().then(snapshot => {
+    // ...
+    let numDocs = snapshot.docs.length;
+    console.log("numDocs", numDocs);
+
+    let data = JSON.stringify(
+      snapshot.docs.map(d => {
+        return { id: d.id, data: d.data() };
+      })
+    );
+    fs.writeFileSync("provenance_" + i + ".json", data);
+
+    // Get the last document
+    let last = snapshot.docs[snapshot.docs.length - 1];
+
+    if (numDocs === 1000) {
+      paginate(i + 1, last);
+    }
+  });
+}
+
+async function fetchData() {
   let querySnapshot = await db.collection("study_participants").get();
 
   let studyParticipants = [];
@@ -131,7 +175,7 @@ async function fetchData() {
 
   studyParticipants = studyParticipants.filter(isValidParticipant);
 
-  console.log('fetched', studyParticipants.length , 'valid participants')
+  console.log("fetched", studyParticipants.length, "valid participants");
 
   //array of ids for valid participants;
   let participantIDs = studyParticipants.map(p => p.id);
@@ -141,37 +185,12 @@ async function fetchData() {
     JSON.stringify(studyParticipants)
   );
 
-  // let collectionName = 'provenance';
-  //fetch provenance; 
-  // let collectionRef, queryRef;
-  // collectionRef = db.collection(collectionName);
-  //   queryRef = collectionRef.where(
-  //     new firebase.firestore.FieldPath("mode"),
-  //     "==",
-  //     "study"
-  //   );
-
-  // participantIDs.map(id=>{
-  //   let participantProvenance=[];
-  //   let allTasks = taskNames.map(async task=>{
-  //     let ref = db.collection('provenance').doc(id + '_'+task);
-  //     let doc = await ref.get();
-  //     participantProvenance.push(doc.data())
-  //   })
-
-  //   Promise.all(allTasks).then((values)=>{
-  //     fs.writeFileSync(id + ".json", data);
-  //   })
-  // })
-  
-
-
+  console.log("exported study_participants.json");
 
   let collectionNames = [
     "results",
     "participant_actions"
     // "heuristics_participants",
-    // "provenance"
     // "trial_provenance",
     // "trial_results",
   ];
@@ -179,8 +198,8 @@ async function fetchData() {
   await collectionNames.map(async collectionName => {
     let collectionRef, queryRef;
     collectionRef = db.collection(collectionName);
-      queryRef = collectionRef;
-    
+    queryRef = collectionRef;
+
     let querySnapshot = await queryRef.get();
 
     let allData = [];
@@ -207,10 +226,8 @@ async function processData() {
   let participant_info = JSON.parse(rawdata);
 
   rawdata = fs.readFileSync("results/study/JSON/results.json");
-  let results = JSON.parse(rawdata);
 
-  // rawdata = fs.readFileSync('results/study/JSON/participant_actions.json');
-  // let provenance = JSON.parse(rawdata);
+  let results = JSON.parse(rawdata);
 
   results.map(p => {
     //flatten answer.nodes, then flatten the whole data;
@@ -252,45 +269,49 @@ async function processData() {
     p.data.workerID = p.id;
     delete p.id;
 
-    p.data.overallMinutesToComplete = participant_info.find(
-      pt => pt.id === p.data.workerID
-    ).data.minutesToComplete;
+    //add overall accuracy to participant info
+
+    let participant = participant_info.find(pt => pt.id === p.data.workerID);
+
+    participant.data.averageAccuracy = p.data.averageAccuracy;
+
+    p.data.overallMinutesToComplete = participant.data.minutesToComplete;
 
     //add demographic information for this participant;
-    p.data.demographics = participant_info.find(
-      pt => pt.id === p.data.workerID
-    ).data.demographics;
-    p.data.overallFeedback = participant_info.find(
-      pt => pt.id === p.data.workerID
-    ).data.feedback;
+    p.data.demographics = participant.data.demographics;
+    p.data.overallFeedback = participant.data.feedback;
 
     return p.data;
   });
 
-  console.log('found ', results.length ,' participantData')
   fs.writeFileSync("processed_results.json", JSON.stringify(results));
-  console.log('exported processed_results.json');
+  console.log("exported processed_results.json");
+
+  fs.writeFileSync("study_participants.json", JSON.stringify(participant_info));
+  console.log("exported updated study_participants.json");
 }
 
-async function exportResults() {
-  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-  let csvWriter;
-
+function exportResults() {
   let rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
   let results = JSON.parse(rawdata);
 
-  
+  exportCSV(results);
+  exportTidy(results);
+}
+
+async function exportCSV(results) {
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+  let csvWriter;
 
   let csvKeys = [];
-  
-  results.map(r=>{
-    Object.keys(flatten(r.data)).map(key=>{
-      if (!csvKeys.includes(key)){
-        csvKeys.push(key)
+
+  results.map(r => {
+    Object.keys(flatten(r.data)).map(key => {
+      if (!csvKeys.includes(key)) {
+        csvKeys.push(key);
       }
-    })
-    
-  })
+    });
+  });
 
   csvKeys = csvKeys.filter(k => {
     return (
@@ -325,41 +346,87 @@ async function exportResults() {
     //sort by visType
     .sort((a, b) => (a.data["S-task01"].visType === "nodeLink" ? 1 : -1));
 
-    let csvValues = sorted.map(p => {
-      //fill in missing values;
-      let obj={}
-      csvKeys.map(key => {
-        let value = nameSpace(p.data, key);
-        // console.log(key, value)
-        //user did not take that task
-        if (value === undefined) {
-          console.log('missing value for ', key)
-          setNested(p.data, key, "");
-        }
+  let csvValues = sorted.map(p => {
+    //fill in missing values;
+    let obj = {};
+    csvKeys.map(key => {
+      let value = nameSpace(p.data, key);
+      // console.log(key, value)
+      //user did not take that task
+      if (value === undefined) {
+        console.log("missing value for ", key);
+        setNested(p.data, key, "");
+      }
 
-        let v = nameSpace(p.data, key);
+      let v = nameSpace(p.data, key);
 
-        //remove commas, newlines, and html markup
-        if (typeof v === "string") {
-          v = v.replace(/,/g, "");
-          v = v.replace(/\r?\n|\r/g, "");
-          v = v.replace(/<span class='attribute'>/g, "");
-          v = v.replace(/<span class='attribute' >/g, "");
-          v = v.replace(/<\/span>/g, "");
-        }
-        // return v.toString();
-        obj[key]=v
-      });
-      return obj
+      //remove commas, newlines, and html markup
+      if (typeof v === "string") {
+        v = v.replace(/,/g, "");
+        v = v.replace(/\r?\n|\r/g, "");
+        v = v.replace(/<span class='attribute'>/g, "");
+        v = v.replace(/<span class='attribute' >/g, "");
+        v = v.replace(/<\/span>/g, "");
+      }
+      // return v.toString();
+      obj[key] = v;
     });
+    return obj;
+  });
 
   csvWriter
-  .writeRecords(csvValues)
-  .then(()=> console.log('results.csv was written successfully'));
+    .writeRecords(csvValues)
+    .then(() => console.log("results.csv was written successfully"));
+}
 
-  let rHeaders = [
+async function exportTidy(results) {
+  const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+  let csvWriter;
+
+  let rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
+  let participants = JSON.parse(rawdata);
+
+  let rHeaders, rRows;
+
+  rHeaders = ["prolificId", "measure", "value"];
+
+  csvWriter = createCsvWriter({
+    path: "participantInfoTidyR.csv",
+    header: rHeaders.map(key => {
+      return { id: key, title: key };
+    })
+  });
+
+  rRows = [];
+
+  participants.map(participant => {
+    let id = participant.data.PROLIFIC_PID;
+
+    let createTidyRow = function(measure, value) {
+      return {
+        prolificId: id,
+        measure,
+        value
+      };
+    };
+
+    rRows.push(createTidyRow("browser",participant.data.browserInfo['Browser name']));
+    rRows.push(createTidyRow("age",participant.data.demographics.age));
+    rRows.push(createTidyRow("age",participant.data.demographics.degree));
+    rRows.push(createTidyRow("sex",participant.data.demographics.sex));
+    rRows.push(createTidyRow("visExperience",participant.data.demographics.vis_experience));
+    rRows.push(createTidyRow("minutesToComplete",Math.round(participant.data.minutesToComplete)));
+    rRows.push(createTidyRow("averageAccuracy",participant.data.averageAccuracy));
+  });
+
+  csvWriter
+    .writeRecords(rRows)
+    .then(() => console.log("participantInfoTidyR.csv was written successfully"));
+
+  rHeaders = [
     "prolificId",
     "taskId",
+    "taskTitle",
     "visType",
     "taskType",
     "topology",
@@ -376,9 +443,7 @@ async function exportResults() {
     })
   });
 
-
- 
-  let rRows = [];
+  rRows = [];
 
   results.map(participantData => {
     let id = participantData.data.workerID;
@@ -386,30 +451,31 @@ async function exportResults() {
     Object.keys(participantData.data)
       .filter(key => key[0] === "S") //only look at task keys
       .map(taskId => {
+        let createTidyRow = function(measure, value) {
+          let hypothesis = data.hypothesis.split(",");
+
+          return {
+            prolificId: id,
+            taskId: taskId,
+            taskTitle: taskTitles[taskId],
+            visType: data.visType,
+            taskType: data.taxonomy.type,
+            topology: data.taxonomy.target,
+            hypothesis_1: hypothesis[0],
+            hypothesis_2: hypothesis[1] ? hypothesis[1] : "",
+            measure,
+            value
+          };
+        };
+
         let data = participantData.data[taskId];
-        let visType = data.visType;
-        let taskType = data.taxonomy.type;
-        let topology = data.taxonomy.target;
-        let hypothesis = data.hypothesis.split(",");
-        let hypothesis_1 = hypothesis[0];
-        let hypothesis_2 = hypothesis[1] ? hypothesis[1] : "";
 
         //create a row for every relevant value;
         data.answer.nodes
           .split(";")
           .map(n => n.trim())
           .map(node => {
-            rRows.push({
-              "prolificId":id,
-              "taskId":taskId,
-              "visType":visType,
-              "taskType":taskType,
-              "topology":topology,
-              "hypothesis_1":hypothesis_1,
-              "hypothesis_2":hypothesis_2,
-              "measure":'nodeAnswer',
-              "value":node            
-            });
+            rRows.push(createTidyRow("nodeAnswer", node));
           });
 
         data.answer.value
@@ -419,98 +485,24 @@ async function exportResults() {
             if (v.length > 0) {
               v = v.replace(/,/g, "");
               v = v.replace(/\r?\n|\r/g, "");
-
-              rRows.push({
-                "prolificId":id,
-                "taskId":taskId,
-                "visType":visType,
-                "taskType":taskType,
-                "topology":topology,
-                "hypothesis_1":hypothesis_1,
-                "hypothesis_2":hypothesis_2,
-                "measure":'valueAnswer',
-                "value":v            
-              });
+              rRows.push(createTidyRow("valueAnswer", v));
             }
           });
+
         if (data.answer.radio) {
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'valueAnswer',
-            "value":data.answer.radio            
-          });
+          rRows.push(createTidyRow("valueAnswer", data.answer.radio));
         }
-        {
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'accuracy',
-            "value":data.answer.accuracy            
-          });
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'correct',
-            "value":data.answer.correct            
-          });
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'difficulty',
-            "value":data.feedback.difficulty            
-          });
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'confidence',
-            "value":data.feedback.confidence            
-          });
-          rRows.push({
-            "prolificId":id,
-            "taskId":taskId,
-            "visType":visType,
-            "taskType":taskType,
-            "topology":topology,
-            "hypothesis_1":hypothesis_1,
-            "hypothesis_2":hypothesis_2,
-            "measure":'minutesToComplete',
-            "value":data.minutesToComplete            
-          });
-        }
+        rRows.push(createTidyRow("accuracy", data.answer.accuracy));
+        rRows.push(createTidyRow("correct", data.answer.correct));
+        rRows.push(createTidyRow("difficulty", data.feedback.difficulty));
+        rRows.push(createTidyRow("confidence", data.feedback.confidence));
+        rRows.push(createTidyRow("minutesToComplete", data.minutesToComplete));
       });
   });
 
   csvWriter
-  .writeRecords(rRows)
-  .then(()=> console.log('TidyR.csv was written successfully'));
-
-
+    .writeRecords(rRows)
+    .then(() => console.log("TidyR.csv was written successfully"));
 }
 
 function computeAccuracy(taskID, answerObj) {
@@ -656,7 +648,7 @@ function computeAccuracy(taskID, answerObj) {
       let score = scoreList(correctAnswers, answer);
 
       // console.log('score is ', score)
-      score =  answer.value >= 400 && answer.value <= 800 ? (score+0.5) : score;
+      score = answer.value >= 400 && answer.value <= 800 ? score + 0.5 : score;
       // console.log('score is ', score)
 
       return score;
@@ -767,7 +759,7 @@ function processProvenance() {
             console.log("could not find start event for ", action);
           } else {
             startObj.endTime = action.time;
-          } 
+          }
         }
       }
     });
@@ -778,9 +770,7 @@ function processProvenance() {
 
   // console.log(events)
   fs.writeFileSync("provenance_events.json", JSON.stringify(events));
-  console.log('exported provenance_events.json');
-
-
+  console.log("exported provenance_events.json");
 }
 
 function flatten(data) {
@@ -803,7 +793,7 @@ function flatten(data) {
   }
   recurse(data, "");
   return result;
-};
+}
 
 function nameSpace(obj, path) {
   var property,
