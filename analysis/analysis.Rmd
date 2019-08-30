@@ -318,7 +318,7 @@ m_acc %>%
 
 ## Participant Info
 
-```{r, fig.height=1, fig.width=3}
+```{r}
 fct_unique(dfp$measure)
 
 dfp %>% 
@@ -413,9 +413,49 @@ df %>%
   mutate( value = as.numeric( as.character(value)) ) %>% 
   mutate( condition = paste(taskId, visType, sep="_") ) %>% 
   ggplot(aes(x=condition, y=value, fill=visType, color=visType)) +
-  geom_jitter( alpha = 0.3, height=0.005  ) +
+  geom_jitter( alpha = 0.3, height=0.01, width=0.25  ) +
     stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, alpha=0.75) +
   coord_flip()
+
+ggsave("comparisons/S-task01_S-task02.pdf")
+
+df %>% 
+  filter( measure == "accuracy" ) %>% 
+  filter( taskId == "S-task04" | taskId == "S-task05" ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  mutate( condition = paste(taskId, visType, sep="_") ) %>% 
+  ggplot(aes(x=condition, y=value, fill=visType, color=visType)) +
+  geom_jitter( alpha = 0.3, height=0.01, width=0.25  ) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, alpha=0.75) +
+  coord_flip()
+
+ggsave("comparisons/S-task04_S-task05.pdf")
+
+
+df %>% 
+  filter( measure == "accuracy" ) %>% 
+  filter( taskId == "S-task10" | taskId == "S-task11" ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  mutate( condition = paste(taskId, visType, sep="_") ) %>% 
+  ggplot(aes(x=condition, y=value, fill=visType, color=visType)) +
+  geom_jitter( alpha = 0.3, height=0.01, width=0.25  ) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, alpha=0.75) +
+  coord_flip()
+
+ggsave("comparisons/S-task10_S-task11.pdf")
+
+df %>% 
+  filter( measure == "accuracy" ) %>% 
+  filter( taskId == "S-task13" | taskId == "S-task14" ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  mutate( condition = paste(taskId, visType, sep="_") ) %>% 
+  ggplot(aes(x=condition, y=value, fill=visType, color=visType)) +
+  geom_jitter( alpha = 0.3, height=0.01, width=0.25  ) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, alpha=0.75) +
+  coord_flip()
+
+ggsave("comparisons/S-task13_S-task14.pdf")
+
 
 
 ```
