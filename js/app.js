@@ -581,12 +581,13 @@ function computeAccuracy(taskID, answerObj) {
     },
     "S-task07": function(answer) {
       let score = 0;
-      if (answer.radio === "Europeans") {
+      if (answer.radio === "European") {
         score = score + 0.5; //score for getting the type right
       }
 
       if (answer.ids.includes("395853499")) {
         //Marc
+        console.log()
         score = score + 0.5;
       }
 
