@@ -14,6 +14,7 @@ library(pwr)
 library(grid)
 library(gtable)
 
+library(ggbeeswarm)
 
 library(tidybayes)
 library(cowplot)
@@ -22,7 +23,9 @@ library(broom)
 theme_set(theme_tidybayes() + panel_border() + background_grid())
 
 
-df <- read.csv("../results/pilot/CSV/TidyR.csv")
+#df <- read.csv("../results/pilot/CSV/TidyR.csv")
+df <- read.csv("../results/study/CSV/TidyR.csv")
+dfp <- read.csv("../results/study/CSV/participantInfoTidyR.csv")
 ```
 
 
@@ -54,6 +57,23 @@ df %>%
   coord_flip() +
     facet_grid(. ~ visType)
 
+df %>% 
+  filter(measure=="accuracy") %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot( aes(x=taskId, y=value) ) +
+    geom_jitter( alpha = 0.2, width=0.1, height=0.3 ) + 
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, position = position_nudge(x=0.25, y=0), alpha=0.5) +
+  coord_flip() +
+    facet_grid(. ~ visType)
+
+## beeswarm big chart
+## ci plots with titles and new tidyr
+## hypothesis column
+## task centric and hypothesis centric charts
+## time and difficulty and correctness and confidence
+## confidence ellipse
+## age education and gender
+## compare to prior and pilot
 
 ```
 
@@ -221,12 +241,56 @@ Interpreting the task 13 graph:
 "Given no changes in Means or pooled stdev, and assuming a t-test, you'd need ~225 people total to find a medium effect size."
 
 
-## Rank-style tests?
+## Rank-style tests
 
-Given the data isn't technically continuous at the measurement level, we might consider non-parametric tests
+Given the data isn't technically continuous at the measurement level, we might consider non-parametric tests:
+
+```{r}
+t13_nl = df_acc %>% 
+  filter(taskId == "S-task13" & visType == "nodeLink")
+
+t13_adj = df_acc %>% 
+  filter(taskId == "S-task13" & visType == "adjMatrix")
+
+# p = 0.06-- promising at the pilot level
+wilcox.test(t13_nl$value, t13_adj$value)
+```
+
+```{r}
+wtest <- function(task) {
+t13_nl = df_acc %>% 
+  filter(taskId == task & visType == "nodeLink")
+
+t13_adj = df_acc %>% 
+  filter(taskId == task & visType == "adjMatrix")
+
+# p = 0.06-- promising at the pilot level
+print(task)
+wilcox.test(t13_nl$value, t13_adj$value)
+}
+
+wtest("S-task01")
+wtest("S-task02")
+wtest("S-task03")
+wtest("S-task04")
+wtest("S-task05")
+wtest("S-task06")
+wtest("S-task07")
+wtest("S-task08")
+wtest("S-task09")
+wtest("S-task10")
+wtest("S-task11")
+wtest("S-task12")
+wtest("S-task13")
+wtest("S-task14")
+wtest("S-task15")
+wtest("S-task16")
+```
 
 
-## Tidybayes-style eye plots (in progress + may be abandoned)
+## TODO Subtract CIs?
+
+## TODO Tidybayes-style eye plots (in progress + may be abandoned)
 
 ```{r}
 # df %>% 
@@ -252,3 +316,78 @@ m_acc %>%
 ```
 
 
+## Participant Info
+
+```{r, fig.height=1, fig.width=3}
+fct_unique(dfp$measure)
+
+dfp %>% 
+  filter(measure == "age") %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot() +
+    geom_density( aes(x=value), fill="blue", alpha=0.75 ) 
+
+dfp %>% 
+  filter(measure == "age") %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot(aes(x="age", y=value)) +
+    geom_beeswarm(priority='random',cex=2, alpha=0.6) +
+  coord_flip() +
+  xlab("") + ylab("")
+
+```
+
+
+## Task Beeswarms
+
+```{r, fig.width=8, fig.height=2}
+
+fct_unique(df$measure)
+
+# TODO scales fix for each measure (make global plot and use to fix scales)... but have to do for each measure!
+# TODO color choices could be better
+
+vplot <- function(task) {
+
+sdf = df %>% filter( taskId == task )
+tt = as.character(sdf[1,]$taskTitle)
+
+df %>% 
+  filter( measure == "accuracy" | measure == "minutesToComplete" | 
+            measure == "difficulty" | measure == "confidence") %>% 
+    filter( taskId == task ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
+    facet_wrap(. ~ measure, scales="free", nrow=1) +
+    geom_violin() +
+    stat_summary(fun.data = "mean_cl_boot", colour = "green", size = 0.5, alpha=0.5) +
+  coord_flip() + 
+    labs(
+      title = tt,
+      subtitle = task
+    )
+  
+ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
+}
+
+vplot("S-task01")
+vplot("S-task02")
+vplot("S-task03")
+vplot("S-task04")
+vplot("S-task05")
+vplot("S-task06")
+vplot("S-task07")
+vplot("S-task08")
+vplot("S-task09")
+vplot("S-task10")
+vplot("S-task11")
+vplot("S-task12")
+vplot("S-task13")
+vplot("S-task14")
+vplot("S-task15")
+vplot("S-task16")
+
+```
+
+
+## Beeswarm debugging
