@@ -346,6 +346,8 @@ fct_unique(df$measure)
 
 # TODO scales fix for each measure (make global plot and use to fix scales)... but have to do for each measure!
 # TODO color choices could be better
+# TODO figure width and height?
+# TODO manual order for measures?
 
 vplot <- function(task) {
 
@@ -391,3 +393,30 @@ vplot("S-task16")
 
 
 ## Beeswarm debugging
+
+
+## Grouped Charts
+
+T1/T2
+
+T4/T5
+
+T10/T11
+
+T13/T14
+
+```{r, fig.width=10, fig.height=6}
+
+df %>% 
+  filter( measure == "accuracy" ) %>% 
+  filter( taskId == "S-task01" | taskId == "S-task02" ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  mutate( condition = paste(taskId, visType, sep="_") ) %>% 
+  ggplot(aes(x=condition, y=value, fill=visType, color=visType)) +
+  geom_jitter( alpha = 0.3, height=0.005  ) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "red", size = 0.5, alpha=0.75) +
+  coord_flip()
+
+
+```
+
