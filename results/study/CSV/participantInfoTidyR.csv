@@ -40,7 +40,7 @@ prolificId,measure,value
 5591cd21fdf99b63126f6c60,sex,Male
 5591cd21fdf99b63126f6c60,visExperience,3
 5591cd21fdf99b63126f6c60,minutesToComplete,30
-5591cd21fdf99b63126f6c60,averageAccuracy,0.7135416666666666
+5591cd21fdf99b63126f6c60,averageAccuracy,0.7083333333333334
 55d0d4b334e9060005e57470,browser,Firefox
 55d0d4b334e9060005e57470,age,33
 55d0d4b334e9060005e57470,age,Bachelors
@@ -54,7 +54,7 @@ prolificId,measure,value
 55e7b91341988f000575d6b5,sex,Female
 55e7b91341988f000575d6b5,visExperience,3
 55e7b91341988f000575d6b5,minutesToComplete,28
-55e7b91341988f000575d6b5,averageAccuracy,0.7552083333333334
+55e7b91341988f000575d6b5,averageAccuracy,0.7291666666666666
 55fc2b4377f33b000ecb21ed,browser,Chrome
 55fc2b4377f33b000ecb21ed,age,33
 55fc2b4377f33b000ecb21ed,age,High School
@@ -96,7 +96,7 @@ prolificId,measure,value
 56b3edf12bac74000d89e452,sex,Female
 56b3edf12bac74000d89e452,visExperience,4
 56b3edf12bac74000d89e452,minutesToComplete,49
-56b3edf12bac74000d89e452,averageAccuracy,0.8333333333333334
+56b3edf12bac74000d89e452,averageAccuracy,0.8072916666666666
 572f526c3c27e7000e0b8aaa,browser,Firefox
 572f526c3c27e7000e0b8aaa,age,29
 572f526c3c27e7000e0b8aaa,age,Bachelors
@@ -194,14 +194,14 @@ prolificId,measure,value
 58c84d506d1c600001a09319,sex,Male
 58c84d506d1c600001a09319,visExperience,1
 58c84d506d1c600001a09319,minutesToComplete,34
-58c84d506d1c600001a09319,averageAccuracy,0.40625
+58c84d506d1c600001a09319,averageAccuracy,0.390625
 58cefdb030c4cf0001ceb3ac,browser,Chrome
 58cefdb030c4cf0001ceb3ac,age,64
 58cefdb030c4cf0001ceb3ac,age,Bachelors
 58cefdb030c4cf0001ceb3ac,sex,Female
 58cefdb030c4cf0001ceb3ac,visExperience,4
 58cefdb030c4cf0001ceb3ac,minutesToComplete,54
-58cefdb030c4cf0001ceb3ac,averageAccuracy,0.9166666666666666
+58cefdb030c4cf0001ceb3ac,averageAccuracy,0.9114583333333334
 58d81a664240e5000118ff51,browser,Chrome
 58d81a664240e5000118ff51,age,29
 58d81a664240e5000118ff51,age,Masters
@@ -257,7 +257,7 @@ prolificId,measure,value
 5973751522e11b0001f3edf3,sex,Male
 5973751522e11b0001f3edf3,visExperience,1
 5973751522e11b0001f3edf3,minutesToComplete,40
-5973751522e11b0001f3edf3,averageAccuracy,0.6145833333333333
+5973751522e11b0001f3edf3,averageAccuracy,0.6041666666666667
 5977e3867412f8000194e1fe,browser,Chrome
 5977e3867412f8000194e1fe,age,40
 5977e3867412f8000194e1fe,age,Other
@@ -271,7 +271,7 @@ prolificId,measure,value
 59789555a0b66b0001ea69ea,sex,Male
 59789555a0b66b0001ea69ea,visExperience,5
 59789555a0b66b0001ea69ea,minutesToComplete,64
-59789555a0b66b0001ea69ea,averageAccuracy,0.7395833333333334
+59789555a0b66b0001ea69ea,averageAccuracy,0.7291666666666666
 5993020a5f49420001caf86b,browser,Chrome
 5993020a5f49420001caf86b,age,50
 5993020a5f49420001caf86b,age,Bachelors
@@ -348,7 +348,7 @@ prolificId,measure,value
 5a93c4c8873cda0001dc608e,sex,Male
 5a93c4c8873cda0001dc608e,visExperience,5
 5a93c4c8873cda0001dc608e,minutesToComplete,24
-5a93c4c8873cda0001dc608e,averageAccuracy,0.796875
+5a93c4c8873cda0001dc608e,averageAccuracy,0.78125
 5ac393cf0527ba0001c2043c,browser,Chrome
 5ac393cf0527ba0001c2043c,age,19
 5ac393cf0527ba0001c2043c,age,High School
@@ -404,14 +404,14 @@ prolificId,measure,value
 5b044a6d72815200013eba92,sex,Male
 5b044a6d72815200013eba92,visExperience,5
 5b044a6d72815200013eba92,minutesToComplete,63
-5b044a6d72815200013eba92,averageAccuracy,0.8645833333333334
+5b044a6d72815200013eba92,averageAccuracy,0.8541666666666666
 5b0c4bbb1e55760001b96b8a,browser,Chrome
 5b0c4bbb1e55760001b96b8a,age,23
 5b0c4bbb1e55760001b96b8a,age,Masters
 5b0c4bbb1e55760001b96b8a,sex,Male
 5b0c4bbb1e55760001b96b8a,visExperience,5
 5b0c4bbb1e55760001b96b8a,minutesToComplete,38
-5b0c4bbb1e55760001b96b8a,averageAccuracy,0.7395833333333334
+5b0c4bbb1e55760001b96b8a,averageAccuracy,0.7291666666666666
 5b1087bce9270900013c1730,browser,Chrome
 5b1087bce9270900013c1730,age,31
 5b1087bce9270900013c1730,age,PhD
@@ -446,7 +446,7 @@ prolificId,measure,value
 5b2d6013d143660001cc3dd1,sex,Female
 5b2d6013d143660001cc3dd1,visExperience,4
 5b2d6013d143660001cc3dd1,minutesToComplete,55
-5b2d6013d143660001cc3dd1,averageAccuracy,0.71875
+5b2d6013d143660001cc3dd1,averageAccuracy,0.703125
 5b48f2d0ff7497000125165e,browser,Chrome
 5b48f2d0ff7497000125165e,age,28
 5b48f2d0ff7497000125165e,age,Bachelors
@@ -488,7 +488,7 @@ prolificId,measure,value
 5b84c2a21e35f00001743866,sex,other
 5b84c2a21e35f00001743866,visExperience,7
 5b84c2a21e35f00001743866,minutesToComplete,53
-5b84c2a21e35f00001743866,averageAccuracy,0.6770833333333333
+5b84c2a21e35f00001743866,averageAccuracy,0.6666666666666667
 5b8772eacf366b00015e7795,browser,Chrome
 5b8772eacf366b00015e7795,age,23
 5b8772eacf366b00015e7795,age,High School
@@ -558,14 +558,14 @@ prolificId,measure,value
 5ba81e70c2358e0001d27708,sex,Male
 5ba81e70c2358e0001d27708,visExperience,4
 5ba81e70c2358e0001d27708,minutesToComplete,36
-5ba81e70c2358e0001d27708,averageAccuracy,0.8541666666666666
+5ba81e70c2358e0001d27708,averageAccuracy,0.8333333333333334
 5ba85e7eb3b5400001ce044e,browser,Firefox
 5ba85e7eb3b5400001ce044e,age,32
 5ba85e7eb3b5400001ce044e,age,Masters
 5ba85e7eb3b5400001ce044e,sex,Female
 5ba85e7eb3b5400001ce044e,visExperience,6
 5ba85e7eb3b5400001ce044e,minutesToComplete,56
-5ba85e7eb3b5400001ce044e,averageAccuracy,1
+5ba85e7eb3b5400001ce044e,averageAccuracy,0.984375
 5ba8a1d2c16a9c0001497a21,browser,Chrome
 5ba8a1d2c16a9c0001497a21,age,27
 5ba8a1d2c16a9c0001497a21,age,Masters
@@ -600,28 +600,28 @@ prolificId,measure,value
 5bb279805a4ee80001c39a8c,sex,Male
 5bb279805a4ee80001c39a8c,visExperience,1
 5bb279805a4ee80001c39a8c,minutesToComplete,42
-5bb279805a4ee80001c39a8c,averageAccuracy,0.578125
+5bb279805a4ee80001c39a8c,averageAccuracy,0.5625
 5bb4212e78330e000177ef69,browser,Chrome
 5bb4212e78330e000177ef69,age,39
 5bb4212e78330e000177ef69,age,Bachelors
 5bb4212e78330e000177ef69,sex,Male
 5bb4212e78330e000177ef69,visExperience,1
 5bb4212e78330e000177ef69,minutesToComplete,60
-5bb4212e78330e000177ef69,averageAccuracy,0.765625
+5bb4212e78330e000177ef69,averageAccuracy,0.75
 5bc26a0ea9070700012212e8,browser,Chrome
 5bc26a0ea9070700012212e8,age,30
 5bc26a0ea9070700012212e8,age,PhD
 5bc26a0ea9070700012212e8,sex,Female
 5bc26a0ea9070700012212e8,visExperience,3
 5bc26a0ea9070700012212e8,minutesToComplete,32
-5bc26a0ea9070700012212e8,averageAccuracy,0.734375
+5bc26a0ea9070700012212e8,averageAccuracy,0.71875
 5bc546d2614ed50001e678ea,browser,Firefox
 5bc546d2614ed50001e678ea,age,19
 5bc546d2614ed50001e678ea,age,High School
 5bc546d2614ed50001e678ea,sex,Male
 5bc546d2614ed50001e678ea,visExperience,3
 5bc546d2614ed50001e678ea,minutesToComplete,28
-5bc546d2614ed50001e678ea,averageAccuracy,0.984375
+5bc546d2614ed50001e678ea,averageAccuracy,0.953125
 5bd1b30a65466500010241de,browser,Chrome
 5bd1b30a65466500010241de,age,25
 5bd1b30a65466500010241de,age,High School
@@ -635,7 +635,7 @@ prolificId,measure,value
 5bd869bf92162c00019c1a54,sex,Male
 5bd869bf92162c00019c1a54,visExperience,4
 5bd869bf92162c00019c1a54,minutesToComplete,27
-5bd869bf92162c00019c1a54,averageAccuracy,0.8072916666666666
+5bd869bf92162c00019c1a54,averageAccuracy,0.8020833333333334
 5be094f99da2d300010c8f62,browser,Chrome
 5be094f99da2d300010c8f62,age,39
 5be094f99da2d300010c8f62,age,Bachelors
@@ -656,21 +656,21 @@ prolificId,measure,value
 5be87e33a14b540001aa2ea5,sex,Female
 5be87e33a14b540001aa2ea5,visExperience,3
 5be87e33a14b540001aa2ea5,minutesToComplete,33
-5be87e33a14b540001aa2ea5,averageAccuracy,0.8645833333333334
+5be87e33a14b540001aa2ea5,averageAccuracy,0.8541666666666666
 5bec51ea73b744000158e6e3,browser,Chrome
 5bec51ea73b744000158e6e3,age,51
 5bec51ea73b744000158e6e3,age,High School
 5bec51ea73b744000158e6e3,sex,Male
 5bec51ea73b744000158e6e3,visExperience,4
 5bec51ea73b744000158e6e3,minutesToComplete,46
-5bec51ea73b744000158e6e3,averageAccuracy,0.6979166666666666
+5bec51ea73b744000158e6e3,averageAccuracy,0.6927083333333334
 5bf0c387f4d94900011c8d7e,browser,Chrome
 5bf0c387f4d94900011c8d7e,age,52
 5bf0c387f4d94900011c8d7e,age,PhD
 5bf0c387f4d94900011c8d7e,sex,Male
 5bf0c387f4d94900011c8d7e,visExperience,3
 5bf0c387f4d94900011c8d7e,minutesToComplete,57
-5bf0c387f4d94900011c8d7e,averageAccuracy,0.8020833333333334
+5bf0c387f4d94900011c8d7e,averageAccuracy,0.7916666666666666
 5bf3761862e1bc0001f15cb2,browser,Chrome
 5bf3761862e1bc0001f15cb2,age,36
 5bf3761862e1bc0001f15cb2,age,Unspecified
@@ -705,7 +705,7 @@ prolificId,measure,value
 5bfbf8f326e31d000104a6d3,sex,Male
 5bfbf8f326e31d000104a6d3,visExperience,1
 5bfbf8f326e31d000104a6d3,minutesToComplete,32
-5bfbf8f326e31d000104a6d3,averageAccuracy,0.4375
+5bfbf8f326e31d000104a6d3,averageAccuracy,0.421875
 5bfd81fb2feab400014d9060,browser,Chrome
 5bfd81fb2feab400014d9060,age,45
 5bfd81fb2feab400014d9060,age,Bachelors
@@ -740,14 +740,14 @@ prolificId,measure,value
 5c0333c84e1b7b00016a83fd,sex,Male
 5c0333c84e1b7b00016a83fd,visExperience,4
 5c0333c84e1b7b00016a83fd,minutesToComplete,44
-5c0333c84e1b7b00016a83fd,averageAccuracy,0.8541666666666666
+5c0333c84e1b7b00016a83fd,averageAccuracy,0.8489583333333334
 5c06b3f64a2b7b0001c3c185,browser,Chrome
 5c06b3f64a2b7b0001c3c185,age,34
 5c06b3f64a2b7b0001c3c185,age,Bachelors
 5c06b3f64a2b7b0001c3c185,sex,Female
 5c06b3f64a2b7b0001c3c185,visExperience,4
 5c06b3f64a2b7b0001c3c185,minutesToComplete,41
-5c06b3f64a2b7b0001c3c185,averageAccuracy,1
+5c06b3f64a2b7b0001c3c185,averageAccuracy,0.984375
 5c071ea87967600001637beb,browser,Chrome
 5c071ea87967600001637beb,age,30
 5c071ea87967600001637beb,age,Bachelors
@@ -768,7 +768,7 @@ prolificId,measure,value
 5c0f111d52bf070001d27721,sex,Male
 5c0f111d52bf070001d27721,visExperience,7
 5c0f111d52bf070001d27721,minutesToComplete,34
-5c0f111d52bf070001d27721,averageAccuracy,0.9479166666666666
+5c0f111d52bf070001d27721,averageAccuracy,0.9270833333333334
 5c1053202b16ba0001c86317,browser,Chrome
 5c1053202b16ba0001c86317,age,34
 5c1053202b16ba0001c86317,age,Bachelors
@@ -810,7 +810,7 @@ prolificId,measure,value
 5c23396210677f0001dae38b,sex,Male
 5c23396210677f0001dae38b,visExperience,6
 5c23396210677f0001dae38b,minutesToComplete,61
-5c23396210677f0001dae38b,averageAccuracy,0.6979166666666666
+5c23396210677f0001dae38b,averageAccuracy,0.6927083333333334
 5c258d9a3217420001e6bdf4,browser,Chrome
 5c258d9a3217420001e6bdf4,age,36
 5c258d9a3217420001e6bdf4,age,High School
@@ -845,7 +845,7 @@ prolificId,measure,value
 5c32748a867f660001b0abf7,sex,Male
 5c32748a867f660001b0abf7,visExperience,6
 5c32748a867f660001b0abf7,minutesToComplete,54
-5c32748a867f660001b0abf7,averageAccuracy,0.78125
+5c32748a867f660001b0abf7,averageAccuracy,0.75
 5c3388fa01439b0001a0adfe,browser,Chrome
 5c3388fa01439b0001a0adfe,age,36
 5c3388fa01439b0001a0adfe,age,Masters
@@ -859,7 +859,7 @@ prolificId,measure,value
 5c3bba90a5cdf70001cba89f,sex,Male
 5c3bba90a5cdf70001cba89f,visExperience,2
 5c3bba90a5cdf70001cba89f,minutesToComplete,47
-5c3bba90a5cdf70001cba89f,averageAccuracy,0.8958333333333334
+5c3bba90a5cdf70001cba89f,averageAccuracy,0.8697916666666666
 5c3d48955fd1050001a99364,browser,Chrome
 5c3d48955fd1050001a99364,age,9
 5c3d48955fd1050001a99364,age,High School
@@ -908,7 +908,7 @@ prolificId,measure,value
 5c4ea7c3889752000156ddc5,sex,Male
 5c4ea7c3889752000156ddc5,visExperience,1
 5c4ea7c3889752000156ddc5,minutesToComplete,58
-5c4ea7c3889752000156ddc5,averageAccuracy,0.64375
+5c4ea7c3889752000156ddc5,averageAccuracy,0.628125
 5c4f5967aac8be0001716a65,browser,Chrome
 5c4f5967aac8be0001716a65,age,28
 5c4f5967aac8be0001716a65,age,Bachelors
@@ -929,14 +929,14 @@ prolificId,measure,value
 5c525174453ce60001aeb4f2,sex,Male
 5c525174453ce60001aeb4f2,visExperience,1
 5c525174453ce60001aeb4f2,minutesToComplete,60
-5c525174453ce60001aeb4f2,averageAccuracy,0.875
+5c525174453ce60001aeb4f2,averageAccuracy,0.859375
 5c54fdde68c74d00013d237e,browser,Chrome
 5c54fdde68c74d00013d237e,age,25
 5c54fdde68c74d00013d237e,age,Bachelors
 5c54fdde68c74d00013d237e,sex,Female
 5c54fdde68c74d00013d237e,visExperience,2
 5c54fdde68c74d00013d237e,minutesToComplete,37
-5c54fdde68c74d00013d237e,averageAccuracy,0.96875
+5c54fdde68c74d00013d237e,averageAccuracy,0.953125
 5c55a5d2318c6b000118fc36,browser,Firefox
 5c55a5d2318c6b000118fc36,age,25
 5c55a5d2318c6b000118fc36,age,Unspecified
@@ -1069,7 +1069,7 @@ prolificId,measure,value
 5c8249a1fff8430014e992fe,sex,Female
 5c8249a1fff8430014e992fe,visExperience,2
 5c8249a1fff8430014e992fe,minutesToComplete,40
-5c8249a1fff8430014e992fe,averageAccuracy,0.6802083333333334
+5c8249a1fff8430014e992fe,averageAccuracy,0.6697916666666667
 5c82c9a4d8302a00010639b8,browser,Chrome
 5c82c9a4d8302a00010639b8,age,28
 5c82c9a4d8302a00010639b8,age,Bachelors
@@ -1146,7 +1146,7 @@ prolificId,measure,value
 5c9303a02d8c5900152f9d63,sex,Male
 5c9303a02d8c5900152f9d63,visExperience,2
 5c9303a02d8c5900152f9d63,minutesToComplete,65
-5c9303a02d8c5900152f9d63,averageAccuracy,0.5885416666666667
+5c9303a02d8c5900152f9d63,averageAccuracy,0.5677083333333333
 5c935d881754ba001b25697a,browser,Chrome
 5c935d881754ba001b25697a,age,34
 5c935d881754ba001b25697a,age,Bachelors
@@ -1209,7 +1209,7 @@ prolificId,measure,value
 5ca59f9f30710b001605b491,sex,Male
 5ca59f9f30710b001605b491,visExperience,1
 5ca59f9f30710b001605b491,minutesToComplete,26
-5ca59f9f30710b001605b491,averageAccuracy,0.6041666666666666
+5ca59f9f30710b001605b491,averageAccuracy,0.5833333333333333
 5ca6bbf13b5fcf00100996e9,browser,Chrome
 5ca6bbf13b5fcf00100996e9,age,53
 5ca6bbf13b5fcf00100996e9,age,Bachelors
@@ -1279,7 +1279,7 @@ prolificId,measure,value
 5cbb50540776a20019ccbf7f,sex,Female
 5cbb50540776a20019ccbf7f,visExperience,4
 5cbb50540776a20019ccbf7f,minutesToComplete,54
-5cbb50540776a20019ccbf7f,averageAccuracy,0.8333333333333334
+5cbb50540776a20019ccbf7f,averageAccuracy,0.8229166666666666
 5cbda9f6290fd50016e5c03f,browser,Chrome
 5cbda9f6290fd50016e5c03f,age,26
 5cbda9f6290fd50016e5c03f,age,High School
@@ -1342,21 +1342,21 @@ prolificId,measure,value
 5cd30b2041a6b8001874c41f,sex,Female
 5cd30b2041a6b8001874c41f,visExperience,4
 5cd30b2041a6b8001874c41f,minutesToComplete,57
-5cd30b2041a6b8001874c41f,averageAccuracy,0.9479166666666666
+5cd30b2041a6b8001874c41f,averageAccuracy,0.9270833333333334
 5cd80770244a6f0017f614ee,browser,Chrome
 5cd80770244a6f0017f614ee,age,19
 5cd80770244a6f0017f614ee,age,High School
 5cd80770244a6f0017f614ee,sex,Female
 5cd80770244a6f0017f614ee,visExperience,4
 5cd80770244a6f0017f614ee,minutesToComplete,33
-5cd80770244a6f0017f614ee,averageAccuracy,0.9375
+5cd80770244a6f0017f614ee,averageAccuracy,0.921875
 5cd85ef210887400012db8dc,browser,Firefox
 5cd85ef210887400012db8dc,age,22
 5cd85ef210887400012db8dc,age,High School
 5cd85ef210887400012db8dc,sex,Male
 5cd85ef210887400012db8dc,visExperience,2
 5cd85ef210887400012db8dc,minutesToComplete,23
-5cd85ef210887400012db8dc,averageAccuracy,0.8958333333333334
+5cd85ef210887400012db8dc,averageAccuracy,0.8697916666666666
 5cd8c94c99e9d00001465e35,browser,Chrome
 5cd8c94c99e9d00001465e35,age,49
 5cd8c94c99e9d00001465e35,age,Bachelors
@@ -1370,7 +1370,7 @@ prolificId,measure,value
 5cdb44d1192b2e001a9ab615,sex,Male
 5cdb44d1192b2e001a9ab615,visExperience,1
 5cdb44d1192b2e001a9ab615,minutesToComplete,44
-5cdb44d1192b2e001a9ab615,averageAccuracy,0.9583333333333334
+5cdb44d1192b2e001a9ab615,averageAccuracy,0.9322916666666666
 5cdda1a93af752001a3949d6,browser,Firefox
 5cdda1a93af752001a3949d6,age,35
 5cdda1a93af752001a3949d6,age,Bachelors
@@ -1384,14 +1384,14 @@ prolificId,measure,value
 5cdf6e1bc0732800014bfc6e,sex,Male
 5cdf6e1bc0732800014bfc6e,visExperience,4
 5cdf6e1bc0732800014bfc6e,minutesToComplete,62
-5cdf6e1bc0732800014bfc6e,averageAccuracy,0.8645833333333334
+5cdf6e1bc0732800014bfc6e,averageAccuracy,0.8541666666666666
 5ce33217f1117f0017c80de1,browser,Chrome
 5ce33217f1117f0017c80de1,age,21
 5ce33217f1117f0017c80de1,age,High School
 5ce33217f1117f0017c80de1,sex,Female
 5ce33217f1117f0017c80de1,visExperience,1
 5ce33217f1117f0017c80de1,minutesToComplete,22
-5ce33217f1117f0017c80de1,averageAccuracy,0.8125
+5ce33217f1117f0017c80de1,averageAccuracy,0.796875
 5ce351236fa444001942e278,browser,Chrome
 5ce351236fa444001942e278,age,41
 5ce351236fa444001942e278,age,High School
@@ -1405,7 +1405,7 @@ prolificId,measure,value
 5ce456e6f54a8b0001d97020,sex,Male
 5ce456e6f54a8b0001d97020,visExperience,5
 5ce456e6f54a8b0001d97020,minutesToComplete,36
-5ce456e6f54a8b0001d97020,averageAccuracy,0.9479166666666666
+5ce456e6f54a8b0001d97020,averageAccuracy,0.9427083333333334
 5ce58ec29c40b2001b3a00d4,browser,Firefox
 5ce58ec29c40b2001b3a00d4,age,32
 5ce58ec29c40b2001b3a00d4,age,Bachelors
@@ -1433,14 +1433,14 @@ prolificId,measure,value
 5ceb292e06aa2300193631d1,sex,Female
 5ceb292e06aa2300193631d1,visExperience,2
 5ceb292e06aa2300193631d1,minutesToComplete,24
-5ceb292e06aa2300193631d1,averageAccuracy,0.578125
+5ceb292e06aa2300193631d1,averageAccuracy,0.5625
 5cebd3addd01c200176b87a9,browser,Firefox
 5cebd3addd01c200176b87a9,age,33
 5cebd3addd01c200176b87a9,age,Bachelors
 5cebd3addd01c200176b87a9,sex,Male
 5cebd3addd01c200176b87a9,visExperience,4
 5cebd3addd01c200176b87a9,minutesToComplete,23
-5cebd3addd01c200176b87a9,averageAccuracy,0.9270833333333334
+5cebd3addd01c200176b87a9,averageAccuracy,0.9166666666666666
 5cec5f7afdd26c00193ba64b,browser,Chrome
 5cec5f7afdd26c00193ba64b,age,26
 5cec5f7afdd26c00193ba64b,age,High School
@@ -1496,21 +1496,21 @@ prolificId,measure,value
 5cf7fa1e7b66930001c9d0af,sex,Male
 5cf7fa1e7b66930001c9d0af,visExperience,3
 5cf7fa1e7b66930001c9d0af,minutesToComplete,24
-5cf7fa1e7b66930001c9d0af,averageAccuracy,0.8958333333333334
+5cf7fa1e7b66930001c9d0af,averageAccuracy,0.8854166666666666
 5cfd339a78a61e0018cc9048,browser,Chrome
 5cfd339a78a61e0018cc9048,age,25
 5cfd339a78a61e0018cc9048,age,Masters
 5cfd339a78a61e0018cc9048,sex,Female
 5cfd339a78a61e0018cc9048,visExperience,5
 5cfd339a78a61e0018cc9048,minutesToComplete,35
-5cfd339a78a61e0018cc9048,averageAccuracy,0.8697916666666666
+5cfd339a78a61e0018cc9048,averageAccuracy,0.8489583333333334
 5cfd7167adab2f0016d1571f,browser,Chrome
 5cfd7167adab2f0016d1571f,age,40
 5cfd7167adab2f0016d1571f,age,High School
 5cfd7167adab2f0016d1571f,sex,Male
 5cfd7167adab2f0016d1571f,visExperience,6
 5cfd7167adab2f0016d1571f,minutesToComplete,37
-5cfd7167adab2f0016d1571f,averageAccuracy,0.921875
+5cfd7167adab2f0016d1571f,averageAccuracy,0.890625
 5cfff7fb63c70500010479ad,browser,Firefox
 5cfff7fb63c70500010479ad,age,52
 5cfff7fb63c70500010479ad,age,High School
@@ -1531,7 +1531,7 @@ prolificId,measure,value
 5d029f6482cabb001579170f,sex,Female
 5d029f6482cabb001579170f,visExperience,3
 5d029f6482cabb001579170f,minutesToComplete,39
-5d029f6482cabb001579170f,averageAccuracy,0.7322916666666667
+5d029f6482cabb001579170f,averageAccuracy,0.7270833333333334
 5d02ed8f7a3c0f0015cd3230,browser,Chrome
 5d02ed8f7a3c0f0015cd3230,age,19
 5d02ed8f7a3c0f0015cd3230,age,High School
@@ -1608,7 +1608,7 @@ prolificId,measure,value
 5d24d146fec9430001470a47,sex,Female
 5d24d146fec9430001470a47,visExperience,4
 5d24d146fec9430001470a47,minutesToComplete,30
-5d24d146fec9430001470a47,averageAccuracy,0.796875
+5d24d146fec9430001470a47,averageAccuracy,0.78125
 5d25473cacb3e5001ae39cb8,browser,Chrome
 5d25473cacb3e5001ae39cb8,age,23
 5d25473cacb3e5001ae39cb8,age,Bachelors
@@ -1643,14 +1643,14 @@ prolificId,measure,value
 5d2790564ea8d100190b3e4e,sex,Male
 5d2790564ea8d100190b3e4e,visExperience,3
 5d2790564ea8d100190b3e4e,minutesToComplete,56
-5d2790564ea8d100190b3e4e,averageAccuracy,0.8020833333333334
+5d2790564ea8d100190b3e4e,averageAccuracy,0.7760416666666666
 5d28993a81b82800155cd563,browser,Chrome
 5d28993a81b82800155cd563,age,20
 5d28993a81b82800155cd563,age,High School
 5d28993a81b82800155cd563,sex,Female
 5d28993a81b82800155cd563,visExperience,2
 5d28993a81b82800155cd563,minutesToComplete,26
-5d28993a81b82800155cd563,averageAccuracy,0.7239583333333334
+5d28993a81b82800155cd563,averageAccuracy,0.7135416666666666
 5d29412ab711e9001ab74ece,browser,Chrome
 5d29412ab711e9001ab74ece,age,36
 5d29412ab711e9001ab74ece,age,High School
@@ -1685,7 +1685,7 @@ prolificId,measure,value
 5d2cd6efce04670001b0ea04,sex,Male
 5d2cd6efce04670001b0ea04,visExperience,3
 5d2cd6efce04670001b0ea04,minutesToComplete,32
-5d2cd6efce04670001b0ea04,averageAccuracy,0.9583333333333334
+5d2cd6efce04670001b0ea04,averageAccuracy,0.9322916666666666
 5d2e1c52c3651500159f0a69,browser,Chrome
 5d2e1c52c3651500159f0a69,age,35
 5d2e1c52c3651500159f0a69,age,High School
@@ -1699,21 +1699,21 @@ prolificId,measure,value
 5d3054cb85abbf001879ea15,sex,Male
 5d3054cb85abbf001879ea15,visExperience,3
 5d3054cb85abbf001879ea15,minutesToComplete,48
-5d3054cb85abbf001879ea15,averageAccuracy,0.7864583333333334
+5d3054cb85abbf001879ea15,averageAccuracy,0.7604166666666666
 5d30a875ad3457001743fbc9,browser,Chrome
 5d30a875ad3457001743fbc9,age,47
 5d30a875ad3457001743fbc9,age,Masters
 5d30a875ad3457001743fbc9,sex,Male
 5d30a875ad3457001743fbc9,visExperience,4
 5d30a875ad3457001743fbc9,minutesToComplete,32
-5d30a875ad3457001743fbc9,averageAccuracy,0.96875
+5d30a875ad3457001743fbc9,averageAccuracy,0.9375
 5d30f91328ec3400180201bd,browser,Chrome
 5d30f91328ec3400180201bd,age,18
 5d30f91328ec3400180201bd,age,High School
 5d30f91328ec3400180201bd,sex,Female
 5d30f91328ec3400180201bd,visExperience,1
 5d30f91328ec3400180201bd,minutesToComplete,29
-5d30f91328ec3400180201bd,averageAccuracy,0.7166666666666667
+5d30f91328ec3400180201bd,averageAccuracy,0.7114583333333333
 5d3312e52fd5a40018e5894c,browser,Chrome
 5d3312e52fd5a40018e5894c,age,26
 5d3312e52fd5a40018e5894c,age,Masters
@@ -1727,7 +1727,7 @@ prolificId,measure,value
 5d338bb02381b7001761694e,sex,Male
 5d338bb02381b7001761694e,visExperience,3
 5d338bb02381b7001761694e,minutesToComplete,38
-5d338bb02381b7001761694e,averageAccuracy,0.6666666666666667
+5d338bb02381b7001761694e,averageAccuracy,0.6614583333333333
 5d34f1a7f7b9c100155ae5b5,browser,Chrome
 5d34f1a7f7b9c100155ae5b5,age,42
 5d34f1a7f7b9c100155ae5b5,age,Masters
@@ -1755,7 +1755,7 @@ prolificId,measure,value
 5d372df59749cc00015c2438,sex,Male
 5d372df59749cc00015c2438,visExperience,4
 5d372df59749cc00015c2438,minutesToComplete,53
-5d372df59749cc00015c2438,averageAccuracy,1
+5d372df59749cc00015c2438,averageAccuracy,0.984375
 5d375cdbca3e5500183e36e4,browser,Chrome
 5d375cdbca3e5500183e36e4,age,24
 5d375cdbca3e5500183e36e4,age,High School
@@ -1853,7 +1853,7 @@ prolificId,measure,value
 5d444ca5bd37550017e01cf0,sex,Male
 5d444ca5bd37550017e01cf0,visExperience,4
 5d444ca5bd37550017e01cf0,minutesToComplete,52
-5d444ca5bd37550017e01cf0,averageAccuracy,0.8541666666666666
+5d444ca5bd37550017e01cf0,averageAccuracy,0.8489583333333334
 5d44d856c225f700019da018,browser,Chrome
 5d44d856c225f700019da018,age,29
 5d44d856c225f700019da018,age,Other
@@ -1867,7 +1867,7 @@ prolificId,measure,value
 5d45cc77da9cb60001aa4711,sex,Male
 5d45cc77da9cb60001aa4711,visExperience,2
 5d45cc77da9cb60001aa4711,minutesToComplete,26
-5d45cc77da9cb60001aa4711,averageAccuracy,0.796875
+5d45cc77da9cb60001aa4711,averageAccuracy,0.78125
 5d4602322f66d0001a1208c7,browser,Chrome
 5d4602322f66d0001a1208c7,age,31
 5d4602322f66d0001a1208c7,age,Masters
@@ -1895,14 +1895,14 @@ prolificId,measure,value
 5d48e3a6e73664001a009852,sex,Male
 5d48e3a6e73664001a009852,visExperience,4
 5d48e3a6e73664001a009852,minutesToComplete,51
-5d48e3a6e73664001a009852,averageAccuracy,1.0208333333333335
+5d48e3a6e73664001a009852,averageAccuracy,0.9947916666666666
 5d49e0634aff6e0018fb7004,browser,Chrome
 5d49e0634aff6e0018fb7004,age,27
 5d49e0634aff6e0018fb7004,age,Masters
 5d49e0634aff6e0018fb7004,sex,Male
 5d49e0634aff6e0018fb7004,visExperience,3
 5d49e0634aff6e0018fb7004,minutesToComplete,39
-5d49e0634aff6e0018fb7004,averageAccuracy,0.8802083333333334
+5d49e0634aff6e0018fb7004,averageAccuracy,0.8541666666666666
 5d49e8d85e7f490018a17ea8,browser,Firefox
 5d49e8d85e7f490018a17ea8,age,40
 5d49e8d85e7f490018a17ea8,age,Other
@@ -1916,7 +1916,7 @@ prolificId,measure,value
 5d4a3ec36952cd0001361bbd,sex,Male
 5d4a3ec36952cd0001361bbd,visExperience,5
 5d4a3ec36952cd0001361bbd,minutesToComplete,29
-5d4a3ec36952cd0001361bbd,averageAccuracy,0.8854166666666666
+5d4a3ec36952cd0001361bbd,averageAccuracy,0.8645833333333334
 5d4a6459061e2a000138bad3,browser,Chrome
 5d4a6459061e2a000138bad3,age,42
 5d4a6459061e2a000138bad3,age,Bachelors
@@ -1944,7 +1944,7 @@ prolificId,measure,value
 5d4de42d6b5daa0001cd774c,sex,Male
 5d4de42d6b5daa0001cd774c,visExperience,7
 5d4de42d6b5daa0001cd774c,minutesToComplete,46
-5d4de42d6b5daa0001cd774c,averageAccuracy,1.0208333333333335
+5d4de42d6b5daa0001cd774c,averageAccuracy,0.9947916666666666
 5d4de607e349a4001629b1f0,browser,Chrome
 5d4de607e349a4001629b1f0,age,28
 5d4de607e349a4001629b1f0,age,Other
@@ -2042,7 +2042,7 @@ prolificId,measure,value
 5d58559698cf220001ec55f8,sex,Male
 5d58559698cf220001ec55f8,visExperience,3
 5d58559698cf220001ec55f8,minutesToComplete,30
-5d58559698cf220001ec55f8,averageAccuracy,0.8854166666666666
+5d58559698cf220001ec55f8,averageAccuracy,0.8645833333333334
 5d58976b10ce3800155c7037,browser,Chrome
 5d58976b10ce3800155c7037,age,18
 5d58976b10ce3800155c7037,age,High School
@@ -2056,7 +2056,7 @@ prolificId,measure,value
 5d594f70cf514a00167872d0,sex,Male
 5d594f70cf514a00167872d0,visExperience,5
 5d594f70cf514a00167872d0,minutesToComplete,30
-5d594f70cf514a00167872d0,averageAccuracy,0.9270833333333334
+5d594f70cf514a00167872d0,averageAccuracy,0.9166666666666666
 5d59d01b687f9400017e19a4,browser,Chrome
 5d59d01b687f9400017e19a4,age,39
 5d59d01b687f9400017e19a4,age,Bachelors
@@ -2084,7 +2084,7 @@ prolificId,measure,value
 5d5c89db993ad300014b3954,sex,Male
 5d5c89db993ad300014b3954,visExperience,3
 5d5c89db993ad300014b3954,minutesToComplete,29
-5d5c89db993ad300014b3954,averageAccuracy,0.9166666666666666
+5d5c89db993ad300014b3954,averageAccuracy,0.9114583333333334
 5d5f4dd69a68fc0019949f43,browser,Chrome
 5d5f4dd69a68fc0019949f43,age,23
 5d5f4dd69a68fc0019949f43,age,Unspecified
@@ -2119,7 +2119,7 @@ prolificId,measure,value
 5d61b5731a749d00011fcef2,sex,Male
 5d61b5731a749d00011fcef2,visExperience,3
 5d61b5731a749d00011fcef2,minutesToComplete,38
-5d61b5731a749d00011fcef2,averageAccuracy,0.7322916666666667
+5d61b5731a749d00011fcef2,averageAccuracy,0.7114583333333334
 5d61cb60d9ea5c0019875954,browser,Chrome
 5d61cb60d9ea5c0019875954,age,24
 5d61cb60d9ea5c0019875954,age,High School

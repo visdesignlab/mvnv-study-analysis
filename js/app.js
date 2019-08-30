@@ -229,6 +229,8 @@ async function processData() {
 
   let results = JSON.parse(rawdata);
 
+  
+
   results.map(p => {
     //flatten answer.nodes, then flatten the whole data;
     Object.keys(p.data).map(key => {
@@ -646,7 +648,7 @@ function computeAccuracy(taskID, answerObj) {
         "1085199426837188600",
         "16112517"
       ];
-      let score = scoreList(correctAnswers, answer);
+      let score = scoreList(correctAnswers, answer,.5);
 
       // console.log('score is ', score)
       score = answer.value >= 400 && answer.value <= 800 ? score + 0.5 : score;
@@ -689,7 +691,7 @@ function computeAccuracy(taskID, answerObj) {
     }
   };
 
-  function scoreList(correctAnswers, answer) {
+  function scoreList(correctAnswers, answer,maxValue=1) {
     //+.25 points for each correct answer -.1 point for each incorrect answer;
     let ids = answer.ids.split(";").map(a => a.trim());
 
@@ -701,7 +703,7 @@ function computeAccuracy(taskID, answerObj) {
       0
     );
 
-    return Math.max(0, score);
+    return Math.max(0, score*maxValue);
   }
 
   return answers[taskID](answerObj);
