@@ -23,7 +23,7 @@ function makePlots(provData) {
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
-  var width = (window.screen.availWidth - margin.left) / 2;
+  var width = (window.screen.availWidth - margin.left - margin.right)/2 ;
 
   width = width - margin.left - margin.right;
   height = height - margin.top - margin.bottom;
@@ -41,11 +41,19 @@ function makePlots(provData) {
     .selectAll("svg")
     .data([1]);
 
+    let svgWidth = width + margin.left + margin.right;
+    let svgHeight = (height + margin.top + margin.bottom) * provData.length;
   let enter = svg
     .enter()
+    .append('div')
+    .attr('class','svg-container')
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", (height + margin.top + margin.bottom) * provData.length);
+    .attr('viewbox','0,0,' + 500 + ',' + 100 )
+    // .attr('preserveAspectRatio','none')
+    // .attr('width','100%')
+    // .attr('height',svgHeight)
+    .attr("width", svgWidth)
+    .attr("height", svgHeight);
 
   svg.exit().remove();
 

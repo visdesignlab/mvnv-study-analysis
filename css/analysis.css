@@ -253,6 +253,10 @@ div.tooltip {
     /* display:none; */
 }
 
+.svg-container{
+    width:100%;
+}
+
 #feedbackCard{
     background-color:#fac667;
     font-size: 20px;
