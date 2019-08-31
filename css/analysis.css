@@ -271,6 +271,11 @@ div.tooltip {
     stroke-width:4px;
     stroke:black;
 }
+
+.frames.selected{
+    stroke-width:4px;
+    stroke:black;
+}
 /* .attribute{
     font-weight:bold;
     color:#f7e671;

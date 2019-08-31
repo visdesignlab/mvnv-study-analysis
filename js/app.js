@@ -26,7 +26,7 @@ let taskTitles = {
   "S-task12": "Alex cluster / average number of followers.",
   "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
   "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
-  "S-task15": "Oldes account of all NA two interactions from Sereno",
+  "S-task15": "Oldest account of all NA two interactions from Sereno",
   "S-task16": "Free Explore"
 };
 
@@ -40,9 +40,6 @@ let taskTitles = {
     case "fetchProvenance":
       await fetchProvenance();
       break;
-    case "fixData":
-      // updateDatabase();
-      break;
     case "process":
       processData();
       break;
@@ -54,69 +51,6 @@ let taskTitles = {
       break;
   }
 })();
-
-function updateDatabase() {
-  //ammend provenance data for participants
-  let nlParticipants = [
-    "5d64759fedf23500018f9334",
-    "5b1087bce9270900013c1730",
-    "5b90bf1a42e93f00017cc9e9",
-    "5d4dc127a370c600156b255b",
-    "5c2c888df42a780001468c5f"
-  ];
-  let amParticipants = [
-    "5cf2d589239c60001a088f03",
-    "5c671a76085e6a0001fed1bc",
-    "58c84d506d1c600001a09319",
-    "5bb279805a4ee80001c39a8c",
-    "5d1db2c56d66ec001904e555"
-  ];
-
-  let taskNames = [
-    "S-task01",
-    "S-task02",
-    "S-task03",
-    "S-task04",
-    "S-task05",
-    "S-task06",
-    "S-task07",
-    "S-task08",
-    "S-task09",
-    "S-task10",
-    "S-task011",
-    "S-task012",
-    "S-task013",
-    "S-task014",
-    "S-task015",
-    "S-task016"
-  ];
-
-  let allParticipants = nlParticipants.concat(amParticipants);
-
-  allParticipants.map(async id => {
-    // taskNames.map(async task=>{
-    let docRef = db.collection("study_participants").doc(id);
-    // console.log({
-    //   id,
-    //   mode:'study'
-    // })
-    console.log("updating db for ", id);
-    await docRef
-      .set(
-        {
-          mode: "study"
-        },
-        { merge: true }
-      )
-      .catch(err => {
-        console.log("Error updating documents", err);
-      });
-
-    // })
-  });
-}
-
-//iterate through and update their db entries;
 
 //function to filter out only valid participants;
 function isValidParticipant(d) {
