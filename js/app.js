@@ -348,7 +348,7 @@ async function exportTidy(results) {
 
     rRows.push(createTidyRow("browser",participant.data.browserInfo['Browser name']));
     rRows.push(createTidyRow("age",participant.data.demographics.age));
-    rRows.push(createTidyRow("age",participant.data.demographics.degree));
+    rRows.push(createTidyRow("degree",participant.data.demographics.degree));
     rRows.push(createTidyRow("sex",participant.data.demographics.sex));
     rRows.push(createTidyRow("visExperience",participant.data.demographics.vis_experience));
     rRows.push(createTidyRow("minutesToComplete",Math.round(participant.data.minutesToComplete)));
