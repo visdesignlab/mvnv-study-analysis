@@ -1,0 +1,117 @@
+---
+title: "carolinaAnalysis"
+author: '@carolinanobre'
+date: "9/3/2019"
+output: html_document
+---
+
+## Setup
+
+```{r setup}
+library(tidyverse)
+library(ggridges)
+library(pwr) 
+library(grid)
+library(gtable)
+
+library(ggbeeswarm)
+
+library(tidybayes)
+library(cowplot)
+library(broom)
+library(Hmisc)
+
+theme_set(theme_tidybayes() + panel_border() + background_grid())
+
+
+#df <- read.csv("../results/pilot/CSV/TidyR.csv")
+df <- read.csv("../results/study/CSV/TidyR.csv")
+dfp <- read.csv("../results/study/CSV/participantInfoTidyR.csv")
+```
+
+
+## Data Cleaning / Types
+
+```{r}
+
+df_acc <- df %>% 
+  filter(measure=="accuracy") 
+
+df_acc$value = as.numeric( as.character(df_acc$value ))
+
+
+df_acc
+```
+
+```{r}
+df %>% 
+  filter(measure=="accuracy") %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot( aes(x=value, y=taskId) ) +
+    geom_density_ridges() +
+    facet_grid(visType ~ topology)
+
+```
+
+```{r}
+filteredFrame<- filter(dfp,measure=="visExperience")
+age <- mutate(filteredFrame, ageValue = as.numeric( as.character(value)) ) 
+
+filteredFrame<- filter(dfp,measure=="averageAccuracy")
+acc <- mutate( filteredFrame, avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
+
+filteredFrame<- filter(dfp,measure=="minutesToComplete")
+time <- mutate( filteredFrame, timeValue = round(as.numeric(as.character(value)),digits=2) ) 
+
+visType <- unique(select(df,"prolificId","visType"))
+
+
+newFrame <- merge(time,acc, by="prolificId")
+
+newFrame <- merge(newFrame,visType, by="prolificId")
+
+
+ggplot(newFrame, aes(x = timeValue, y = avgAcc)) +
+    geom_point(aes(color=visType))+
+    facet_grid(visType ~ .) +
+    xlab("Time") +
+    ylab("Average Accuracy")
+```
+
+
+
+```{r}
+
+dfp %>% 
+  filter(measure == "age") %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot(aes(x="age", y=value)) +
+    geom_beeswarm(priority='density',cex=2, alpha=.6) +
+  coord_flip() +
+  xlab("") + ylab("")
+
+```
+
+
+```{r, fig.width=8, fig.height=2}
+task<-"S-task01"
+
+sdf = df %>% filter( taskId == task )
+tt = as.character(sdf[1,]$taskTitle)
+
+df %>% 
+  filter( measure == "accuracy" | measure == "minutesToComplete" | 
+            measure == "difficulty" | measure == "confidence") %>% 
+    filter( taskId == task ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+  ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
+    facet_wrap(. ~ measure, scales="free", nrow=1) +
+    geom_violin() +
+    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=0.5) +
+  coord_flip() + 
+    labs(
+      title = tt,
+      subtitle = task
+    )
+  
+```

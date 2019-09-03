@@ -327,20 +327,6 @@ dfp %>%
   ggplot() +
     geom_density( aes(x=value), fill="blue", alpha=0.75 ) 
 
-age<- filter(dfp,measure=="age")
-acc<- filter(dfp,measure=="averageAccuracy")
-
-value<- filter(dfp,measure== "age")+
-  mutate( value = as.numeric( as.character(value)) ) %>% 
-  
-  ggplot(aes(x="age", y=value)) +
-    geom_beeswarm(priority='random',cex=2, alpha=0.6) +
-  coord_flip() +
-  xlab("") + ylab("")
-
-
-#ggplot(mtcars, aes(x = drat, y = mpg)) +
- #   geom_point()
 dfp %>% 
   filter(measure == "age") %>% 
   mutate( value = as.numeric( as.character(value)) ) %>% 
@@ -348,17 +334,6 @@ dfp %>%
     geom_beeswarm(priority='random',cex=2, alpha=0.6) +
   coord_flip() +
   xlab("") + ylab("")
-
-
-dfp %>% 
-  filter(measure == "browser") %>% 
-  mutate( value =  as.character(value))  %>% 
-  ggplot(aes(x="browser", y=value)) +
-    #geom_beeswarm(priority='random',cex=2, alpha=0.6) +
-  coord_flip() +
-  xlab("") + ylab("")
-
-
 
 ```
 
@@ -379,15 +354,15 @@ vplot <- function(task) {
 sdf = df %>% filter( taskId == task )
 tt = as.character(sdf[1,]$taskTitle)
 
-sdf %>% 
+df %>% 
   filter( measure == "accuracy" | measure == "minutesToComplete" | 
             measure == "difficulty" | measure == "confidence") %>% 
-    #filter( taskId == task ) %>% 
+    filter( taskId == task ) %>% 
   mutate( value = as.numeric( as.character(value)) ) %>% 
   ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
     facet_wrap(. ~ measure, scales="free", nrow=1) +
     geom_violin() +
-    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=0.5) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "green", size = 0.5, alpha=0.5) +
   coord_flip() + 
     labs(
       title = tt,
@@ -398,21 +373,21 @@ ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = 
 }
 
 vplot("S-task01")
-#vplot("S-task02")
-#vplot("S-task03")
-#vplot("S-task04")
-#vplot("S-task05")
-#vplot("S-task06")
-#vplot("S-task07")
-#vplot("S-task08")
-#vplot("S-task09")
-#vplot("S-task10")
-#vplot("S-task11")
-#vplot("S-task12")
-#vplot("S-task13")
-#vplot("S-task14")
-#vplot("S-task15")
-#vplot("S-task16")
+vplot("S-task02")
+vplot("S-task03")
+vplot("S-task04")
+vplot("S-task05")
+vplot("S-task06")
+vplot("S-task07")
+vplot("S-task08")
+vplot("S-task09")
+vplot("S-task10")
+vplot("S-task11")
+vplot("S-task12")
+vplot("S-task13")
+vplot("S-task14")
+vplot("S-task15")
+vplot("S-task16")
 
 ```
 

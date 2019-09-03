@@ -359,6 +359,8 @@ async function exportTidy(results) {
     .writeRecords(rRows)
     .then(() => console.log("participantInfoTidyR.csv was written successfully"));
 
+
+    
   rHeaders = [
     "prolificId",
     "taskId",
