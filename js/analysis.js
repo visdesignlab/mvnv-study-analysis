@@ -20,6 +20,8 @@ function hideTooltip() {
 }
 
 function makePlots(provData) {
+
+  console.log(provData)
   var margin = { top: 50, right: 15, bottom: 25, left: 150 };
 
   var height = 180;
@@ -36,36 +38,44 @@ function makePlots(provData) {
     )[0];
   };
 
-  var svg = d3
+  var participantGroups = d3
     .select("body")
     .selectAll("svg")
-    .data([1]);
+    .data(provData);
+    // .data([1]);
 
     let svgWidth = width + margin.left + margin.right;
-    let svgHeight = (height + margin.top + margin.bottom) * provData.length;
-  let enter = svg
-    .enter()
-    .append('div')
-    .attr('class','svg-container')
-    .append("svg")
-    .attr('viewbox','0,0,' + 500 + ',' + 100 )
-    // .attr('preserveAspectRatio','none')
-    // .attr('width','100%')
-    // .attr('height',svgHeight)
-    .attr("width", svgWidth)
-    .attr("height", svgHeight);
-
-  svg.exit().remove();
-
-  svg = svg.merge(enter);
-
-  let participantGroups = svg.selectAll(".participantGroup").data(provData);
-
+    let svgHeight = (height + margin.top + margin.bottom) //* provData.length;
 
   let participantGroupsEnter = participantGroups
     .enter()
+    .append('svg')
+    .attr("width", svgWidth)
+    .attr("height", svgHeight)
     .append("g")
     .attr("class", "participantGroup");
+
+
+    // .append('div')
+    // .attr('class','svg-container')
+    // .append("svg")
+    // .attr('viewbox','0,0,' + 500 + ',' + 100 )
+    // .attr('preserveAspectRatio','none')
+    // .attr('width','100%')
+    // .attr('height',svgHeight)
+    
+
+  // svg.exit().remove();
+
+  // svg = svg.merge(enter);
+
+  // let participantGroups = svg.selectAll(".participantGroup").data(provData);
+
+
+  // let participantGroupsEnter = participantGroups
+  //   .enter()
+  //   .append("g")
+  //   .attr("class", "participantGroup");
 
   participantGroupsEnter
     .append("rect")
@@ -110,7 +120,7 @@ function makePlots(provData) {
     .append("text")
     .attr("class", "id")
     .attr("x", x.range()[1])
-    .attr("y", y(1))
+    .attr("y", y(3))
     .style("text-anchor", "end");
 
     participantGroupsEnter
@@ -126,17 +136,25 @@ function makePlots(provData) {
 
   participantGroups = participantGroupsEnter.merge(participantGroups);
 
-  participantGroups
+  // participantGroups
+  //   .attr(
+  //     "transform",
+  //     (d, i) =>
+  //       "translate(" + margin.left + "," + (i*(margin.top + height)) + ")"
+  //   );
+
+   participantGroups
     .attr(
       "transform",
       (d, i) =>
-        "translate(" + margin.left + "," + (i*(margin.top + height)) + ")"
+        "translate(" + margin.left + "," + margin.top + ")"
     );
 
   participantGroups
     .select(".typeRect")
     .attr("class", d =>  'typeRect ' + d.visType );
 
+    
   let rects = participantGroups
     .selectAll(".event")
     .data((d, i) => d.provEvents.filter(e => e.type === "longAction").map(p=>{
@@ -148,11 +166,7 @@ function makePlots(provData) {
     .enter()
     .append("rect")
     .attr("class", "event")
-    .style("opacity", d => {
-      return d.task && d.task.id
-        ? opacityScale(d.task.id.match(/\d+/g).map(Number))
-        : "";
-    });
+
 
   rects.exit().remove();
 
@@ -171,11 +185,16 @@ function makePlots(provData) {
       return diff || 0;
     })
     .attr("class", d => "event " + d.label.replace(/ /g, ""))
-    .classed("wrong", d =>
-      d.task && d.task.data && d.task.data.answer
-        ? d.task.data.answer.correct == 0
-        : false
-    );
+    // .style("opacity", d => {
+    //   return d.task && d.task.id
+    //     ? opacityScale(d.task.id.match(/\d+/g).map(Number))
+    //     : "";
+    // });
+    // .classed("wrong", d =>
+    //   d.task && d.task.data && d.task.data.answer
+    //     ? d.task.data.answer.correct == 0
+    //     : false
+    // );
   // .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
   rects
@@ -211,6 +230,49 @@ function makePlots(provData) {
         d3.selectAll('.frames').classed('selected',f=>f.task.id === d.task.id )
       }
     });
+
+    let diff = participantGroups
+    .selectAll(".textGroup")
+    .data((d, i) =>  d.provEvents.filter(e => e.type === "longAction" && e.label==="task" && e.task.data));
+
+  let diffEnter = diff
+    .enter().append('g').attr('class','textGroup')
+
+    diffEnter
+    .append("text")
+    .attr("class", "difficulty")
+
+    diffEnter
+    .append("text")
+    .attr("class", "confidence")
+
+
+  diff.exit().remove();
+
+  diff = diffEnter.merge(diff);
+
+  diff.select('.difficulty')
+    .attr("x", d => {
+      let time = Date.parse(d.endTime);
+      return x(time - d.participantStartTime);
+    })
+    .attr("y", (d, i) => y(d.level)-5) //y(d.participantOrder))
+    .text(d=>d.task.data.feedback.difficulty)
+    .style('text-anchor','end')
+    .attr("class", 'difficulty')
+
+
+    diff.select('.confidence')
+    .attr("x", d => {
+      let time = Date.parse(d.endTime);
+      return x(time - d.participantStartTime);
+    })
+    .attr("y", (d, i) => y(d.level)+20) //y(d.participantOrder))
+    .text(d=>d.task.data.feedback.confidence)
+    .style('text-anchor','end')
+    .attr("class", 'confidence')
+
+
 
   let frames = participantGroups
     .selectAll(".frames")
@@ -293,16 +355,18 @@ function makePlots(provData) {
     .attr("class", d => "label " + d.label.replace(/ /g, ""))
     .text(d => (d.level == 0 && d.label !== "browse away" ? d.label : ""));
 
-  rects = participantGroups.selectAll(".s-event").data((d, i) =>
-    d.provEvents
-      .filter(
-        e => e.type === "singleAction" && e.label !== "submitted valid answer"
-      )
-      .map(pEvent => {
-        pEvent.participantStartTime = startTime(d);
-        return pEvent;
-      })
-  );
+  rects = participantGroups.selectAll(".s-event")
+  .data([])
+  // .data((d, i) =>
+  //   d.provEvents
+  //     .filter(
+  //       e => e.type === "singleAction" && e.label !== "submitted valid answer"
+  //     )
+  //     .map(pEvent => {
+  //       pEvent.participantStartTime = startTime(d);
+  //       return pEvent;
+  //     })
+  // );
 
   rectsEnter = rects
     .enter()

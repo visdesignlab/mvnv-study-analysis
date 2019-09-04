@@ -163,8 +163,6 @@ async function processData() {
 
   let results = JSON.parse(rawdata);
 
-  
-
   results.map(p => {
     //flatten answer.nodes, then flatten the whole data;
     Object.keys(p.data).map(key => {
@@ -185,8 +183,15 @@ async function processData() {
 
         //compute accuracy and add to data structure;
         let answer = p.data[key].answer;
+        let acc = computeAccuracy(key, answer); // col for more nuanced score
         // console.log('user id', p.data[key].workerID)
-        answer.accuracy = computeAccuracy(key, answer); // col for more nuanced score
+        if (key === 'S-task12'){
+          answer.accuracy = acc.scoreCluster*0.5 + acc.scoreAverage*0.5;
+          answer.scoreCluster = acc.scoreCluster;
+          answer.scoreAverage = acc.scoreAverage
+        }else {
+          answer.accuracy = acc // col for more nuanced score
+        }
         // console.log('accuracy for task ', key ,  ' is ', answer.accuracy)
         answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
       }
@@ -220,10 +225,10 @@ async function processData() {
     return p.data;
   });
 
-  fs.writeFileSync("processed_results.json", JSON.stringify(results));
+  fs.writeFileSync("results/study/JSON/processed_results.json", JSON.stringify(results));
   console.log("exported processed_results.json");
 
-  fs.writeFileSync("study_participants.json", JSON.stringify(participant_info));
+  fs.writeFileSync("results/study/JSON/study_participants.json", JSON.stringify(participant_info));
   console.log("exported updated study_participants.json");
 }
 
@@ -272,7 +277,7 @@ async function exportCSV(results) {
   // console.log(csvKeys)
 
   csvWriter = createCsvWriter({
-    path: "results.csv",
+    path: "results/study/CSV/results.csv",
     header: csvKeys.map(key => {
       return { id: key, title: key };
     })
@@ -327,7 +332,7 @@ async function exportTidy(results) {
   rHeaders = ["prolificId", "measure", "value"];
 
   csvWriter = createCsvWriter({
-    path: "participantInfoTidyR.csv",
+    path: "results/study/CSV/participantInfoTidyR.csv",
     header: rHeaders.map(key => {
       return { id: key, title: key };
     })
@@ -346,21 +351,35 @@ async function exportTidy(results) {
       };
     };
 
-    rRows.push(createTidyRow("browser",participant.data.browserInfo['Browser name']));
-    rRows.push(createTidyRow("age",participant.data.demographics.age));
-    rRows.push(createTidyRow("degree",participant.data.demographics.degree));
-    rRows.push(createTidyRow("sex",participant.data.demographics.sex));
-    rRows.push(createTidyRow("visExperience",participant.data.demographics.vis_experience));
-    rRows.push(createTidyRow("minutesToComplete",Math.round(participant.data.minutesToComplete)));
-    rRows.push(createTidyRow("averageAccuracy",participant.data.averageAccuracy));
+    rRows.push(
+      createTidyRow("browser", participant.data.browserInfo["Browser name"])
+    );
+    rRows.push(createTidyRow("age", participant.data.demographics.age));
+    rRows.push(createTidyRow("degree", participant.data.demographics.degree));
+    rRows.push(createTidyRow("sex", participant.data.demographics.sex));
+    rRows.push(
+      createTidyRow(
+        "visExperience",
+        participant.data.demographics.vis_experience
+      )
+    );
+    rRows.push(
+      createTidyRow(
+        "minutesToComplete",
+        Math.round(participant.data.minutesToComplete)
+      )
+    );
+    rRows.push(
+      createTidyRow("averageAccuracy", participant.data.averageAccuracy)
+    );
   });
 
   csvWriter
     .writeRecords(rRows)
-    .then(() => console.log("participantInfoTidyR.csv was written successfully"));
+    .then(() =>
+      console.log("participantInfoTidyR.csv was written successfully")
+    );
 
-
-    
   rHeaders = [
     "prolificId",
     "taskId",
@@ -375,7 +394,7 @@ async function exportTidy(results) {
   ];
 
   csvWriter = createCsvWriter({
-    path: "TidyR.csv",
+    path: "results/study/CSV/TidyR.csv",
     header: rHeaders.map(key => {
       return { id: key, title: key };
     })
@@ -389,12 +408,12 @@ async function exportTidy(results) {
     Object.keys(participantData.data)
       .filter(key => key[0] === "S") //only look at task keys
       .map(taskId => {
-        let createTidyRow = function(measure, value) {
+        let createTidyRow = function(measure, value,customTaskId) {
           let hypothesis = data.hypothesis.split(",");
 
           return {
             prolificId: id,
-            taskId: taskId,
+            taskId:customTaskId ? customTaskId : taskId,
             taskTitle: taskTitles[taskId],
             visType: data.visType,
             taskType: data.taxonomy.type,
@@ -430,11 +449,19 @@ async function exportTidy(results) {
         if (data.answer.radio) {
           rRows.push(createTidyRow("valueAnswer", data.answer.radio));
         }
-        rRows.push(createTidyRow("accuracy", data.answer.accuracy));
-        rRows.push(createTidyRow("correct", data.answer.correct));
-        rRows.push(createTidyRow("difficulty", data.feedback.difficulty));
-        rRows.push(createTidyRow("confidence", data.feedback.confidence));
-        rRows.push(createTidyRow("minutesToComplete", data.minutesToComplete));
+        if (taskId == 'S-task12'){
+          rRows.push(createTidyRow("accuracy", data.answer.scoreCluster,'S-task12A'));
+          rRows.push(createTidyRow("accuracy", data.answer.scoreAverage,'S-task12B'));
+        } 
+
+
+          rRows.push(createTidyRow("accuracy", data.answer.accuracy));
+          rRows.push(createTidyRow("correct", data.answer.correct));
+          rRows.push(createTidyRow("difficulty", data.feedback.difficulty));
+          rRows.push(createTidyRow("confidence", data.feedback.confidence));
+          rRows.push(createTidyRow("minutesToComplete", data.minutesToComplete));
+        
+       
       });
   });
 
@@ -525,7 +552,6 @@ function computeAccuracy(taskID, answerObj) {
 
       if (answer.ids.includes("395853499")) {
         //Marc
-        console.log()
         score = score + 0.5;
       }
 
@@ -575,22 +601,70 @@ function computeAccuracy(taskID, answerObj) {
       return scoreList(correctAnswers, answer);
     },
     "S-task12": function(answer) {
-      //Jason, giCentre, Noeska, Alex, EVis19, Robert,
+      //
+      //Jason, Noeska, Alex,Robert,
       let correctAnswers = [
-        "19299318",
-        "19283433",
-        "40219508",
-        "81658145",
-        "1085199426837188600",
-        "16112517"
+        { id: "19299318", followers: 610 },//Jason
+        { id: "40219508", followers: 552 },//Noeska
+        { id: "81658145", followers: 1048 },//Alex
+        { id: "16112517", followers: 1059}//Robert
       ];
-      let score = scoreList(correctAnswers, answer,.5);
 
-      // console.log('score is ', score)
-      score = answer.value >= 400 && answer.value <= 800 ? score + 0.5 : score;
+      //Tamara, James, Jon, Marc, Klaus
+      let extendedAnswers=[
+        { id: "1652270612", followers: 1123 },//Tamara
+        { id: "30009655", followers: 141 }, //James
+        { id: "201277609", followers: 509 },//Jon
+        { id: "395853499", followers: 554},//Marc
+        { id: "270431596", followers: 12}//Klaus
+      ];
+
+       //1/4 points for each correct answer -1/9 point for each incorrect answer;
+      let ids = answer.ids.split(";").map(a => a.trim());
+
+        let scoreCluster = ids.reduce(
+          (acc, cValue) =>{
+            if (correctAnswers.find(a => a.id == cValue)){
+              return acc + 1 / correctAnswers.length
+            }
+
+            if (extendedAnswers.find(a => a.id == cValue)){
+              return acc; //no penalty and no credit for nodes in the extended answer;
+            }
+
+            //otherwise, -1/9 for any incorrect answer;
+            return acc //- 1/(correctAnswers.length + extendedAnswers.length);
+             
+          },0);
+
+          // console.log('user scored', score, answer.nodes)
+          scoreCluster =  Math.max(0, scoreCluster);
+
+        let validNodes = ids.reduce(
+          (acc, cValue) =>{
+            let correctNode = correctAnswers.find(a => a.id == cValue) || extendedAnswers.find(a => a.id == cValue)
+            if (correctNode){
+              return acc .concat(correctNode);
+            }
+            //otherwise, return;
+            return acc;
+             
+          },[]);
+
+          // console.log('validNodes are ', validNodes)
+
+
+      let meanFollowers = average(validNodes.map(n=>n.followers));
+      let stdDev = standardDeviation(validNodes.map(n=>n.followers));
+
+
+      // console.log('meanFollowers is ', meanFollowers)
+      // console.log('stdDev is ', stdDev)
+
+      let scoreAverage = answer.value >= meanFollowers -stdDev && answer.value <= meanFollowers+stdDev ? 1 : 0;
       // console.log('score is ', score)
 
-      return score;
+      return {scoreCluster, scoreAverage};
     },
     "S-task13": function(answer) {
       let score = 0;
@@ -627,7 +701,7 @@ function computeAccuracy(taskID, answerObj) {
     }
   };
 
-  function scoreList(correctAnswers, answer,maxValue=1) {
+  function scoreList(correctAnswers, answer, maxValue = 1) {
     //+.25 points for each correct answer -.1 point for each incorrect answer;
     let ids = answer.ids.split(";").map(a => a.trim());
 
@@ -639,10 +713,34 @@ function computeAccuracy(taskID, answerObj) {
       0
     );
 
-    return Math.max(0, score*maxValue);
+    return Math.max(0, score * maxValue);
   }
 
   return answers[taskID](answerObj);
+}
+
+function standardDeviation(values){
+  var avg = average(values);
+  
+  var squareDiffs = values.map(function(value){
+    var diff = value - avg;
+    var sqrDiff = diff * diff;
+    return sqrDiff;
+  });
+  
+  var avgSquareDiff = average(squareDiffs);
+
+  var stdDev = Math.sqrt(avgSquareDiff);
+  return stdDev;
+}
+
+function average(data){
+  var sum = data.reduce(function(sum, value){
+    return sum + value;
+  }, 0);
+
+  var avg = sum / data.length;
+  return avg;
 }
 
 function processProvenance() {
