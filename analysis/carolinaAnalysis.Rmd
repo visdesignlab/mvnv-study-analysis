@@ -60,7 +60,7 @@ age <- mutate(filteredFrame, ageValue = as.numeric( as.character(value)) )
 filteredFrame<- filter(dfp,measure=="averageAccuracy")
 acc <- mutate( filteredFrame, avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
 
-filteredFrame<- filter(dfp,measure=="minutesToComplete")
+filteredFrame<- filter(dfp,measure=="minutesOnTask")
 time <- mutate( filteredFrame, timeValue = round(as.numeric(as.character(value)),digits=2) ) 
 
 visType <- unique(select(df,"prolificId","visType"))
@@ -116,7 +116,7 @@ df %>%
       subtitle = task
     )
   
-#ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
+ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
 }
 
 vplot('S-task12A')
