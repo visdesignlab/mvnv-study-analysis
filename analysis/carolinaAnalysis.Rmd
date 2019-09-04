@@ -49,7 +49,7 @@ df %>%
   mutate( value = as.numeric( as.character(value)) ) %>% 
   ggplot( aes(x=value, y=taskId) ) +
     geom_density_ridges() +
-    facet_grid(visType ~ topology)
+    facet_grid(. ~ visType)
 
 ```
 
@@ -94,7 +94,9 @@ dfp %>%
 
 
 ```{r, fig.width=8, fig.height=2}
-task<-"S-task01"
+
+
+vplot <- function(task) {
 
 sdf = df %>% filter( taskId == task )
 tt = as.character(sdf[1,]$taskTitle)
@@ -107,11 +109,18 @@ df %>%
   ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
     facet_wrap(. ~ measure, scales="free", nrow=1) +
     geom_violin() +
-    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=0.5) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=1) +
   coord_flip() + 
     labs(
       title = tt,
       subtitle = task
     )
+  
+#ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
+}
+
+vplot('S-task12A')
+vplot('S-task12B')
+
   
 ```
