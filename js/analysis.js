@@ -190,11 +190,11 @@ function makePlots(provData) {
     //     ? opacityScale(d.task.id.match(/\d+/g).map(Number))
     //     : "";
     // });
-    // .classed("wrong", d =>
-    //   d.task && d.task.data && d.task.data.answer
-    //     ? d.task.data.answer.correct == 0
-    //     : false
-    // );
+    .classed("wrong", d =>
+      d.task && d.task.data && d.task.data.answer
+        ? d.task.data.answer.correct == 0
+        : false
+    );
   // .classed('sortedOn', d=>sortOrder && d.task && d.task.id == sortOrder)
 
   rects

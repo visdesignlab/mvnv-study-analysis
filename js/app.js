@@ -54,7 +54,45 @@ let taskTitles = {
 
 //function to filter out only valid participants;
 function isValidParticipant(d) {
-  return d.data.mode === "study" && d.id[0] === "5" && d.data.demographics;
+  let rejected = [
+    { id: "5d00163d9f497e00191a609c", reason: "NOCODE", vis: "nodeLink"},
+    { id: "5d49f4637df55600014dda45", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5c12d0d303f44c00017441e3", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5c5629c79fcbc40001dc55cc", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5d37d2861566530016a061de", reason: "LowEffort", vis: "nodeLink" },
+    { id: "5d017f2466581d001a9059dc", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5d30e6ef53416100199ad7bf", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5d4c50d3ff031f001883cf4f", reason: "NOCODE", vis: "nodeLink" },
+    { id: "5b74656b9750540001f26fde", reason: "NOCODE", vis: "nodeLink" },
+
+    { id: "5d63dc6c163b260001acc8e6", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5b2486c6007d870001c795a4", reason: "LowEffort", vis: "adjMatrix"},
+    { id: "5c582efbe66e510001eedfa8", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5c5043028003d4000107b97a", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5d017f2466581d001a9059dc", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5d36060877dd7c00197477e7", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5d641c307c4e9c0019d604d8", reason: "LowEffort", vis: "adjMatrix"},
+    { id: "5c1d19c810677f0001d9d56c", reason: "NOCODE", vis: "adjMatrix"},
+    { id: "5ac393cf0527ba0001c2043c", reason: "LowEffort", vis: "adjMatrix"},
+    { id: "5c6cf98a34d8f80001ddf31d", reason: "NOCODE", vis: "adjMatrix"}];
+
+
+  let invalid = [
+    { id: "5d54d0b14a1521001850610a", reason: "TIMED OUT", vis: "nodeLink"},
+    { id: "5caa534a19731a00190bb935", reason: "TIMED OUT", vis: "adjMatrix"},
+    { id: "5d5c49acdd90af0001f13f7d", reason: "TIMED OUT", vis: "adjMatrix"},
+    { id: "5b3d79ec4915d00001828240", reason: "RETURNED", vis: "adjMatrix"},
+    { id: "5bfaed16e2562a0001ce0ff4", reason: "TIMED OUT", vis: "nodeLink"},  
+    { id: "5d645bf6912c630018e269e3", reason: "TIMED OUT", vis: "nodeLink"}   
+  
+  ]
+
+  let wasRejected = rejected.find(r=>r.id === d.id);
+
+  let invalidParticipant = invalid.find(r=>r.id === d.id);
+
+
+  return d.data.mode === "study" && d.id[0] === "5" && d.data.demographics && !wasRejected && !invalidParticipant;
 }
 
 async function fetchProvenance() {
@@ -115,7 +153,7 @@ async function fetchData() {
   let participantIDs = studyParticipants.map(p => p.id);
 
   fs.writeFileSync(
-    "study_participants.json",
+    "results/study/JSON/study_participants.json",
     JSON.stringify(studyParticipants)
   );
 
@@ -145,7 +183,7 @@ async function fetchData() {
     });
 
     let data = JSON.stringify(allData);
-    fs.writeFileSync(collectionName + ".json", data);
+    fs.writeFileSync('results/study/JSON/' + collectionName + ".json", data);
 
     console.log("saved", collectionName);
   });
@@ -185,18 +223,19 @@ async function processData() {
         let answer = p.data[key].answer;
         let acc = computeAccuracy(key, answer); // col for more nuanced score
         // console.log('user id', p.data[key].workerID)
-        if (key === 'S-task12'){
-          answer.accuracy = acc.scoreCluster*0.5 + acc.scoreAverage*0.5;
+        if (key === "S-task12") {
+          answer.accuracy = acc.scoreCluster * 0.5 + acc.scoreAverage * 0.5;
           answer.scoreCluster = acc.scoreCluster;
-          answer.scoreAverage = acc.scoreAverage
-        }else {
-          answer.accuracy = acc // col for more nuanced score
+          answer.scoreAverage = acc.scoreAverage;
+        } else {
+          answer.accuracy = acc; // col for more nuanced score
         }
         // console.log('accuracy for task ', key ,  ' is ', answer.accuracy)
         answer.correct = answer.accuracy === 1 ? 1 : 0; //col for boolean right/wrong
       }
 
       p.data[key].taskID = key;
+      p.data[key].minutesOnTask = p.data[key].minutesToComplete; //will update this field as necessary when processing provenance for browsed away
     });
 
     //compute average accuracy for this participant;
@@ -225,15 +264,21 @@ async function processData() {
     return p.data;
   });
 
-  fs.writeFileSync("results/study/JSON/processed_results.json", JSON.stringify(results));
+  fs.writeFileSync(
+    "results/study/JSON/processed_results.json",
+    JSON.stringify(results)
+  );
   console.log("exported processed_results.json");
 
-  fs.writeFileSync("results/study/JSON/study_participants.json", JSON.stringify(participant_info));
+  fs.writeFileSync(
+    "results/study/JSON/study_participants.json",
+    JSON.stringify(participant_info)
+  );
   console.log("exported updated study_participants.json");
 }
 
 function exportResults() {
-  let rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
+  let rawdata = fs.readFileSync("results/study/JSON/provenance_processed_results.json");
   let results = JSON.parse(rawdata);
 
   exportCSV(results);
@@ -262,7 +307,7 @@ async function exportCSV(results) {
       k.includes("answer.radio") ||
       k.includes("answer.value") ||
       k.includes("feedback") ||
-      k.includes("minutesToComplete") ||
+      k.includes("minutesOnTask") ||
       k.includes("order") ||
       k.includes("prompt") ||
       k.includes("workerID") ||
@@ -324,7 +369,7 @@ async function exportTidy(results) {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
   let csvWriter;
 
-  let rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
+  let rawdata = fs.readFileSync("results/study/JSON/provenance_study_participants.json");
   let participants = JSON.parse(rawdata);
 
   let rHeaders, rRows;
@@ -365,8 +410,8 @@ async function exportTidy(results) {
     );
     rRows.push(
       createTidyRow(
-        "minutesToComplete",
-        Math.round(participant.data.minutesToComplete)
+        "minutesOnTask",
+        participant.data.minutesOnTask
       )
     );
     rRows.push(
@@ -408,12 +453,12 @@ async function exportTidy(results) {
     Object.keys(participantData.data)
       .filter(key => key[0] === "S") //only look at task keys
       .map(taskId => {
-        let createTidyRow = function(measure, value,customTaskId) {
+        let createTidyRow = function(measure, value, customTaskId) {
           let hypothesis = data.hypothesis.split(",");
 
           return {
             prolificId: id,
-            taskId:customTaskId ? customTaskId : taskId,
+            taskId: customTaskId ? customTaskId : taskId,
             taskTitle: taskTitles[taskId],
             visType: data.visType,
             taskType: data.taxonomy.type,
@@ -449,19 +494,20 @@ async function exportTidy(results) {
         if (data.answer.radio) {
           rRows.push(createTidyRow("valueAnswer", data.answer.radio));
         }
-        if (taskId == 'S-task12'){
-          rRows.push(createTidyRow("accuracy", data.answer.scoreCluster,'S-task12A'));
-          rRows.push(createTidyRow("accuracy", data.answer.scoreAverage,'S-task12B'));
-        } 
+        if (taskId == "S-task12") {
+          rRows.push(
+            createTidyRow("accuracy", data.answer.scoreCluster, "S-task12A")
+          );
+          rRows.push(
+            createTidyRow("accuracy", data.answer.scoreAverage, "S-task12B")
+          );
+        }
 
-
-          rRows.push(createTidyRow("accuracy", data.answer.accuracy));
-          rRows.push(createTidyRow("correct", data.answer.correct));
-          rRows.push(createTidyRow("difficulty", data.feedback.difficulty));
-          rRows.push(createTidyRow("confidence", data.feedback.confidence));
-          rRows.push(createTidyRow("minutesToComplete", data.minutesToComplete));
-        
-       
+        rRows.push(createTidyRow("accuracy", data.answer.accuracy));
+        rRows.push(createTidyRow("correct", data.answer.correct));
+        rRows.push(createTidyRow("difficulty", data.feedback.difficulty));
+        rRows.push(createTidyRow("confidence", data.feedback.confidence));
+        rRows.push(createTidyRow("minutesOnTask", data.minutesOnTask));
       });
   });
 
@@ -604,67 +650,67 @@ function computeAccuracy(taskID, answerObj) {
       //
       //Jason, Noeska, Alex,Robert,
       let correctAnswers = [
-        { id: "19299318", followers: 610 },//Jason
-        { id: "40219508", followers: 552 },//Noeska
-        { id: "81658145", followers: 1048 },//Alex
-        { id: "16112517", followers: 1059}//Robert
+        { id: "19299318", followers: 610 }, //Jason
+        { id: "40219508", followers: 552 }, //Noeska
+        { id: "81658145", followers: 1048 }, //Alex
+        { id: "16112517", followers: 1059 } //Robert
       ];
 
       //Tamara, James, Jon, Marc, Klaus
-      let extendedAnswers=[
-        { id: "1652270612", followers: 1123 },//Tamara
+      let extendedAnswers = [
+        { id: "1652270612", followers: 1123 }, //Tamara
         { id: "30009655", followers: 141 }, //James
-        { id: "201277609", followers: 509 },//Jon
-        { id: "395853499", followers: 554},//Marc
-        { id: "270431596", followers: 12}//Klaus
+        { id: "201277609", followers: 509 }, //Jon
+        { id: "395853499", followers: 554 }, //Marc
+        { id: "270431596", followers: 12 } //Klaus
       ];
 
-       //1/4 points for each correct answer -1/9 point for each incorrect answer;
+      //1/4 points for each correct answer -1/9 point for each incorrect answer;
       let ids = answer.ids.split(";").map(a => a.trim());
 
-        let scoreCluster = ids.reduce(
-          (acc, cValue) =>{
-            if (correctAnswers.find(a => a.id == cValue)){
-              return acc + 1 / correctAnswers.length
-            }
+      let scoreCluster = ids.reduce((acc, cValue) => {
+        if (correctAnswers.find(a => a.id == cValue)) {
+          return acc + 1 / correctAnswers.length;
+        }
 
-            if (extendedAnswers.find(a => a.id == cValue)){
-              return acc; //no penalty and no credit for nodes in the extended answer;
-            }
+        if (extendedAnswers.find(a => a.id == cValue)) {
+          return acc; //no penalty and no credit for nodes in the extended answer;
+        }
 
-            //otherwise, -1/9 for any incorrect answer;
-            return acc //- 1/(correctAnswers.length + extendedAnswers.length);
-             
-          },0);
+        //otherwise, -1/9 for any incorrect answer;
+        return acc; //- 1/(correctAnswers.length + extendedAnswers.length);
+      }, 0);
 
-          // console.log('user scored', score, answer.nodes)
-          scoreCluster =  Math.max(0, scoreCluster);
+      // console.log('user scored', score, answer.nodes)
+      scoreCluster = Math.max(0, scoreCluster);
 
-        let validNodes = ids.reduce(
-          (acc, cValue) =>{
-            let correctNode = correctAnswers.find(a => a.id == cValue) || extendedAnswers.find(a => a.id == cValue)
-            if (correctNode){
-              return acc .concat(correctNode);
-            }
-            //otherwise, return;
-            return acc;
-             
-          },[]);
+      let validNodes = ids.reduce((acc, cValue) => {
+        let correctNode =
+          correctAnswers.find(a => a.id == cValue) ||
+          extendedAnswers.find(a => a.id == cValue);
+        if (correctNode) {
+          return acc.concat(correctNode);
+        }
+        //otherwise, return;
+        return acc;
+      }, []);
 
-          // console.log('validNodes are ', validNodes)
+      // console.log('validNodes are ', validNodes)
 
-
-      let meanFollowers = average(validNodes.map(n=>n.followers));
-      let stdDev = standardDeviation(validNodes.map(n=>n.followers));
-
+      let meanFollowers = average(validNodes.map(n => n.followers));
+      let stdDev = standardDeviation(validNodes.map(n => n.followers));
 
       // console.log('meanFollowers is ', meanFollowers)
       // console.log('stdDev is ', stdDev)
 
-      let scoreAverage = answer.value >= meanFollowers -stdDev && answer.value <= meanFollowers+stdDev ? 1 : 0;
+      let scoreAverage =
+        answer.value >= meanFollowers - stdDev &&
+        answer.value <= meanFollowers + stdDev
+          ? 1
+          : 0;
       // console.log('score is ', score)
 
-      return {scoreCluster, scoreAverage};
+      return { scoreCluster, scoreAverage };
     },
     "S-task13": function(answer) {
       let score = 0;
@@ -719,23 +765,23 @@ function computeAccuracy(taskID, answerObj) {
   return answers[taskID](answerObj);
 }
 
-function standardDeviation(values){
+function standardDeviation(values) {
   var avg = average(values);
-  
-  var squareDiffs = values.map(function(value){
+
+  var squareDiffs = values.map(function(value) {
     var diff = value - avg;
     var sqrDiff = diff * diff;
     return sqrDiff;
   });
-  
+
   var avgSquareDiff = average(squareDiffs);
 
   var stdDev = Math.sqrt(avgSquareDiff);
   return stdDev;
 }
 
-function average(data){
-  var sum = data.reduce(function(sum, value){
+function average(data) {
+  var sum = data.reduce(function(sum, value) {
     return sum + value;
   }, 0);
 
@@ -751,6 +797,9 @@ function processProvenance() {
   rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
   let results = JSON.parse(rawdata);
 
+  rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
+  let study_participants = JSON.parse(rawdata);
+
   rawdata = fs.readFileSync("results/study/JSON/participant_actions.json");
   let provenance = JSON.parse(rawdata);
 
@@ -759,6 +808,11 @@ function processProvenance() {
 
   provenance.map(participant => {
     participantEventArray = [];
+
+    let r = results.find(r=>r.data.workerID === participant.id)
+    r.data.browsedAwayTime = 0;
+
+    let p = study_participants.find(p=>p.id === participant.id);
 
     participant.data.provGraphs.map(action => {
       //see if this a single event, or the start/end of a long event;
@@ -773,12 +827,18 @@ function processProvenance() {
           participantEventArray.push(eventObj);
         }
       } else {
+
+
         //at the start of an event;
         if (event && event.start.trim() == action.event.trim()) {
           let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
           eventObj.startTime = action.time;
           eventObj.task = action.task;
-          participantEventArray.push(eventObj);
+
+          //if this event started after the last task, ignore it; 
+          // if (Date.parse(eventObj.startTime)< Date.parse(r.data['S-task16'].startTime)){
+            participantEventArray.push(eventObj);
+          // }
         } else {
           //at the end of an event;
           //find the 'start' eventObj;
@@ -793,21 +853,50 @@ function processProvenance() {
             })
             .pop();
           if (startObj === undefined) {
-            console.log("could not find start event for ", action);
+            // console.log("could not find start event for ", action.event, action.task);
           } else {
             startObj.endTime = action.time;
+            let minutesBrowsedAway = (Date.parse(startObj.endTime) - Date.parse(startObj.startTime)) / 1000 / 60
+
+
+            if (startObj.label === 'browse away' && minutesBrowsedAway <50){
+              r.data.browsedAwayTime = r.data.browsedAwayTime + minutesBrowsedAway;
+            }
+
+            if (startObj.label === 'browse away' && startObj.task && startObj.task[0] === 'S'){
+                //only adjust time for browse away events during task completions
+              if (Date.parse(startObj.startTime) < Date.parse(r.data['S-task16'].endTime)){
+                if (minutesBrowsedAway <50){ //catch case where browse away is logged at several hours;
+                  r.data[startObj.task].minutesOnTask = Math.round((r.data[startObj.task].minutesOnTask - minutesBrowsedAway)*10)/10
+                } 
+              } 
+            }
           }
         }
       }
     });
+
+    //update total on study time
+    r.data.overallMinutesOnTask = r.data.overallMinutesToComplete - r.data.browsedAwayTime;
+    //update total on participant_info
+    p.data.minutesOnTask = r.data.overallMinutesOnTask;
 
     events.push({ id: participant.id, provEvents: participantEventArray });
     // console.log(participantEventArray.filter(e=>e.type === 'longAction' && e.endTime === undefined))
   });
 
   // console.log(events)
-  fs.writeFileSync("provenance_events.json", JSON.stringify(events));
+  fs.writeFileSync("results/study/JSON/provenance_events.json", JSON.stringify(events));
   console.log("exported provenance_events.json");
+
+
+  // console.log(events)
+  fs.writeFileSync("results/study/JSON/provenance_processed_results.json", JSON.stringify(results));
+  console.log("exported provenance_processed_results.json");
+
+  // console.log(events)
+  fs.writeFileSync("results/study/JSON/provenance_study_participants.json", JSON.stringify(study_participants));
+  console.log("exported provenance_study_participants.json");
 }
 
 function flatten(data) {
