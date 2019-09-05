@@ -54,8 +54,37 @@ df %>%
 ```
 
 ```{r}
+
+df_acc <- df %>% 
+  filter(measure=="accuracy") 
+
+df_acc$value = as.numeric( as.character(df_acc$value ))
+
+
+df_time<- df %>% 
+  filter(measure=="minutesOnTask") 
+
+df_time$value = as.numeric( as.character(df_time$value ))
+
+
+newFrame <- merge(df_time,df_acc, by="prolificId")
+
+#newFrame
+
+ggplot(newFrame, aes(x = value.x, y = value.y)) +
+    geom_point(aes(color=visType.y))+
+    facet_grid (visType.y ~taskId.y) +
+    xlab("Time") +
+    ylab("Accuracy")
+
+ggsave(paste("charts/time_vs_accuracy_horizontal.pdf", sep=""), width = 35, height =3, units = "in")
+
+```
+
+
+```{r}
 filteredFrame<- filter(dfp,measure=="visExperience")
-age <- mutate(filteredFrame, ageValue = as.numeric( as.character(value)) ) 
+accuracy <- mutate(filteredFrame, ageValue = as.numeric( as.character(value)) ) 
 
 filteredFrame<- filter(dfp,measure=="averageAccuracy")
 acc <- mutate( filteredFrame, avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
@@ -79,7 +108,6 @@ ggplot(newFrame, aes(x = timeValue, y = avgAcc)) +
 ```
 
 
-
 ```{r}
 
 dfp %>% 
@@ -89,6 +117,23 @@ dfp %>%
     geom_beeswarm(priority='density',cex=2, alpha=.6) +
   coord_flip() +
   xlab("") + ylab("")
+
+
+histogramFunc <- function(var) {
+data<- filter(dfp,measure == var) 
+  ggplot(data=data, aes(data$value)) + 
+    geom_histogram(stat="count") +
+    xlab(var) 
+
+    ggsave(paste("charts/",var,".pdf", sep=""), width = 7, height = 2, units = "in")
+}
+
+histogramFunc("age");
+histogramFunc("browser");
+histogramFunc("sex");
+histogramFunc("degree");
+histogramFunc("visExperience");
+
 
 ```
 
@@ -119,8 +164,25 @@ df %>%
 ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
 }
 
+
+vplot("S-task01")
+vplot("S-task02")
+vplot("S-task03")
+vplot("S-task04")
+vplot("S-task05")
+vplot("S-task06")
+vplot("S-task07")
+vplot("S-task08")
+vplot("S-task09")
+vplot("S-task10")
+vplot("S-task11")
+vplot("S-task12")
 vplot('S-task12A')
 vplot('S-task12B')
+vplot("S-task13")
+vplot("S-task14")
+vplot("S-task15")
+vplot("S-task16")
 
   
 ```

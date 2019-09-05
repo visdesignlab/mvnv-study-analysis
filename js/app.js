@@ -11,6 +11,85 @@ const fs = require("fs");
 let firestore = require("./firebaseApi.js");
 let db = firestore.connect();
 
+let followers = [
+  { id: 91169926, followers: 875.9531049269019 },
+  { id: 208312922, followers: 540 },
+  { id: 191257554, followers: 407 },
+  { id: 1085199426837188600, followers: 124 },
+  { id: 4058687172, followers: 21 },
+  { id: 201277609, followers: 509 },
+  { id: 81658145, followers: 1048 },
+  { id: 78865306, followers: 1130 },
+  { id: 16112517, followers: 1058.6447463109218 },
+  { id: 10414152, followers: 887.5503146097599 },
+  { id: 1314101, followers: 1128.083816360442 },
+  { id: 247943631, followers: 1194.128970165576 },
+  { id: 1873322353, followers: 917.0129159130782 },
+  { id: 30009655, followers: 141 },
+  { id: 19299318, followers: 610 },
+  { id: 2873695769, followers: 47 },
+  { id: 2596138699, followers: 311 },
+  { id: 40219508, followers: 552 },
+  { id: 270431596, followers: 12 },
+  { id: 2889052877, followers: 83 },
+  { id: 241173920, followers: 288 },
+  { id: 1055379531731796000, followers: 7 },
+  { id: 43953969, followers: 1028 },
+  { id: 84043985, followers: 940.6973594225974 },
+  { id: 16557883, followers: 867.5043748613535 },
+  { id: 6146692, followers: 1088.2704116657321 },
+  { id: 944216617268973600, followers: 47 },
+  { id: 19283433, followers: 558 },
+  { id: 1667081238, followers: 334 },
+  { id: 188046229, followers: 1001.3912552594699 },
+  { id: 1658560038, followers: 84 },
+  { id: 190726679, followers: 354 },
+  { id: 2924711485, followers: 204 },
+  { id: 318046158, followers: 965.9807228075383 },
+  { id: 395853499, followers: 554 },
+  { id: 85844572, followers: 130 },
+  { id: 18406335, followers: 1181.4016849958925 },
+  { id: 79908341, followers: 33 },
+  { id: 1325316703, followers: 889 },
+  { id: 2527017636, followers: 171 },
+  { id: 4893004803, followers: 317 },
+  { id: 446672281, followers: 38 },
+  { id: 92951551, followers: 579 },
+  { id: 158685605, followers: 204 },
+  { id: 1006945298, followers: 1113.360675327881 },
+  { id: 227831457, followers: 544 },
+  { id: 29700681, followers: 224 },
+  { id: 4597853354, followers: 911.3508800205839 },
+  { id: 1035496563743842300, followers: 23 },
+  { id: 14905766, followers: 879.9774423669157 },
+  { id: 824684769543741400, followers: 971.464782079251 },
+  { id: 49457800, followers: 340 },
+  { id: 711885257549680600, followers: 54 },
+  { id: 18325271, followers: 534 },
+  { id: 1556132462, followers: 909.1013619633616 },
+  { id: 18704160, followers: 974 },
+  { id: 1652270612, followers: 1122.9834643104346 },
+  { id: 31638712, followers: 216 },
+  { id: 9527212, followers: 946.5240684637761 },
+  { id: 136400506, followers: 1052.2786937013052 },
+  { id: 82890309, followers: 1038.0641979221682 },
+  { id: 44195788, followers: 896.4227855913206 },
+  { id: 3230388598, followers: 1137.7135906185335 },
+  { id: 36853217, followers: 1066.516300154543 },
+  { id: 403626099, followers: 264 },
+  { id: 15208867, followers: 1072 },
+  { id: 889998600, followers: 385 },
+  { id: 11493602, followers: 904.8672020539047 },
+  { id: 14148549, followers: 757 },
+  { id: 909697437694087200, followers: 92 },
+  { id: 22766040, followers: 238 },
+  { id: 21084111, followers: 965.461156482286 },
+  { id: 1068137549355515900, followers: 1134 },
+  { id: 743468486756868100, followers: 208 },
+  { id: 701375574, followers: 273 }
+];
+
+
 let taskTitles = {
   "S-task01": "NA with most tweets",
   "S-task02": "EU with least likes [Distractors]",
@@ -55,7 +134,7 @@ let taskTitles = {
 //function to filter out only valid participants;
 function isValidParticipant(d) {
   let rejected = [
-    { id: "5d00163d9f497e00191a609c", reason: "NOCODE", vis: "nodeLink"},
+    { id: "5d00163d9f497e00191a609c", reason: "NOCODE", vis: "nodeLink" },
     { id: "5d49f4637df55600014dda45", reason: "NOCODE", vis: "nodeLink" },
     { id: "5c12d0d303f44c00017441e3", reason: "NOCODE", vis: "nodeLink" },
     { id: "5c5629c79fcbc40001dc55cc", reason: "NOCODE", vis: "nodeLink" },
@@ -65,34 +144,38 @@ function isValidParticipant(d) {
     { id: "5d4c50d3ff031f001883cf4f", reason: "NOCODE", vis: "nodeLink" },
     { id: "5b74656b9750540001f26fde", reason: "NOCODE", vis: "nodeLink" },
 
-    { id: "5d63dc6c163b260001acc8e6", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5b2486c6007d870001c795a4", reason: "LowEffort", vis: "adjMatrix"},
-    { id: "5c582efbe66e510001eedfa8", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5c5043028003d4000107b97a", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5d017f2466581d001a9059dc", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5d36060877dd7c00197477e7", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5d641c307c4e9c0019d604d8", reason: "LowEffort", vis: "adjMatrix"},
-    { id: "5c1d19c810677f0001d9d56c", reason: "NOCODE", vis: "adjMatrix"},
-    { id: "5ac393cf0527ba0001c2043c", reason: "LowEffort", vis: "adjMatrix"},
-    { id: "5c6cf98a34d8f80001ddf31d", reason: "NOCODE", vis: "adjMatrix"}];
-
+    { id: "5d63dc6c163b260001acc8e6", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5b2486c6007d870001c795a4", reason: "LowEffort", vis: "adjMatrix" },
+    { id: "5c582efbe66e510001eedfa8", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5c5043028003d4000107b97a", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5d017f2466581d001a9059dc", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5d36060877dd7c00197477e7", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5d641c307c4e9c0019d604d8", reason: "LowEffort", vis: "adjMatrix" },
+    { id: "5c1d19c810677f0001d9d56c", reason: "NOCODE", vis: "adjMatrix" },
+    { id: "5ac393cf0527ba0001c2043c", reason: "LowEffort", vis: "adjMatrix" },
+    { id: "5c6cf98a34d8f80001ddf31d", reason: "NOCODE", vis: "adjMatrix" }
+  ];
 
   let invalid = [
-    { id: "5d54d0b14a1521001850610a", reason: "TIMED OUT", vis: "nodeLink"},
-    { id: "5caa534a19731a00190bb935", reason: "TIMED OUT", vis: "adjMatrix"},
-    { id: "5d5c49acdd90af0001f13f7d", reason: "TIMED OUT", vis: "adjMatrix"},
-    { id: "5b3d79ec4915d00001828240", reason: "RETURNED", vis: "adjMatrix"},
-    { id: "5bfaed16e2562a0001ce0ff4", reason: "TIMED OUT", vis: "nodeLink"},  
-    { id: "5d645bf6912c630018e269e3", reason: "TIMED OUT", vis: "nodeLink"}   
-  
-  ]
+    { id: "5d54d0b14a1521001850610a", reason: "TIMED OUT", vis: "nodeLink" },
+    { id: "5caa534a19731a00190bb935", reason: "TIMED OUT", vis: "adjMatrix" },
+    { id: "5d5c49acdd90af0001f13f7d", reason: "TIMED OUT", vis: "adjMatrix" },
+    { id: "5b3d79ec4915d00001828240", reason: "RETURNED", vis: "adjMatrix" },
+    { id: "5bfaed16e2562a0001ce0ff4", reason: "TIMED OUT", vis: "nodeLink" },
+    { id: "5d645bf6912c630018e269e3", reason: "TIMED OUT", vis: "nodeLink" }
+  ];
 
-  let wasRejected = rejected.find(r=>r.id === d.id);
+  let wasRejected = rejected.find(r => r.id === d.id);
 
-  let invalidParticipant = invalid.find(r=>r.id === d.id);
+  let invalidParticipant = invalid.find(r => r.id === d.id);
 
-
-  return d.data.mode === "study" && d.id[0] === "5" && d.data.demographics && !wasRejected && !invalidParticipant;
+  return (
+    d.data.mode === "study" &&
+    d.id[0] === "5" &&
+    d.data.demographics &&
+    !wasRejected &&
+    !invalidParticipant
+  );
 }
 
 async function fetchProvenance() {
@@ -183,7 +266,7 @@ async function fetchData() {
     });
 
     let data = JSON.stringify(allData);
-    fs.writeFileSync('results/study/JSON/' + collectionName + ".json", data);
+    fs.writeFileSync("results/study/JSON/" + collectionName + ".json", data);
 
     console.log("saved", collectionName);
   });
@@ -224,7 +307,7 @@ async function processData() {
         let acc = computeAccuracy(key, answer); // col for more nuanced score
         // console.log('user id', p.data[key].workerID)
         if (key === "S-task12") {
-          answer.accuracy = acc.scoreCluster * 0.5 + acc.scoreAverage * 0.5;
+          answer.accuracy = acc.scoreCluster*acc.scoreAverage;
           answer.scoreCluster = acc.scoreCluster;
           answer.scoreAverage = acc.scoreAverage;
         } else {
@@ -278,7 +361,9 @@ async function processData() {
 }
 
 function exportResults() {
-  let rawdata = fs.readFileSync("results/study/JSON/provenance_processed_results.json");
+  let rawdata = fs.readFileSync(
+    "results/study/JSON/provenance_processed_results.json"
+  );
   let results = JSON.parse(rawdata);
 
   exportCSV(results);
@@ -369,7 +454,9 @@ async function exportTidy(results) {
   const createCsvWriter = require("csv-writer").createObjectCsvWriter;
   let csvWriter;
 
-  let rawdata = fs.readFileSync("results/study/JSON/provenance_study_participants.json");
+  let rawdata = fs.readFileSync(
+    "results/study/JSON/provenance_study_participants.json"
+  );
   let participants = JSON.parse(rawdata);
 
   let rHeaders, rRows;
@@ -408,12 +495,7 @@ async function exportTidy(results) {
         participant.data.demographics.vis_experience
       )
     );
-    rRows.push(
-      createTidyRow(
-        "minutesOnTask",
-        participant.data.minutesOnTask
-      )
-    );
+    rRows.push(createTidyRow("minutesOnTask", participant.data.minutesOnTask));
     rRows.push(
       createTidyRow("averageAccuracy", participant.data.averageAccuracy)
     );
@@ -520,11 +602,14 @@ function computeAccuracy(taskID, answerObj) {
   //dictionary of functions that compute the accuracy for each task; Each function
   // returns a score between 0 and 1
 
-  let second = 0.8; //credit given for second best answer;
-  let third = 0.6; //credit given for second best answer;
+  let second = 0.5; //credit given for second best answer;
+  // let third = 0.3; //credit given for second best answer;
 
   let answers = {
     "S-task01": function(answer) {
+
+      //  "S-task01": "NA with most tweets",
+
       if (answer.ids.includes("18704160")) {
         //T.J - 5151 tweets
         return 1;
@@ -535,13 +620,15 @@ function computeAccuracy(taskID, answerObj) {
         return second;
       }
 
-      if (answer.nodes.includes("44195788")) {
-        //Carlos - 4787 tweets
-        return third;
-      }
+      // if (answer.nodes.includes("44195788")) {
+      //   //Carlos - 4787 tweets
+      //   return third;
+      // }
       return 0;
     },
     "S-task02": function(answer) {
+      //  "S-task02": "EU with least likes [Distractors]",
+
       if (answer.ids.includes("909697437694087200")) {
         //Evis2018
         return 1;
@@ -558,6 +645,8 @@ function computeAccuracy(taskID, answerObj) {
       return 0;
     },
     "S-task03": function(answer) {
+      //  "S-task03": "Well connected with few likes/tweets",
+
       //Jeffrey or Alex
       let correctAnswers = ["247943631", "81658145", "208312922", "40219508"];
       if (correctAnswers.find(a => a == answer.ids)) {
@@ -571,11 +660,15 @@ function computeAccuracy(taskID, answerObj) {
       return 0;
     },
     "S-task04": function(answer) {
+      //   "S-task04": "Lane's EU neighbors",
+
       // 'AA','Noeska', 'Till', 'Joe'
       let correctAnswers = ["191257554", "40219508", "36853217", "15208867"];
       return scoreList(correctAnswers, answer);
     },
     "S-task05": function(answer) {
+      //  "S-task05": "giCentre's NA neighbors [Distractors]",
+
       //Robert 16112517
       let score = answer.ids
         .split(";")
@@ -584,6 +677,8 @@ function computeAccuracy(taskID, answerObj) {
       return Math.max(0, score);
     },
     "S-task06": function(answer) {
+      //  "S-task06": "Most mentions with Jeffrey",
+
       //Robert 16112517
       let score = answer.ids
         .split(";")
@@ -591,12 +686,14 @@ function computeAccuracy(taskID, answerObj) {
       return Math.max(0, score);
     },
     "S-task07": function(answer) {
+      //   "S-task07": "Alex more EU or NA interactions? Most mentions with Alex. ",
+
       let score = 0;
       if (answer.radio === "European") {
         score = score + 0.5; //score for getting the type right
       }
 
-      if (answer.ids.includes("395853499")) {
+      if (answer.ids.includes("395853499")) { 
         //Marc
         score = score + 0.5;
       }
@@ -604,6 +701,8 @@ function computeAccuracy(taskID, answerObj) {
       return score;
     },
     "S-task08": function(answer) {
+      //"S-task08": "Most followers among common neighbors of Jeffrey and Robert",
+
       if (answer.ids === "78865306") {
         //Chris
         return 1;
@@ -614,24 +713,28 @@ function computeAccuracy(taskID, answerObj) {
         return second;
       }
 
-      if (answer.ids === "16112517") {
-        //Robert
-        return third;
-      }
+      // if (answer.ids === "16112517") {
+      //   //Robert
+      //   return third;
+      // }
       return 0;
     },
     "S-task09": function(answer) {
+      //   "S-task09": "Most common/how many interactions between Evis19 and Jon",
+
       let score = 0;
       if (answer.radio === "Mentions") {
         score = score + 0.5; //score for getting the type right
       }
-      if (answer.value == 4) {
+      if (answer.value == 4 && answer.radio === "Mentions") {
         score = score + 0.5; //score for getting the weight right
       }
 
       return score;
     },
     "S-task10": function(answer) {
+      //  "S-task10": "Noeska's neighbors with more friends than followers",
+
       // 'Lonni','Thomas', 'Anna', 'Klaus'
       let correctAnswers = [
         "2924711485",
@@ -642,11 +745,15 @@ function computeAccuracy(taskID, answerObj) {
       return scoreList(correctAnswers, answer);
     },
     "S-task11": function(answer) {
+      //   "S-task11": "Thomas' neighbors with more friends than followers [small]",
+
       //  'Anna'
       let correctAnswers = ["446672281"];
       return scoreList(correctAnswers, answer);
     },
     "S-task12": function(answer) {
+      //  "S-task12": "Alex cluster / average number of followers.",
+
       //
       //Jason, Noeska, Alex,Robert,
       let correctAnswers = [
@@ -678,54 +785,70 @@ function computeAccuracy(taskID, answerObj) {
         }
 
         //otherwise, -1/9 for any incorrect answer;
-        return acc; //- 1/(correctAnswers.length + extendedAnswers.length);
+        return acc - 1 / correctAnswers.length;; //- 1/(correctAnswers.length + extendedAnswers.length);
       }, 0);
 
       // console.log('user scored', score, answer.nodes)
       scoreCluster = Math.max(0, scoreCluster);
 
-      let validNodes = ids.reduce((acc, cValue) => {
-        let correctNode =
-          correctAnswers.find(a => a.id == cValue) ||
-          extendedAnswers.find(a => a.id == cValue);
-        if (correctNode) {
-          return acc.concat(correctNode);
-        }
-        //otherwise, return;
-        return acc;
-      }, []);
+      // let validNodes = ids.reduce((acc, cValue) => {
+      //   let correctNode =
+      //     correctAnswers.find(a => a.id == cValue) ||
+      //     extendedAnswers.find(a => a.id == cValue);
+      //   if (correctNode) {
+      //     return acc.concat(correctNode);
+      //   }
+      //   //otherwise, return;
+      //   return acc;
+      // }, []);
+
+      let validNodes = ids.map(id=>{
+        
+        // console.log('looking for id', id); 
+        return followers.find(f=>{
+          // console.log(f); 
+          return f.id == id})
+      })
+
+      // console.log(validNodes)
 
       // console.log('validNodes are ', validNodes)
 
       let meanFollowers = average(validNodes.map(n => n.followers));
-      let stdDev = standardDeviation(validNodes.map(n => n.followers));
+      let stdDev = standardDeviation(validNodes.map(n => n.followers))/2;
+      // let stdDev = Math.max(followers.map(n=>n.followers));
 
+      let distanceToAnswer = Math.abs(answer.value - meanFollowers)
+      let scoreAverage = distanceToAnswer > stdDev ? 0 : 1 - distanceToAnswer/stdDev;
+
+      // console.log('userSelectedNodes', validNodes)
       // console.log('meanFollowers is ', meanFollowers)
       // console.log('stdDev is ', stdDev)
+      // console.log('user answer / score is', answer.value, scoreAverage)
 
-      let scoreAverage =
-        answer.value >= meanFollowers - stdDev &&
-        answer.value <= meanFollowers + stdDev
-          ? 1
-          : 0;
-      // console.log('score is ', score)
 
       return { scoreCluster, scoreAverage };
     },
     "S-task13": function(answer) {
-      let score = 0;
-      if (answer.radio === "EU") {
-        score = score + 0.5; //score for getting the type right
-      }
+      //   "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
 
+      let score = 0;
+ 
       if (answer.ids.includes("191257554")) {
         //AA
         score = score + 0.5;
       }
 
+      if (answer.radio === "EU" && answer.ids.includes("191257554")) {
+        score = score + 0.5; //score for getting the type right
+      }
+
+
       return score;
     },
     "S-task14": function(answer) {
+      //   "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
+
       let score = 0;
       if (answer.radio === "EU") {
         score = score + 0.5; //score for getting the type right
@@ -739,10 +862,14 @@ function computeAccuracy(taskID, answerObj) {
       return score;
     },
     "S-task15": function(answer) {
+      //  "S-task15": "Oldest account of all NA two interactions from Sereno",
+
       //Robert 16112517
       return answer.ids.includes("16112517") ? 1 : 0;
     },
     "S-task16": function(answer) {
+      //  "S-task16": "Free Explore"
+
       return 1;
     }
   };
@@ -809,10 +936,10 @@ function processProvenance() {
   provenance.map(participant => {
     participantEventArray = [];
 
-    let r = results.find(r=>r.data.workerID === participant.id)
+    let r = results.find(r => r.data.workerID === participant.id);
     r.data.browsedAwayTime = 0;
 
-    let p = study_participants.find(p=>p.id === participant.id);
+    let p = study_participants.find(p => p.id === participant.id);
 
     participant.data.provGraphs.map(action => {
       //see if this a single event, or the start/end of a long event;
@@ -827,17 +954,15 @@ function processProvenance() {
           participantEventArray.push(eventObj);
         }
       } else {
-
-
         //at the start of an event;
         if (event && event.start.trim() == action.event.trim()) {
           let eventObj = JSON.parse(JSON.stringify(eventTypes[action.event]));
           eventObj.startTime = action.time;
           eventObj.task = action.task;
 
-          //if this event started after the last task, ignore it; 
+          //if this event started after the last task, ignore it;
           // if (Date.parse(eventObj.startTime)< Date.parse(r.data['S-task16'].startTime)){
-            participantEventArray.push(eventObj);
+          participantEventArray.push(eventObj);
           // }
         } else {
           //at the end of an event;
@@ -856,20 +981,35 @@ function processProvenance() {
             // console.log("could not find start event for ", action.event, action.task);
           } else {
             startObj.endTime = action.time;
-            let minutesBrowsedAway = (Date.parse(startObj.endTime) - Date.parse(startObj.startTime)) / 1000 / 60
+            let minutesBrowsedAway =
+              (Date.parse(startObj.endTime) - Date.parse(startObj.startTime)) /
+              1000 /
+              60;
 
+           if (
+              startObj.label === "browse away" &&
+              startObj.task &&
+              startObj.task[0] === "S"
+            ) {
+              //only adjust time for browse away events during task completions
+              if (
+                Date.parse(startObj.startTime) <
+                Date.parse(r.data["S-task16"].endTime)
+              ) {
+                if (minutesBrowsedAway < 50) {
 
-            if (startObj.label === 'browse away' && minutesBrowsedAway <50){
-              r.data.browsedAwayTime = r.data.browsedAwayTime + minutesBrowsedAway;
-            }
+                  r.data.browsedAwayTime =
+                  r.data.browsedAwayTime + minutesBrowsedAway;
 
-            if (startObj.label === 'browse away' && startObj.task && startObj.task[0] === 'S'){
-                //only adjust time for browse away events during task completions
-              if (Date.parse(startObj.startTime) < Date.parse(r.data['S-task16'].endTime)){
-                if (minutesBrowsedAway <50){ //catch case where browse away is logged at several hours;
-                  r.data[startObj.task].minutesOnTask = Math.round((r.data[startObj.task].minutesOnTask - minutesBrowsedAway)*10)/10
-                } 
-              } 
+                  //catch case where browse away is logged at several hours;
+                  r.data[startObj.task].minutesOnTask =
+                    Math.round(
+                      (r.data[startObj.task].minutesOnTask -
+                        minutesBrowsedAway) *
+                        10
+                    ) / 10;
+                }
+              }
             }
           }
         }
@@ -877,7 +1017,8 @@ function processProvenance() {
     });
 
     //update total on study time
-    r.data.overallMinutesOnTask = r.data.overallMinutesToComplete - r.data.browsedAwayTime;
+    r.data.overallMinutesOnTask =
+      r.data.overallMinutesToComplete - r.data.browsedAwayTime;
     //update total on participant_info
     p.data.minutesOnTask = r.data.overallMinutesOnTask;
 
@@ -886,16 +1027,24 @@ function processProvenance() {
   });
 
   // console.log(events)
-  fs.writeFileSync("results/study/JSON/provenance_events.json", JSON.stringify(events));
+  fs.writeFileSync(
+    "results/study/JSON/provenance_events.json",
+    JSON.stringify(events)
+  );
   console.log("exported provenance_events.json");
 
-
   // console.log(events)
-  fs.writeFileSync("results/study/JSON/provenance_processed_results.json", JSON.stringify(results));
+  fs.writeFileSync(
+    "results/study/JSON/provenance_processed_results.json",
+    JSON.stringify(results)
+  );
   console.log("exported provenance_processed_results.json");
 
   // console.log(events)
-  fs.writeFileSync("results/study/JSON/provenance_study_participants.json", JSON.stringify(study_participants));
+  fs.writeFileSync(
+    "results/study/JSON/provenance_study_participants.json",
+    JSON.stringify(study_participants)
+  );
   console.log("exported provenance_study_participants.json");
 }
 
@@ -949,3 +1098,4 @@ function setNested(obj, path, value) {
     // console.log(obj,property,obj[property])
   }
 }
+
