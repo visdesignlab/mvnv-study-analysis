@@ -3,6 +3,8 @@ title: "carolinaAnalysis"
 author: '@carolinanobre'
 date: "9/3/2019"
 output: html_document
+fig_width: 12 
+fig_height: 4 
 ---
 
 ## Setup
@@ -84,7 +86,8 @@ ggsave(paste("charts/time_vs_accuracy_horizontal.pdf", sep=""), width = 35, heig
 
 ```{r}
 filteredFrame<- filter(dfp,measure=="visExperience")
-accuracy <- mutate(filteredFrame, ageValue = as.numeric( as.character(value)) ) 
+experience <- mutate(filteredFrame, visExperience = ifelse(as.numeric( as.character(value)) <3, "low",
+                                     ifelse(as.numeric( as.character(value))<6, "medium", "high"))) 
 
 filteredFrame<- filter(dfp,measure=="averageAccuracy")
 acc <- mutate( filteredFrame, avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
@@ -95,16 +98,29 @@ time <- mutate( filteredFrame, timeValue = round(as.numeric(as.character(value))
 visType <- unique(select(df,"prolificId","visType"))
 
 
-newFrame <- merge(time,acc, by="prolificId")
+newFrame <- merge(experience,acc, by="prolificId")
 
 newFrame <- merge(newFrame,visType, by="prolificId")
 
+newFrame <- merge(newFrame,filter(dfp,measure=="sex"), by="prolificId")
 
-ggplot(newFrame, aes(x = timeValue, y = avgAcc)) +
-    geom_point(aes(color=visType))+
-    facet_grid(visType ~ .) +
-    xlab("Time") +
-    ylab("Average Accuracy")
+
+
+#ggplot(newFrame, aes(x = timeValue, y = avgAcc)) +
+#    geom_point(aes(color=visType))+
+#    facet_grid(visType ~ .) +
+#    xlab("Time") +
+#    ylab("Average Accuracy")
+
+
+ggplot(newFrame, aes(x = visType, y = avgAcc)) +
+    geom_point(aes(color=visType,alpha=0.5,size=4))+
+    facet_grid(value ~ visExperience) +
+  stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=1) +
+    xlab("vis experience") +
+    ylab("mean accuracy")
+
+
 ```
 
 

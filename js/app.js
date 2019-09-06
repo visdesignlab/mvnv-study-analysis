@@ -321,11 +321,11 @@ async function processData() {
       p.data[key].minutesOnTask = p.data[key].minutesToComplete; //will update this field as necessary when processing provenance for browsed away
     });
 
-    //compute average accuracy for this participant;
+    //compute average accuracy for this participant,  disregard task16 since accuracy for that is always 1;
     p.data.averageAccuracy =
       Object.keys(p.data).reduce((acc, key) => {
-        return acc + p.data[key].answer.accuracy;
-      }, 0) / Object.keys(p.data).length;
+        return key === 'S-task16' ?  acc : acc + p.data[key].answer.accuracy;
+      }, 0) / (Object.keys(p.data).length-1);
 
     // console.log("average accuracy for ", p.id, " is ", p.data.averageAccuracy);
 
@@ -772,7 +772,7 @@ function computeAccuracy(taskID, answerObj) {
         { id: "270431596", followers: 12 } //Klaus
       ];
 
-      //1/4 points for each correct answer -1/9 point for each incorrect answer;
+      //1/4 points for each correct answer -1/4 point for each incorrect answer;
       let ids = answer.ids.split(";").map(a => a.trim());
 
       let scoreCluster = ids.reduce((acc, cValue) => {
@@ -788,7 +788,6 @@ function computeAccuracy(taskID, answerObj) {
         return acc - 1 / correctAnswers.length;; //- 1/(correctAnswers.length + extendedAnswers.length);
       }, 0);
 
-      // console.log('user scored', score, answer.nodes)
       scoreCluster = Math.max(0, scoreCluster);
 
       // let validNodes = ids.reduce((acc, cValue) => {
@@ -802,30 +801,13 @@ function computeAccuracy(taskID, answerObj) {
       //   return acc;
       // }, []);
 
-      let validNodes = ids.map(id=>{
-        
-        // console.log('looking for id', id); 
-        return followers.find(f=>{
-          // console.log(f); 
-          return f.id == id})
-      })
-
-      // console.log(validNodes)
-
-      // console.log('validNodes are ', validNodes)
+      let validNodes = ids.map(id=>followers.find(f=>f.id == id))
 
       let meanFollowers = average(validNodes.map(n => n.followers));
-      let stdDev = standardDeviation(validNodes.map(n => n.followers))/2;
-      // let stdDev = Math.max(followers.map(n=>n.followers));
+      let tolerance = standardDeviation(validNodes.map(n => n.followers));
 
       let distanceToAnswer = Math.abs(answer.value - meanFollowers)
-      let scoreAverage = distanceToAnswer > stdDev ? 0 : 1 - distanceToAnswer/stdDev;
-
-      // console.log('userSelectedNodes', validNodes)
-      // console.log('meanFollowers is ', meanFollowers)
-      // console.log('stdDev is ', stdDev)
-      // console.log('user answer / score is', answer.value, scoreAverage)
-
+      let scoreAverage = distanceToAnswer > tolerance ? 0 : 1 - distanceToAnswer/tolerance;
 
       return { scoreCluster, scoreAverage };
     },
@@ -850,13 +832,13 @@ function computeAccuracy(taskID, answerObj) {
       //   "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
 
       let score = 0;
-      if (answer.radio === "EU") {
-        score = score + 0.5; //score for getting the type right
-      }
 
       if (answer.ids.includes("1085199426837188600")) {
         //EVis19
         score = score + 0.5;
+      }
+      if (answer.radio === "EU" && answer.ids.includes("1085199426837188600")) {
+        score = score + 0.5; //score for getting the type right
       }
 
       return score;
