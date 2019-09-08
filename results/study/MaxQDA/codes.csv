@@ -1,0 +1,99 @@
+Code,Segment
+no-insight,"there is no ""likes"""
+no-insight,If there is anything surprising or particularly interesting i don't seem to be able to find it.
+topology-attribute-insight,Teo has one of the most followers but very few interatctions.
+attribute-insight\incorrect-attribute-insight,I do see that asia has less accounts than institutions in this data presented
+topology-insight,Jeffery and Robert do a lot of interacting with everyone including between themself.
+topology-insight,There are a lot of accounts whom rarely ever interact with anything.
+topology-insight,Steven Evan Jo and Till have only ever had 1 interaction and they have all been with Lane.
+general-comment,I found this network to be fairly interesting and how it works to be easy to learn overall.
+topology-attribute-insight,Jeffrey has very few tweets but the most followers and interactions with a lot of accounts.
+question-insight,I also thought it was interesting that a person could have more followers than tweets. How's that possible? What are they doing to attract people?
+attribute-insight\ranked-attribute-insight,MViews has the 2nd youngest account age however it has the 4th largest follower count even though it also has the least number of tweets
+attribute-insight\ranked-attribute-insight,Jeffrey has very few tweets but the most followers and interactions with a lot of accounts.
+attribute-insight\ranked-attribute-insight,Teo has one of the most followers but very few interatctions.
+attribute-insight\overview-attribute-insight,Majority of accounts reside from either Europe or North America.
+attribute-insight\overview-attribute-insight,Most of the 'subjects' are people from either North America or Europe and overall they most 'subjects' have a large following.
+attribute-insight\ranked-attribute-insight,1. that some nodes with the most followers actually have much fewer tweets than those with far fewer followers
+attribute-insight\across-node-attribute-comparison,institutions have much fewer tweets in general than a persons account
+attribute-insight\within-node-attribute-comparison,I also thought it was interesting that a person could have more followers than tweets. How's that possible?
+attribute-insight\across-node-attribute-comparison,1. that some nodes with the most followers actually have much fewer tweets than those with far fewer followers
+attribute-insight\overview-attribute-insight,I see that the activity in the EU is broader and I think it is more real by the average that they show of tweets against the number of followers and how I see the interactions on the sheet...In the US it looks like a pattern.
+topology-attribute-insight,The reported cluster has as many EU as NA members
+attribute-insight\overview-attribute-insight,NA members tend to have more followers EU members make up most of the lowest-follower users--still the two continents seem to have a pretty even spread among account age.
+attribute-insight\overview-attribute-insight,nstitutions have a better chance of having a lot of followers despite a short account life or tweet quantity.
+attribute-insight\overview-attribute-insight,Institutions seem to have a lot of followers in comparison to how many tweets they have
+attribute-insight\overview-attribute-insight,institutions have much fewer tweets in general than a persons account
+attribute-insight\single-attribute-insight,It doesn't seem like there's a large amount of users of twitter from Asia on this chart.
+attribute-insight\multiple-attribute-insight,I also thought it was interesting that a person could have more followers than tweets. How's that possible?
+attribute-insight\single-attribute-insight,Teo has one of the most followers but very few interatctions.
+attribute-insight\multiple-attribute-insight,There are outliers as well with some accounts having many follows yet little tweets and many tweets with little followers.
+attribute-insight\single-attribute-insight,There are only two person from South America.
+attribute-insight\within-node-attribute-comparison,There are outliers as well with some accounts having many follows yet little tweets and many tweets with little followers.
+attribute-insight\multiple-attribute-insight,Jeffrey has very few tweets but the most followers and interactions with a lot of accounts.
+attribute-insight\single-attribute-insight,Majority of accounts reside from either Europe or North America.
+attribute-insight\multiple-attribute-insight,MViews has the 2nd youngest account age however it has the 4th largest follower count even though it also has the least number of tweets
+attribute-insight\multiple-attribute-insight,1. that some nodes with the most followers actually have much fewer tweets than those with far fewer followers
+attribute-insight\single-attribute-insight,Most of the 'subjects' are people from either North America or Europe and overall they most 'subjects' have a large following.
+attribute-insight\multiple-attribute-insight,Institutions seem to have a lot of followers in comparison to how many tweets they have
+attribute-insight\within-node-attribute-comparison,Institutions seem to have a lot of followers in comparison to how many tweets they have
+attribute-insight\within-node-attribute-comparison,nstitutions have a better chance of having a lot of followers despite a short account life or tweet quantity.
+attribute-insight\multiple-attribute-insight,nstitutions have a better chance of having a lot of followers despite a short account life or tweet quantity.
+attribute-insight\multiple-attribute-insight,NA members tend to have more followers EU members make up most of the lowest-follower users--still the two continents seem to have a pretty even spread among account age.
+attribute-insight\multiple-attribute-insight,More often than not the more popular Person's have a lot of tweets or account age
+attribute-insight\within-node-attribute-comparison,More often than not the more popular Person's have a lot of tweets or account age
+topology-attribute-insight,Interesting that people with only a few interactions also got very high follower number.
+topology-attribute-insight,Also that more interactions in EU than NA
+meaningless-insight,EU is on the bottom of the follower number list
+meaningless-insight,Also that more interactions in EU than NA
+attribute-insight\overview-attribute-insight,Tweet number is low for new accounts but otherwise not related to any other attribute.
+general-comment,cluster is a very interesting way to sort. seeing all the people that interact with each at the same time seems to be very useful.
+no-insight,I cannot see anything out of the ordinary!
+attribute-insight\single-attribute-insight,Few people from South America
+attribute-insight\single-attribute-insight,Few institutions
+attribute-insight\single-attribute-insight,Most people from Europe
+attribute-insight\overview-attribute-insight,People older on the network not always have biggest number of followers and tweets
+attribute-insight\multiple-attribute-insight,People older on the network not always have biggest number of followers and tweets
+topology-insight,Robert has the most interactions
+topology-attribute-insight,Jeffrey also has  a lot of intereactions several followers but few tweets
+attribute-insight\within-node-attribute-comparison,Jeffrey also has  a lot of intereactions several followers but few tweets
+no-insight,N/A
+attribute-insight\overview-attribute-insight,NA has more people with longer account ages than Europe.
+attribute-insight\multiple-attribute-insight,NA has more people with longer account ages than Europe.
+topology-attribute-insight,In terms of cluster it seems to be concentrated with regards to Europeans.
+attribute-insight\single-attribute-insight,In terms of cluster it seems to be concentrated with regards to Europeans.
+topology-attribute-insight,The Institution with the most tweets has not interacted with many other people.
+attribute-insight\ranked-attribute-insight,The Institution with the most tweets has not interacted with many other people.
+attribute-insight\multiple-attribute-insight,The Institution with the most tweets has not interacted with many other people.
+topology-attribute-insight,I find it interesting that Jeffrey has the most followers and a decent number of neighbors at 27
+attribute-insight\single-attribute-insight,I find it interesting that Jeffrey has the most followers and a decent number of neighbors at 27
+attribute-insight\ranked-attribute-insight,I find it interesting that Jeffrey has the most followers and a decent number of neighbors at 27
+topology-attribute-insight,I also think it's interesting his neighbors are primarily North American and European and mostly persons and not institutions
+attribute-insight\across-node-attribute-comparison,I also think it's interesting his neighbors are primarily North American and European and mostly persons and not institutions
+attribute-insight\multiple-attribute-insight,I also think it's interesting his neighbors are primarily North American and European and mostly persons and not institutions
+question-insight,This makes me wonder of persons in developed countries have more access to Twitter and if this is why Jeffrey's followers consist of persons from that region.
+topology-attribute-insight,This makes me wonder of persons in developed countries have more access to Twitter and if this is why Jeffrey's followers consist of persons from that region.
+topology-insight,Jack has 5 interaction with Rob
+topology-insight\edge-count-insight,Jack has 5 interaction with Rob
+attribute-insight\ranked-attribute-insight,Lynn has the oldest account
+attribute-insight\single-attribute-insight,Lynn has the oldest account
+topology-attribute-insight,Alex has one neighbour from South Africa
+attribute-insight\single-attribute-insight,Alex has one neighbour from South Africa
+attribute-insight\overview-attribute-insight,Old account ages
+attribute-insight\single-attribute-insight,Old account ages
+attribute-insight\single-attribute-insight,There are definately more Europeans than South Americans North Americans and Australians.
+attribute-insight\overview-attribute-insight,There are definately more Europeans than South Americans North Americans and Australians.
+attribute-insight\within-node-attribute-comparison,Most people have 2x amount of Tweets to Followers
+attribute-insight\overview-attribute-insight,Most people have 2x amount of Tweets to Followers
+attribute-insight\multiple-attribute-insight,Most people have 2x amount of Tweets to Followers
+meaningless-insight,The most used feature are interactions.
+topology-attribute-insight,There is only one user from South America being one of the most active members with few interactions.
+attribute-insight\overview-attribute-insight,The accounts that have the most interactions tend to have the oldest accounts
+topology-attribute-insight,The accounts that have the most interactions tend to have the oldest accounts
+attribute-insight\ranked-attribute-insight,The accounts that have the most interactions tend to have the oldest accounts
+attribute-insight\single-attribute-insight,The accounts that have the most interactions tend to have the oldest accounts
+question-insight,It's interesting how there are non-person twitter accounts. Are these accounts bots?
+attribute-insight\single-attribute-insight,All of the non-person accounts are listed as institutions
+attribute-insight\single-attribute-insight,It's also interesting how there is only one South American account within this set of data.
+no-insight,Unfortunetely I did not find anything suprising me. But generally all of this stuff is quite interesting.
+topology-insight,31 poeple interacted with only one other person

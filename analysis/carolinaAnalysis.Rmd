@@ -16,6 +16,8 @@ library(pwr)
 library(grid)
 library(gtable)
 
+library(ggthemes)
+
 library(ggbeeswarm)
 
 library(tidybayes)
@@ -29,6 +31,52 @@ theme_set(theme_tidybayes() + panel_border() + background_grid())
 #df <- read.csv("../results/pilot/CSV/TidyR.csv")
 df <- read.csv("../results/study/CSV/TidyR.csv")
 dfp <- read.csv("../results/study/CSV/participantInfoTidyR.csv")
+
+dfc <- read.csv("../results/study/MaxQDA/codesTidy.csv")
+```
+
+
+
+```{r}
+
+data <- 
+  dfc %>%
+  group_by(Code) %>%
+  count()
+
+data <-mutate(data,type=ifelse(grepl("topology-attribute", Code), "topology-attribute",
+                               ifelse(grepl("topology", Code), "topology",
+                                      ifelse(grepl("attribute", Code), "attribute", "Other")))) 
+
+
+#data$n
+
+data$Code <- factor(data$Code, levels = data$Code[order(-data$n)])
+
+ggplot(data=data, aes(x=Code, y=n, fill=type)) +
+  geom_bar(stat="identity")+
+    #theme_tufte()+
+  theme(axis.text.x=element_text(angle = -90, hjust = 0))+
+  ylab("Code Frequency")
+  
+
+
+
+histogramFunc <- function() {
+#data<- filter(dfp,measure == var) 
+  
+  #dfc$Code <- factor(dfc$Code,levels='a','b','c')
+
+  ggplot(data=data, aes(data$n)) + 
+    geom_histogram() +
+    theme(axis.text.x=element_text(angle = -90, hjust = 0))+
+    xlab("Code") 
+
+}
+
+#histogramFunc()
+    
+
 ```
 
 
@@ -85,24 +133,25 @@ ggsave(paste("charts/time_vs_accuracy_horizontal.pdf", sep=""), width = 35, heig
 
 
 ```{r}
-filteredFrame<- filter(dfp,measure=="visExperience")
-experience <- mutate(filteredFrame, visExperience = ifelse(as.numeric( as.character(value)) <3, "low",
-                                     ifelse(as.numeric( as.character(value))<6, "medium", "high"))) 
 
-filteredFrame<- filter(dfp,measure=="averageAccuracy")
-acc <- mutate( filteredFrame, avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
+experience <- mutate(filter(dfp,measure=="visExperience"), visExperience = ifelse(as.numeric( as.character(value)) <3, "low (1-2)",
+                                     ifelse(as.numeric( as.character(value))<6, "medium (3-5)", "high (6-7)"))) 
+acc <- mutate( filter(dfp,measure=="averageAccuracy"), avgAcc = round(as.numeric(as.character(value)),digits=2) ) 
 
-filteredFrame<- filter(dfp,measure=="minutesOnTask")
-time <- mutate( filteredFrame, timeValue = round(as.numeric(as.character(value)),digits=2) ) 
+time <- mutate( filter(dfp,measure=="minutesOnTask"), timeValue = round(as.numeric(as.character(value)),digits=2) ) 
 
-visType <- unique(select(df,"prolificId","visType"))
+vis_type <- unique(select(df,"prolificId","visType"))
 
 
 newFrame <- merge(experience,acc, by="prolificId")
 
-newFrame <- merge(newFrame,visType, by="prolificId")
+newFrame <- merge(newFrame,vis_type, by="prolificId")
 
-newFrame <- merge(newFrame,filter(dfp,measure=="sex"), by="prolificId")
+newFrame <- merge(newFrame,time, by="prolificId")
+
+
+newFrame$visExperience <- factor(newFrame$visExperience, levels= c("low (1-2)","medium (3-5)","high (6-7)"))
+
 
 
 
@@ -114,12 +163,23 @@ newFrame <- merge(newFrame,filter(dfp,measure=="sex"), by="prolificId")
 
 
 ggplot(newFrame, aes(x = visType, y = avgAcc)) +
-    geom_point(aes(color=visType,alpha=0.5,size=4))+
-    facet_grid(value ~ visExperience) +
+      #geom_beeswarm(priority='random', cex=4,alpha=0.3,size=3,aes(color=visType)) +
+    geom_point(aes(color=visType,alpha=0.5,size=3))+
+
+    facet_grid(. ~ visExperience) +
   stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=1) +
     xlab("vis experience") +
     ylab("mean accuracy")
 
+
+ggplot(newFrame, aes(x = visType, y = timeValue)) +
+      #geom_beeswarm(priority='random',cex=4,alpha=0.3,size=3,aes(color=visType)) +
+
+    geom_point(aes(color=visType,alpha=0.5,size=3))+
+    facet_grid(. ~ visExperience) +
+  stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=1) +
+    xlab("vis experience") +
+    ylab("time")
 
 ```
 
