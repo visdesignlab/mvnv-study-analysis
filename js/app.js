@@ -90,22 +90,42 @@ let followers = [
 ];
 
 let taskTitles = {
-  "S-task01": "NA with most tweets",
-  "S-task02": "EU with least likes [Distractors]",
-  "S-task03": "Well connected with few likes/tweets",
-  "S-task04": "Lane's EU neighbors",
-  "S-task05": "giCentre's NA neighbors [Distractors]",
-  "S-task06": "Most mentions with Jeffrey",
-  "S-task07": "Alex more EU or NA interactions? Most mentions with Alex. ",
-  "S-task08": "Most followers among common neighbors of Jeffrey and Robert",
-  "S-task09": "Most common/how many interactions between Evis19 and Jon",
-  "S-task10": "Noeska's neighbors with more friends than followers",
-  "S-task11": "Thomas' neighbors with more friends than followers [small]",
-  "S-task12": "Alex cluster / average number of followers.",
-  "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
-  "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
-  "S-task15": "Oldest account of all NA two interactions from Sereno",
+  "S-task01": "Node Search on Attribute",
+  "S-task02": "Node Search on Attribute with Distractors",
+  "S-task03": "Node Search on Topology and Multiple Attributes",
+  "S-task04": "Neighbor Search on Attribute",
+  "S-task05": "Neighbor Search on Attribute with Distractors",
+  "S-task06": "Neighbor Search on Edge Attribute",
+  "S-task07": "Neighbor Overview on Edge Attribute.",
+  "S-task08": "Attribute of Common Neighbors",
+  "S-task09": "Edge Attributes",
+  "S-task10": "Node Attribute Comparison",
+  "S-task11": "Node Attribute Comparison on Small Network",
+  "S-task12": "Cluster and Attribute Estimation",
+  "S-task13": "Attribute along Shortest Path",
+  "S-task14": "Attribute along Shortest Path on Small Network",
+  "S-task15": "Attribute on Subnetwork",
   "S-task16": "Free Explore"
+};
+
+let taskPrompts = {
+
+  "S-task01": "Find the North American with the most Tweets.",
+  "S-task02": "Find the European person or institution with the least likes.",
+  "S-task03": "Which person has many interactions (edges) in this network, several followers, but few tweets and likes in general?",
+  "S-task04": "Find all of Lane's European Neighbors.",
+  "S-task05": "Find all of giCentre's North American Neighbors.",
+  "S-task06": "Who had the most mention interactions with Jeffrey?",
+  "S-task07": "Does Alex have more mention interactions with North American or European accounts? Who does he have the most mentions interactions with?",
+  "S-task08": "Among all people who have interacted with both Jeffrey and Robert, who has the most followers?",
+  "S-task09": "What is the most common form of interaction between Evis19 and Jon? How often has this interaction happened?",
+  "S-task10": "Select all of Noeska’s neighbors that are people and have more friends than followers.",
+  "S-task11": "Select the people who have interacted with Thomas and have more friends than followers.",
+  "S-task12": "Select all the people who are in a cluster with Alex. Estimate the average number of followers among the selected people.",
+  "S-task13": "What is the institution on a shortest path between Lane and Rob. What is its continent of origin?",
+  "S-task14": "What is the institution on a shortest path between Jason and Jon. What is its continent of origin?",
+  "S-task15": "Of the North Americans who are two interactions away from Sereno, who has been on twitter the longest?",
+  "S-task16": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network?"
 };
 
 (async function() {
@@ -572,7 +592,9 @@ async function exportTidy(results) {
   rHeaders = [
     "prolificId",
     "taskId",
+    "taskNumber",
     "taskTitle",
+    "taskPrompt",
     "visType",
     "taskType",
     "topology",
@@ -603,7 +625,9 @@ async function exportTidy(results) {
           return {
             prolificId: id,
             taskId: customTaskId ? customTaskId : taskId,
+            taskNumber: customTaskId ? 'T' + customTaskId.replace('S-task','') : 'T' + taskId.replace('S-task','')  ,
             taskTitle: taskTitles[taskId],
+            taskPrompt: customTaskId ? (customTaskId.includes('A') ? taskPrompts[taskId].split('.')[0]  : taskPrompts[taskId].split('.')[1] ) : taskPrompts[taskId],
             visType: data.visType,
             taskType: data.taxonomy.type,
             topology: data.taxonomy.target,

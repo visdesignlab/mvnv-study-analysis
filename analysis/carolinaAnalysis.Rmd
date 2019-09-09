@@ -33,15 +33,22 @@ df <- read.csv("../results/study/CSV/TidyR.csv")
 dfp <- read.csv("../results/study/CSV/participantInfoTidyR.csv")
 
 dfc <- read.csv("../results/study/MaxQDA/codesTidy.csv")
+
+
 ```
 
+
+``` {r}
+visType.colors <- c(adjMatrix = "#05b4dd", nodeLink = "#f4aa4a")
+
+```
 
 
 ```{r}
 
 data <- 
   dfc %>%
-  group_by(Code) %>%
+  group_by(Code,visType) %>%
   count()
 
 data <-mutate(data,type=ifelse(grepl("topology-attribute", Code), "topology-attribute",
@@ -51,32 +58,24 @@ data <-mutate(data,type=ifelse(grepl("topology-attribute", Code), "topology-attr
 
 #data$n
 
-data$Code <- factor(data$Code, levels = data$Code[order(-data$n)])
+#data$Code <- factor(data$Code, levels = data$Code[order(data$n)])
 
-ggplot(data=data, aes(x=Code, y=n, fill=type)) +
+
+
+ggplot(data=data, aes(x=visType, y=n, fill=visType)) +
   geom_bar(stat="identity")+
+   facet_grid(Code ~ .)+
+  theme(strip.text.y = element_text(angle=0))+
+
     #theme_tufte()+
-  theme(axis.text.x=element_text(angle = -90, hjust = 0))+
-  ylab("Code Frequency")
+  #theme(axis.text.x=element_text(angle = -90, hjust = 0))+
+  #theme(axis.text.y=element_text(angle = -90, hjust = 0))+
+
   
-
-
-
-histogramFunc <- function() {
-#data<- filter(dfp,measure == var) 
+  coord_flip()+
+  ylab("Code Frequency")+
+  scale_fill_manual(values=visType.colors)
   
-  #dfc$Code <- factor(dfc$Code,levels='a','b','c')
-
-  ggplot(data=data, aes(data$n)) + 
-    geom_histogram() +
-    theme(axis.text.x=element_text(angle = -90, hjust = 0))+
-    xlab("Code") 
-
-}
-
-#histogramFunc()
-    
-
 ```
 
 
@@ -214,6 +213,22 @@ histogramFunc("visExperience");
 ```
 
 
+```{r}
+
+labels.measure <- c(
+  "minutesOnTask"  = "Time (minutes)",
+  "accuracy"= "Accuracy",
+  "difficulty"= "Difficulty",
+  "confidence" = "Confidence"
+)
+
+labels.visType <- c(nodeLink = 'NL', adjMatrix = 'AM');
+
+
+```
+
+
+
 ```{r, fig.width=8, fig.height=2}
 
 
@@ -221,23 +236,60 @@ vplot <- function(task) {
 
 sdf = df %>% filter( taskId == task )
 tt = as.character(sdf[1,]$taskTitle)
+prompt = as.character(sdf[1,]$taskPrompt)
+number = as.character(sdf[1,]$taskNumber)
 
-df %>% 
-  filter( measure == "accuracy" | measure == "minutesToComplete" | 
+gridLines <- function(x) { 
+  if (max(x) < 2) seq(0, 1, .25) 
+  else if (max(x) == 7.3) seq (1,7,2)
+    else seq(0, round(max(x)), round(max(x)/3)) 
+}
+
+
+
+gridLabels <- function(x) { 
+  if (max(as.numeric(x)) < 2) seq(0, 1, .25) 
+  else if (max(as.numeric(x)) == 7.3) seq (1,7,2)
+    else seq(0, round(max(x)), round(max(x)/3)) 
+}
+
+
+
+plotData <-df %>% 
+  filter( measure == "accuracy" | measure == "minutesOnTask" | 
             measure == "difficulty" | measure == "confidence") %>% 
     filter( taskId == task ) %>% 
   mutate( value = as.numeric( as.character(value)) ) %>% 
-  ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
-    facet_wrap(. ~ measure, scales="free", nrow=1) +
-    geom_violin() +
-    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=1) +
+   mutate( label = labels.measure[as.character(measure)] ) %>% 
+     mutate( visLabel = labels.visType[as.character(visType)] ) %>% 
+
+  mutate( label = factor(label, levels=c("Accuracy","Time (minutes)", "Confidence","Difficulty")));
+
+
+
+  ggplot(data=plotData, aes(x=visLabel, y=value, fill=visType, color=visType)) +
+    facet_wrap(. ~ label, scales="free_x", nrow=1) +
+    geom_violin(show.legend=FALSE) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=.75, show.legend=FALSE) +
   coord_flip() + 
     labs(
-      title = tt,
-      subtitle = task
-    )
-  
-ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
+      title = paste(number, '-', tt),
+      subtitle = prompt
+      #caption = prompt
+    )+
+    xlab ("") + 
+    ylab("")+
+    scale_fill_manual(values=visType.colors)+
+    scale_color_manual(values=visType.colors)+      
+  scale_y_continuous(breaks = gridLines) #,labels = gridLabels) 
+
+
+
+
+
+#ggsave(paste("violins/",task,".pdf", sep=""), width = 10, height = 2.5, units = "in")
+ggsave(paste("violins/",gsub(" ", "", paste(number,tt), fixed = TRUE),".pdf", sep=""), width = 10, height = 2.5, units = "in")
+
 }
 
 
@@ -252,7 +304,53 @@ vplot("S-task08")
 vplot("S-task09")
 vplot("S-task10")
 vplot("S-task11")
-vplot("S-task12")
+vplot('S-task12')
+vplot('S-task12A')
+vplot('S-task12B')
+vplot("S-task13")
+vplot("S-task14")
+vplot("S-task15")
+vplot("S-task16")
+  
+```
+
+``` {r fig.width=10, fig.height=16}
+
+plotData <-df %>% 
+  filter( measure == "accuracy" | measure == "minutesOnTask" | 
+            measure == "difficulty" | measure == "confidence") %>% 
+   # filter( taskId == task ) %>% 
+  mutate( value = as.numeric( as.character(value)) ) %>% 
+   mutate( label = labels.measure[as.character(measure)] ) %>% 
+     mutate( visLabel = labels.visType[as.character(visType)] ) %>% 
+
+  mutate( label = factor(label, levels=c("Accuracy","Time (minutes)", "Confidence","Difficulty")));
+
+  ggplot(data=plotData, aes(x=visLabel, y=value, fill=visType, color=visType)) +
+    facet_grid(taskId ~ label, scales="free_x") +
+    geom_violin(show.legend=FALSE) +
+    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=.75, show.legend=FALSE) +
+  coord_flip() + 
+    scale_fill_manual(values=visType.colors)+
+    scale_color_manual(values=visType.colors)     
+  #scale_y_continuous(breaks = gridLines) #,labels = gridLabels) 
+
+```
+
+
+``` {r, fig.width=8, fig.height=2}
+
+vplot("S-task02")
+vplot("S-task03")
+vplot("S-task04")
+vplot("S-task05")
+vplot("S-task06")
+vplot("S-task07")
+vplot("S-task08")
+vplot("S-task09")
+vplot("S-task10")
+vplot("S-task11")
+vplot('S-task12')
 vplot('S-task12A')
 vplot('S-task12B')
 vplot("S-task13")
@@ -260,5 +358,5 @@ vplot("S-task14")
 vplot("S-task15")
 vplot("S-task16")
 
-  
 ```
+

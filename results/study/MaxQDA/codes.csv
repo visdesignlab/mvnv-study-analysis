@@ -97,3 +97,66 @@ attribute-insight\single-attribute-insight,All of the non-person accounts are li
 attribute-insight\single-attribute-insight,It's also interesting how there is only one South American account within this set of data.
 no-insight,Unfortunetely I did not find anything suprising me. But generally all of this stuff is quite interesting.
 topology-insight,31 poeple interacted with only one other person
+attribute-insight\multiple-attribute-insight,Lace has a young account with a lot of followers compared to the older ones.
+attribute-insight\across-node-attribute-comparison,Lace has a young account with a lot of followers compared to the older ones.
+topology-insight,Robert seems to have many links
+attribute-insight\multiple-attribute-insight,Sereno has not too many followers or tweets
+attribute-insight\overview-attribute-insight,Mostly Europeans
+topology-insight,Alex and Robert together being connected to what seems to be about half of the networ
+topology-attribute-insight,It does seem a bit odd that Jon Jeffrey Alex and Rob have such large networks with their lower than average tweeting
+topology-insight,Robert is very active
+topology-insight,Klaus is very inactive
+topology-insight,Robert and Jeffery are the two most important nodes in the graph.
+question-insight,I thought there would be more institutions that take importance than people
+topology-insight,I thought there would be more institutions that take importance than people
+topology-attribute-insight,A lot of the continents are clustered together which is not that surprising.
+attribute-insight\single-attribute-insight,There are only three accounts with an Asian origin and none from South America.
+attribute-insight\overview-attribute-insight,There are only three accounts with an Asian origin and none from South America.
+topology-attribute-insight,The institutions have fewer neighbors on average than the people.
+overview-topology-attribute-insight,The institutions have fewer neighbors on average than the people.
+no-insight,nothing I can see in particular
+attribute-insight\single-attribute-insight,How little represented that Asia and South America is as a whole.
+attribute-insight\overview-attribute-insight,How little represented that Asia and South America is as a whole.
+no-insight,I don't see anything that stands out.
+topology-attribute-insight,Some users on the outskirts of the graph (i.e. having a small number of edges) have a disproportionately large number of followers. You can't get that many followers just by interacting with one or two users so it shows that you had to cut the graph off somewhere because otherwise it would go on forever.
+topology-attribute-insight,alex seems to have had a lot of interactions with various nodes but not many likes. Indicating he may tweet mention or retweet a lot and be very active.
+attribute-insight\within-node-attribute-comparison,Eytan and IDL have many followers but very few tweetsas do Wood and Ben.
+attribute-insight\multiple-attribute-insight,Eytan and IDL have many followers but very few tweetsas do Wood and Ben.
+topology-insight,In reality they are all connected in some form or another. If by interaction continents or mentions
+meaningless-insight,In reality they are all connected in some form or another. If by interaction continents or mentions
+attribute-insight\incorrect-attribute-insight,Nobody from SA only two from AS
+attribute-insight\single-attribute-insight,Nobody from SA only two from AS
+topology-attribute-insight,"From what I can tell Robert and Jeffrey appear to form the two major ""hubs"" of this social network both with the highest number of connections and several that overlap. There are other smaller hubs like Rob and Lane with similar features. Each of these share a larger account age compared to less connected people in the network and boast high follower counts too."
+attribute-insight\across-node-attribute-comparison,"From what I can tell Robert and Jeffrey appear to form the two major ""hubs"" of this social network both with the highest number of connections and several that overlap. There are other smaller hubs like Rob and Lane with similar features. Each of these share a larger account age compared to less connected people in the network and boast high follower counts too."
+attribute-insight\within-node-attribute-comparison,Jeffrey hasn't made many Tweets (less than a thousand) yet has a lot of followers and a fairly long account age.
+attribute-insight\multiple-attribute-insight,Jeffrey hasn't made many Tweets (less than a thousand) yet has a lot of followers and a fairly long account age.
+topology-insight,Andrea and Mandy are two people who do not have much social influence but are connected with him.
+attribute-insight\within-node-attribute-comparison,I would have assumed that a high follower count would also mean a high tweets count; however in many instances I can see that this is not true. Most notably MViews stands out.
+attribute-insight\multiple-attribute-insight,I would have assumed that a high follower count would also mean a high tweets count; however in many instances I can see that this is not true. Most notably MViews stands out.
+topology-insight,Jeffrey and Robert are connected to nearly everyone on the network.
+topology-attribute-insight,the accounts with the most interactions are North American
+attribute-insight\single-attribute-insight,the accounts with the most interactions are North American
+attribute-insight\multiple-attribute-insight,Klaus has many connections but few tweets and followers. He also has an old account.
+topology-attribute-insight,Klaus has many connections but few tweets and followers. He also has an old account.
+topology-insight,There are a lot of nodes people with only 1 interaction.  Jeffrey and Robert are the lynch pins of the network
+topology-insight,It seems that the people with multiple connections mostly connect to one person and the chain dead-ends there.
+topology-attribute-insight,Some of them like Alex and Jeffrey also have few tweets which is interesting for how many connections and followers they have as well as for how old their account is.
+attribute-insight\multiple-attribute-insight,Some of them like Alex and Jeffrey also have few tweets which is interesting for how many connections and followers they have as well as for how old their account is.
+topology-attribute-insight,It appears that most European people interact with everyone while North American people tend to form small groups of other North Americans like with Rob Lane and Jeffrey.
+no-insight,Can't spot anything aurprising
+topology-attribute-insight,Sereno seems to be quite isolated though it is understandable since his account age is very young.
+topology-insight,I also noticed that Robert has the most popularity among the rest. In fact I noticed that I had selected Robert the most during this survey's tasks.
+topology-attribute-insight,CSEE is connected to EVis19 but doesn't have any direct connections-it just stops at James and John
+topology-attribute-insight,Jeffrey has only few tweets compared to other people but he has many followers also he has many interactions
+attribute-insight\multiple-attribute-insight,Mara account is quite new but she has a lot of followers and tweets
+attribute-insight\multiple-attribute-insight,Jeffrey has only few tweets compared to other people but he has many followers also he has many interactions
+topology-attribute-insight,Krist has a lot of tweets and followers but only few interactions
+attribute-insight\multiple-attribute-insight,Krist has a lot of tweets and followers but only few interactions
+attribute-insight\multiple-attribute-insight,Evison has many tweets but it is low on followers
+topology-attribute-insight,Robert has the highest stats and the most direct connections as well as the shortest average connection between any two other users
+attribute-insight\multiple-attribute-insight,Robert has the highest stats and the most direct connections as well as the shortest average connection between any two other users
+no-insight,what am i supposed to find interesting
+attribute-insight\multiple-attribute-insight,Tamara has a relatively low account life but a significant amount of followers especially compared to some other accounts/users
+attribute-insight\within-node-attribute-comparison,Tamara has a relatively low account life but a significant amount of followers especially compared to some other accounts/users
+topology-attribute-insight,Not a lot of interactions between SA and AS and generally not many nodes from that areas.
+attribute-insight\single-attribute-insight,Not a lot of interactions between SA and AS and generally not many nodes from that areas.
