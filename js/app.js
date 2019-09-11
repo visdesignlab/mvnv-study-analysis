@@ -89,7 +89,6 @@ let followers = [
   { id: 701375574, followers: 273 }
 ];
 
-
 let taskTitles = {
   "S-task01": "NA with most tweets",
   "S-task02": "EU with least likes [Distractors]",
@@ -113,6 +112,9 @@ let taskTitles = {
   let mode = process.argv[2];
   console.log("mode is ", mode);
   switch (mode) {
+    case "maxQDA":
+      processMaxQDA();
+      break;
     case "fetch":
       await fetchData();
       break;
@@ -176,6 +178,65 @@ function isValidParticipant(d) {
     !wasRejected &&
     !invalidParticipant
   );
+}
+
+function processMaxQDA() {
+  const csv = require("csv-parser");
+
+  let codes = [];
+  let insights = [];
+
+  fs.createReadStream("results/study/MaxQDA/codes.csv")
+    .pipe(csv())
+    .on("data", row => {
+      row.Code = row.Code.split("\\");
+      row.Code = row.Code[row.Code.length - 1];
+      codes.push(row);
+    })
+    .on("end", () => {
+      fs.createReadStream("results/study/MaxQDA/insights.csv")
+        .pipe(csv())
+        .on("data", row => {
+          insights.push(row);
+        })
+
+        .on("end", () => {
+          //iterate through all the codes and add the type of vis, confidence, difficulty, and minutes to complete
+          codes.map(code => {
+            let seg = code.Segment;
+            let originalData = insights.find(r =>
+              r["S-task16.answer.value"].includes(seg)
+            );
+            if (originalData === undefined) {
+              console.log("could not find data for ", seg);
+            } else {
+              code.visType = originalData["S-task16.visType"];
+              code.minutesToComplete =
+                originalData["S-task16.minutesToComplete"];
+              code.confidence = originalData["S-task16.feedback.confidence"];
+              code.difficulty = originalData["S-task16.feedback.difficulty"];
+            }
+            return code;
+          });
+
+          //write out new codes CSV file for R processing
+          const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+          let csvWriter;
+
+          headers = Object.keys(codes[0]);
+
+          csvWriter = createCsvWriter({
+            path: "results/study/MaxQDA/codesTidy.csv",
+            header: headers.map(key => {
+              return { id: key, title: key };
+            })
+          });
+
+          csvWriter
+            .writeRecords(codes)
+            .then(() => console.log("codesTidy.csv was written successfully"));
+        });
+    });
 }
 
 async function fetchProvenance() {
@@ -307,7 +368,7 @@ async function processData() {
         let acc = computeAccuracy(key, answer); // col for more nuanced score
         // console.log('user id', p.data[key].workerID)
         if (key === "S-task12") {
-          answer.accuracy = acc.scoreCluster*acc.scoreAverage;
+          answer.accuracy = acc.scoreCluster * acc.scoreAverage;
           answer.scoreCluster = acc.scoreCluster;
           answer.scoreAverage = acc.scoreAverage;
         } else {
@@ -324,8 +385,9 @@ async function processData() {
     //compute average accuracy for this participant,  disregard task16 since accuracy for that is always 1;
     p.data.averageAccuracy =
       Object.keys(p.data).reduce((acc, key) => {
-        return key === 'S-task16' ?  acc : acc + p.data[key].answer.accuracy;
-      }, 0) / (Object.keys(p.data).length-1);
+        return key === "S-task16" ? acc : acc + p.data[key].answer.accuracy;
+      }, 0) /
+      (Object.keys(p.data).length - 1);
 
     // console.log("average accuracy for ", p.id, " is ", p.data.averageAccuracy);
 
@@ -607,7 +669,6 @@ function computeAccuracy(taskID, answerObj) {
 
   let answers = {
     "S-task01": function(answer) {
-
       //  "S-task01": "NA with most tweets",
 
       if (answer.ids.includes("18704160")) {
@@ -693,7 +754,7 @@ function computeAccuracy(taskID, answerObj) {
         score = score + 0.5; //score for getting the type right
       }
 
-      if (answer.ids.includes("395853499")) { 
+      if (answer.ids.includes("395853499")) {
         //Marc
         score = score + 0.5;
       }
@@ -785,7 +846,7 @@ function computeAccuracy(taskID, answerObj) {
         }
 
         //otherwise, -1/9 for any incorrect answer;
-        return acc - 1 / correctAnswers.length;; //- 1/(correctAnswers.length + extendedAnswers.length);
+        return acc - 1 / correctAnswers.length; //- 1/(correctAnswers.length + extendedAnswers.length);
       }, 0);
 
       scoreCluster = Math.max(0, scoreCluster);
@@ -801,13 +862,14 @@ function computeAccuracy(taskID, answerObj) {
       //   return acc;
       // }, []);
 
-      let validNodes = ids.map(id=>followers.find(f=>f.id == id))
+      let validNodes = ids.map(id => followers.find(f => f.id == id));
 
       let meanFollowers = average(validNodes.map(n => n.followers));
       let tolerance = standardDeviation(validNodes.map(n => n.followers));
 
-      let distanceToAnswer = Math.abs(answer.value - meanFollowers)
-      let scoreAverage = distanceToAnswer > tolerance ? 0 : 1 - distanceToAnswer/tolerance;
+      let distanceToAnswer = Math.abs(answer.value - meanFollowers);
+      let scoreAverage =
+        distanceToAnswer > tolerance ? 0 : 1 - distanceToAnswer / tolerance;
 
       return { scoreCluster, scoreAverage };
     },
@@ -815,7 +877,7 @@ function computeAccuracy(taskID, answerObj) {
       //   "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
 
       let score = 0;
- 
+
       if (answer.ids.includes("191257554")) {
         //AA
         score = score + 0.5;
@@ -824,7 +886,6 @@ function computeAccuracy(taskID, answerObj) {
       if (answer.radio === "EU" && answer.ids.includes("191257554")) {
         score = score + 0.5; //score for getting the type right
       }
-
 
       return score;
     },
@@ -968,7 +1029,7 @@ function processProvenance() {
               1000 /
               60;
 
-           if (
+            if (
               startObj.label === "browse away" &&
               startObj.task &&
               startObj.task[0] === "S"
@@ -979,9 +1040,8 @@ function processProvenance() {
                 Date.parse(r.data["S-task16"].endTime)
               ) {
                 if (minutesBrowsedAway < 50) {
-
                   r.data.browsedAwayTime =
-                  r.data.browsedAwayTime + minutesBrowsedAway;
+                    r.data.browsedAwayTime + minutesBrowsedAway;
 
                   //catch case where browse away is logged at several hours;
                   r.data[startObj.task].minutesOnTask =
@@ -1080,4 +1140,3 @@ function setNested(obj, path, value) {
     // console.log(obj,property,obj[property])
   }
 }
-
