@@ -14,6 +14,8 @@ library(pwr)
 library(grid)
 library(gtable)
 
+library(boot)
+
 library(ggbeeswarm)
 
 library(tidybayes)
@@ -288,6 +290,122 @@ wtest("S-task16")
 ```
 
 
+## CIs
+
+```{r, warning=FALSE}
+# Credit to Mia for the originals
+
+# Bootstrap 95% CI for mean
+# function to obtain mean from the data (with indexing)
+mean.fun <- function(D, d) {
+  return( mean(D[d]) )
+}
+
+reportCI <- function(data, attr) {
+  # bootstrapping with 1000 replications
+  ci <- boot.ci(
+    boot(data=data[[attr]], statistic=mean.fun, R=1000, sim="ordinary")
+  )
+
+  cat( "M=",     round( mean( data[[attr]] ), 2), "~",
+       "[", round( ci$bca[,4]          , 2), ",",
+       round( ci$bca[,5]          , 2), "]",
+       sep="")
+}
+
+citext <- function(task) {
+nl = df_acc %>% 
+  filter(taskId == task & visType == "nodeLink")
+
+adj = df_acc %>% 
+  filter(taskId == task & visType == "adjMatrix")
+
+cat( paste(task," | node link\n") )
+reportCI(nl, "value")
+cat( "\n" )
+
+
+cat( paste(task," | adj matrix\n") )
+reportCI(adj, "value")
+cat( "\n" )
+cat( "\n" )
+
+
+}
+
+citext("S-task01")
+citext("S-task02")
+citext("S-task03")
+citext("S-task04")
+citext("S-task05")
+citext("S-task06")
+citext("S-task07")
+citext("S-task08")
+citext("S-task09")
+citext("S-task10")
+citext("S-task11")
+citext("S-task12")
+citext("S-task13")
+citext("S-task14")
+citext("S-task15")
+citext("S-task16")
+```
+
+
+## Effect Sizes
+
+Note: at least as of 10-Sep-2019, negative effect sizes appear to mean "the adjMatrix wins" aka the adjMatrix has a higher accuracy
+
+```{r, warning=FALSE}
+# Credit to Mia for the originals
+
+
+reportES <- function(data, attr, group) {
+
+  lvs <- levels(data[[group]])
+
+  b <- bootES(data,
+              data.col=attr,
+              group.col=group,
+              contrast=lvs, # normal cases c(group1=1, group2=-1), but for 2 groups, it's simplified.
+              effect.type="cohens.d")
+
+  cat( "d=", round( b$t0, 2), "~",
+       "[", round( b$bounds[1], 2), ",",
+       round( b$bounds[2], 2), "]",
+       sep="")
+}
+
+estext <- function(task) {
+esd = df_acc %>% 
+  filter(taskId == task)
+
+cat( paste(task, "\n") )
+reportES(esd, "value", "visType")
+cat( "\n" )
+cat( "\n" )
+
+
+}
+
+estext("S-task01")
+estext("S-task02")
+estext("S-task03")
+estext("S-task04")
+estext("S-task05")
+estext("S-task06")
+estext("S-task07")
+estext("S-task08")
+estext("S-task09")
+estext("S-task10")
+estext("S-task11")
+estext("S-task12")
+estext("S-task13")
+estext("S-task14")
+estext("S-task15")
+estext("S-task16")
+```
+
 ## TODO Subtract CIs?
 
 ## TODO Tidybayes-style eye plots (in progress + may be abandoned)
@@ -467,7 +585,8 @@ df %>%
   filter( measure == "accuracy" ) %>% 
   filter( taskId == "S-task12") %>% 
   mutate( value = as.numeric( as.character(value)) ) %>% 
-  ggplot(aes(x=taskId, y=value, fill=visType, color=visType)) +
-  geom_jitter( alpha = 0.3, height=0.01, width=0.01  )
+  ggplot(aes(x=visType, y=value, fill=visType, color=visType)) +
+  geom_jitter( alpha = 0.3, height=0.01, width=0.01  ) + 
+  coord_flip()
 ```
 
