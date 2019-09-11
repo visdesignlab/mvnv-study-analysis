@@ -45,6 +45,8 @@ dfc <- read.csv("../results/study/MaxQDA/codesTidy.csv")
 
 wilcox <- read.csv("../results/study/CSV/wilcox.csv")
 
+dfprov <- read.csv("../results/study/CSV/provenanceTidy.csv")
+
 
 
 ```
@@ -53,6 +55,36 @@ wilcox <- read.csv("../results/study/CSV/wilcox.csv")
 ``` {r}
 visType.colors <- c(adjMatrix = "#05b4dd", nodeLink = "#f4aa4a")
 
+```
+
+
+```{r fig.width=15, fig.height=8}
+
+data <- 
+  dfprov %>%
+   filter(event!= 'Finished Task' & event!= 'startedProvenance')  %>%
+  mutate( event = ifelse(event == 'Searched for Node', "search", as.character(event)))  %>% 
+    mutate( event = ifelse(event == 'answerBox', "Select Answer", as.character(event)))  %>% 
+      mutate( event = ifelse(event == 'Hard Selected a Node', "Select Answer", as.character(event)))  %>% 
+        mutate( event = ifelse(event == 'Hard Unselected a Node', "Unselect Answer", as.character(event)))  %>% 
+    mutate( event = ifelse(event == 'colLabel', "Highlight Neighbors", as.character(event)))  %>% 
+        mutate( event = ifelse(event == 'Unselect Node', "Un-Highlight Neighbors", as.character(event)))  %>% 
+
+      mutate( event = ifelse(event == 'Select Node', "Highlight Neighbors", as.character(event)))  %>% 
+
+
+  group_by(taskId,event,visType) %>%
+  count()
+
+
+ggplot(data=data, aes(x=visType, y=n/150, fill=visType)) +
+  geom_bar(stat="identity")+
+   facet_grid(event ~ taskId)+
+  theme(strip.text.y = element_text(angle=0),  panel.grid.major = element_blank())+
+  coord_flip()+
+  ylab("Event Frequency")+
+  scale_fill_manual(values=visType.colors)
+  
 ```
 
 
@@ -65,6 +97,9 @@ data <-
   group_by(Code,visType) %>%
   count()
 
+#data$Code <- factor(data$Code, levels = data$Code[order(data$n)])
+
+
 data <-mutate(data,type=ifelse(grepl("topology-attribute", Code), "topology-attribute",
                                ifelse(grepl("topology", Code), "topology",
                                       ifelse(grepl("attribute", Code), "attribute", "Other")))) 
@@ -72,7 +107,7 @@ data <-mutate(data,type=ifelse(grepl("topology-attribute", Code), "topology-attr
 
 #data$n
 
-#data$Code <- factor(data$Code, levels = data$Code[order(data$n)])
+data$Code <- factor(data$Code, levels = unique(data$Code[order(-data$n)]))
 
 
 

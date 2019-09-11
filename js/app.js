@@ -148,7 +148,9 @@ let taskPrompts = {
       processProvenance();
       break;
     case "visProvenance":
-          processVisProvenance();
+        exportTidyProvenance();
+
+          // processVisProvenance();
           break;
     case "export":
       exportResults();
@@ -1010,7 +1012,9 @@ function processVisProvenance() {
 
   let allProvenance={};
 
-  var files =[...Array(3).keys()]
+  let slimProvenance = {};
+
+  var files =[...Array(55).keys()]
   files.map((n,i)=>{
     rawdata = fs.readFileSync("allProvenance/provenance_" + i + ".json");
   let provenance = JSON.parse(rawdata);
@@ -1021,26 +1025,78 @@ function processVisProvenance() {
       let task = prov.id.split('_')[1];
       if (allProvenance[id]){
         allProvenance[id][task] = prov;
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
+
       } else {
         allProvenance[id]={};
+        allProvenance[id].visType = prov['data']['provGraphs'][0].selections ? 'adjMatrix' : 'nodeLink'
         allProvenance[id][task] = prov;
+
+        slimProvenance[id]={};
+        slimProvenance[id].visType = prov['data']['provGraphs'][0].selections ? 'adjMatrix' : 'nodeLink'
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
       }
     };
   })
-  
-
-  // console.log('validProvenance participants for file ', i ,  '  are ', validProvenance.length)
 
   })
 
-  console.log(allProvenance)
+
+  fs.writeFileSync(
+    "results/study/JSON/slimProvenance.json",
+    JSON.stringify(slimProvenance)
+  );
+
+};
 
 
+function exportTidyProvenance(){
 
-  // fs.writeFileSync(
-  //   "results/study/JSON/processed_results.json",
-  //   JSON.stringify(results)
-  // );
+  let rawdata;
+  rawdata = fs.readFileSync("results/study/JSON/slimProvenance.json");
+  let slimProvenance = JSON.parse(rawdata);
+
+  //Read in JSON file for slimProvenance; 
+
+    //write out provenance events for R processing
+    const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+    let csvWriter;
+
+    headers = ['id','taskId','visType','event'];
+
+    csvWriter = createCsvWriter({
+      path: "results/study/CSV/provenanceTidy.csv",
+      header: headers.map(key => {
+        return { id: key, title: key };
+      })
+    });
+
+    let provCsv = [];
+    // "5d49e0634aff6e0018fb7004": {
+    //   "visType": "adjMatrix",
+    //   "S-task08": [null, "search", "c
+
+    Object.keys(slimProvenance).map(id=>{
+      Object.keys(slimProvenance[id]).map(taskId=>{
+        if (Array.isArray(slimProvenance[id][taskId])){
+          slimProvenance[id][taskId].map(event=>{
+            if (event){
+              provCsv.push({
+                id,
+                taskId,
+                visType:slimProvenance[id].visType,
+                event
+              })
+            }
+          })
+        }
+      })
+    })
+
+    csvWriter
+      .writeRecords(provCsv)
+      .then(() => console.log("provenanceTidy.csv was written successfully"));
+  
 
   
 
