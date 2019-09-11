@@ -96,7 +96,7 @@ let taskTitles = {
   "S-task04": "Neighbor Search on Attribute",
   "S-task05": "Neighbor Search on Attribute with Distractors",
   "S-task06": "Neighbor Search on Edge Attribute",
-  "S-task07": "Neighbor Overview on Edge Attribute.",
+  "S-task07": "Neighbor Overview on Edge Attribute",
   "S-task08": "Attribute of Common Neighbors",
   "S-task09": "Edge Attributes",
   "S-task10": "Node Attribute Comparison",
@@ -147,6 +147,9 @@ let taskPrompts = {
     case "provenance":
       processProvenance();
       break;
+    case "visProvenance":
+          processVisProvenance();
+          break;
     case "export":
       exportResults();
       break;
@@ -356,7 +359,14 @@ async function fetchData() {
 async function processData() {
   //load data;
 
+  //load in taskList to have the latest task taxonomy and associated hypothesis for each task;
+
+
+
   let rawdata;
+
+  rawdata = fs.readFileSync("results/study/JSON/taskList.json");
+  let taskList = JSON.parse(rawdata);
 
   rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
   let participant_info = JSON.parse(rawdata);
@@ -371,6 +381,10 @@ async function processData() {
       delete p.data[key].replyCount;
       delete p.data[key].replyType;
       delete p.data[key].answerKey;
+
+      //replace taxonomy and hypothesis from taskList file (for post-study updates)
+      p.data[key].taxonomy = taskList[key].taxonomy;
+      p.data[key].hypothesis = taskList[key].hypothesis;
 
       if (p.data[key].answer) {
         ["answer"].map(answer => {
@@ -593,6 +607,7 @@ async function exportTidy(results) {
     "prolificId",
     "taskId",
     "taskNumber",
+    "taskOrder",
     "taskTitle",
     "taskPrompt",
     "visType",
@@ -621,11 +636,11 @@ async function exportTidy(results) {
       .map(taskId => {
         let createTidyRow = function(measure, value, customTaskId) {
           let hypothesis = data.hypothesis.split(",");
-
           return {
             prolificId: id,
             taskId: customTaskId ? customTaskId : taskId,
             taskNumber: customTaskId ? 'T' + customTaskId.replace('S-task','') : 'T' + taskId.replace('S-task','')  ,
+            taskOrder:data.order,
             taskTitle: taskTitles[taskId],
             taskPrompt: customTaskId ? (customTaskId.includes('A') ? taskPrompts[taskId].split('.')[0]  : taskPrompts[taskId].split('.')[1] ) : taskPrompts[taskId],
             visType: data.visType,
@@ -983,6 +998,53 @@ function average(data) {
   return avg;
 }
 
+
+
+function processVisProvenance() {
+  let rawdata;
+
+  rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
+  let results = JSON.parse(rawdata);
+
+  let validParticipants = results.map(r=>r.data.workerID);
+
+  let allProvenance={};
+
+  var files =[...Array(3).keys()]
+  files.map((n,i)=>{
+    rawdata = fs.readFileSync("allProvenance/provenance_" + i + ".json");
+  let provenance = JSON.parse(rawdata);
+
+  provenance.filter(prov=>{
+    let id = prov.id.split('_')[0];
+    if (validParticipants.includes(id)){
+      let task = prov.id.split('_')[1];
+      if (allProvenance[id]){
+        allProvenance[id][task] = prov;
+      } else {
+        allProvenance[id]={};
+        allProvenance[id][task] = prov;
+      }
+    };
+  })
+  
+
+  // console.log('validProvenance participants for file ', i ,  '  are ', validProvenance.length)
+
+  })
+
+  console.log(allProvenance)
+
+
+
+  // fs.writeFileSync(
+  //   "results/study/JSON/processed_results.json",
+  //   JSON.stringify(results)
+  // );
+
+  
+
+}
 function processProvenance() {
   let rawdata;
   rawdata = fs.readFileSync("results/events.json");
