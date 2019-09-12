@@ -90,22 +90,42 @@ let followers = [
 ];
 
 let taskTitles = {
-  "S-task01": "NA with most tweets",
-  "S-task02": "EU with least likes [Distractors]",
-  "S-task03": "Well connected with few likes/tweets",
-  "S-task04": "Lane's EU neighbors",
-  "S-task05": "giCentre's NA neighbors [Distractors]",
-  "S-task06": "Most mentions with Jeffrey",
-  "S-task07": "Alex more EU or NA interactions? Most mentions with Alex. ",
-  "S-task08": "Most followers among common neighbors of Jeffrey and Robert",
-  "S-task09": "Most common/how many interactions between Evis19 and Jon",
-  "S-task10": "Noeska's neighbors with more friends than followers",
-  "S-task11": "Thomas' neighbors with more friends than followers [small]",
-  "S-task12": "Alex cluster / average number of followers.",
-  "S-task13": "Inst.(nationality) on shortest path from Lane to Rob.",
-  "S-task14": "Inst.(nationality) on shortest path from Jason to Jon. [small]",
-  "S-task15": "Oldest account of all NA two interactions from Sereno",
+  "S-task01": "Node Search on Attribute",
+  "S-task02": "Node Search on Attribute with Distractors",
+  "S-task03": "Node Search on Topology and Multiple Attributes",
+  "S-task04": "Neighbor Search on Attribute",
+  "S-task05": "Neighbor Search on Attribute with Distractors",
+  "S-task06": "Neighbor Search on Edge Attribute",
+  "S-task07": "Neighbor Overview on Edge Attribute",
+  "S-task08": "Attribute of Common Neighbors",
+  "S-task09": "Edge Attributes",
+  "S-task10": "Node Attribute Comparison",
+  "S-task11": "Node Attribute Comparison on Small Network",
+  "S-task12": "Cluster and Attribute Estimation",
+  "S-task13": "Attribute along Shortest Path",
+  "S-task14": "Attribute along Shortest Path on Small Network",
+  "S-task15": "Attribute on Subnetwork",
   "S-task16": "Free Explore"
+};
+
+let taskPrompts = {
+
+  "S-task01": "Find the North American with the most Tweets.",
+  "S-task02": "Find the European person or institution with the least likes.",
+  "S-task03": "Which person has many interactions (edges) in this network, several followers, but few tweets and likes in general?",
+  "S-task04": "Find all of Lane's European Neighbors.",
+  "S-task05": "Find all of giCentre's North American Neighbors.",
+  "S-task06": "Who had the most mention interactions with Jeffrey?",
+  "S-task07": "Does Alex have more mention interactions with North American or European accounts? Who does he have the most mentions interactions with?",
+  "S-task08": "Among all people who have interacted with both Jeffrey and Robert, who has the most followers?",
+  "S-task09": "What is the most common form of interaction between Evis19 and Jon? How often has this interaction happened?",
+  "S-task10": "Select all of Noeska’s neighbors that are people and have more friends than followers.",
+  "S-task11": "Select the people who have interacted with Thomas and have more friends than followers.",
+  "S-task12": "Select all the people who are in a cluster with Alex. Estimate the average number of followers among the selected people.",
+  "S-task13": "What is the institution on a shortest path between Lane and Rob. What is its continent of origin?",
+  "S-task14": "What is the institution on a shortest path between Jason and Jon. What is its continent of origin?",
+  "S-task15": "Of the North Americans who are two interactions away from Sereno, who has been on twitter the longest?",
+  "S-task16": "Please explore the network freely and report on your findings. Is there anything surprising or particularly interesting in the network?"
 };
 
 (async function() {
@@ -127,6 +147,11 @@ let taskTitles = {
     case "provenance":
       processProvenance();
       break;
+    case "visProvenance":
+        exportTidyProvenance();
+
+          // processVisProvenance();
+          break;
     case "export":
       exportResults();
       break;
@@ -336,7 +361,14 @@ async function fetchData() {
 async function processData() {
   //load data;
 
+  //load in taskList to have the latest task taxonomy and associated hypothesis for each task;
+
+
+
   let rawdata;
+
+  rawdata = fs.readFileSync("results/study/JSON/taskList.json");
+  let taskList = JSON.parse(rawdata);
 
   rawdata = fs.readFileSync("results/study/JSON/study_participants.json");
   let participant_info = JSON.parse(rawdata);
@@ -351,6 +383,10 @@ async function processData() {
       delete p.data[key].replyCount;
       delete p.data[key].replyType;
       delete p.data[key].answerKey;
+
+      //replace taxonomy and hypothesis from taskList file (for post-study updates)
+      p.data[key].taxonomy = taskList[key].taxonomy;
+      p.data[key].hypothesis = taskList[key].hypothesis;
 
       if (p.data[key].answer) {
         ["answer"].map(answer => {
@@ -572,7 +608,10 @@ async function exportTidy(results) {
   rHeaders = [
     "prolificId",
     "taskId",
+    "taskNumber",
+    "taskOrder",
     "taskTitle",
+    "taskPrompt",
     "visType",
     "taskType",
     "topology",
@@ -599,11 +638,13 @@ async function exportTidy(results) {
       .map(taskId => {
         let createTidyRow = function(measure, value, customTaskId) {
           let hypothesis = data.hypothesis.split(",");
-
           return {
             prolificId: id,
             taskId: customTaskId ? customTaskId : taskId,
+            taskNumber: customTaskId ? 'T' + customTaskId.replace('S-task','') : 'T' + taskId.replace('S-task','')  ,
+            taskOrder:data.order,
             taskTitle: taskTitles[taskId],
+            taskPrompt: customTaskId ? (customTaskId.includes('A') ? taskPrompts[taskId].split('.')[0]  : taskPrompts[taskId].split('.')[1] ) : taskPrompts[taskId],
             visType: data.visType,
             taskType: data.taxonomy.type,
             topology: data.taxonomy.target,
@@ -959,6 +1000,107 @@ function average(data) {
   return avg;
 }
 
+
+
+function processVisProvenance() {
+  let rawdata;
+
+  rawdata = fs.readFileSync("results/study/JSON/processed_results.json");
+  let results = JSON.parse(rawdata);
+
+  let validParticipants = results.map(r=>r.data.workerID);
+
+  let allProvenance={};
+
+  let slimProvenance = {};
+
+  var files =[...Array(55).keys()]
+  files.map((n,i)=>{
+    rawdata = fs.readFileSync("allProvenance/provenance_" + i + ".json");
+  let provenance = JSON.parse(rawdata);
+
+  provenance.filter(prov=>{
+    let id = prov.id.split('_')[0];
+    if (validParticipants.includes(id)){
+      let task = prov.id.split('_')[1];
+      if (allProvenance[id]){
+        allProvenance[id][task] = prov;
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
+
+      } else {
+        allProvenance[id]={};
+        allProvenance[id].visType = prov['data']['provGraphs'][0].selections ? 'adjMatrix' : 'nodeLink'
+        allProvenance[id][task] = prov;
+
+        slimProvenance[id]={};
+        slimProvenance[id].visType = prov['data']['provGraphs'][0].selections ? 'adjMatrix' : 'nodeLink'
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
+      }
+    };
+  })
+
+  })
+
+
+  fs.writeFileSync(
+    "results/study/JSON/slimProvenance.json",
+    JSON.stringify(slimProvenance)
+  );
+
+};
+
+
+function exportTidyProvenance(){
+
+  let rawdata;
+  rawdata = fs.readFileSync("results/study/JSON/slimProvenance.json");
+  let slimProvenance = JSON.parse(rawdata);
+
+  //Read in JSON file for slimProvenance; 
+
+    //write out provenance events for R processing
+    const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+    let csvWriter;
+
+    headers = ['id','taskId','visType','event'];
+
+    csvWriter = createCsvWriter({
+      path: "results/study/CSV/provenanceTidy.csv",
+      header: headers.map(key => {
+        return { id: key, title: key };
+      })
+    });
+
+    let provCsv = [];
+    // "5d49e0634aff6e0018fb7004": {
+    //   "visType": "adjMatrix",
+    //   "S-task08": [null, "search", "c
+
+    Object.keys(slimProvenance).map(id=>{
+      Object.keys(slimProvenance[id]).map(taskId=>{
+        if (Array.isArray(slimProvenance[id][taskId])){
+          slimProvenance[id][taskId].map(event=>{
+            if (event){
+              provCsv.push({
+                id,
+                taskId,
+                visType:slimProvenance[id].visType,
+                event
+              })
+            }
+          })
+        }
+      })
+    })
+
+    csvWriter
+      .writeRecords(provCsv)
+      .then(() => console.log("provenanceTidy.csv was written successfully"));
+  
+
+  
+
+}
 function processProvenance() {
   let rawdata;
   rawdata = fs.readFileSync("results/events.json");

@@ -231,46 +231,46 @@ function makePlots(provData) {
       }
     });
 
-    let diff = participantGroups
-    .selectAll(".textGroup")
-    .data((d, i) =>  d.provEvents.filter(e => e.type === "longAction" && e.label==="task" && e.task.data));
+  //   let diff = participantGroups
+  //   .selectAll(".textGroup")
+  //   .data((d, i) =>  d.provEvents.filter(e => e.type === "longAction" && e.label==="task" && e.task.data));
 
-  let diffEnter = diff
-    .enter().append('g').attr('class','textGroup')
+  // let diffEnter = diff
+  //   .enter().append('g').attr('class','textGroup')
 
-    diffEnter
-    .append("text")
-    .attr("class", "difficulty")
+  //   diffEnter
+  //   .append("text")
+  //   .attr("class", "difficulty")
 
-    diffEnter
-    .append("text")
-    .attr("class", "confidence")
-
-
-  diff.exit().remove();
-
-  diff = diffEnter.merge(diff);
-
-  diff.select('.difficulty')
-    .attr("x", d => {
-      let time = Date.parse(d.endTime);
-      return x(time - d.participantStartTime);
-    })
-    .attr("y", (d, i) => y(d.level)-5) //y(d.participantOrder))
-    .text(d=>d.task.data.feedback.difficulty)
-    .style('text-anchor','end')
-    .attr("class", 'difficulty')
+  //   diffEnter
+  //   .append("text")
+  //   .attr("class", "confidence")
 
 
-    diff.select('.confidence')
-    .attr("x", d => {
-      let time = Date.parse(d.endTime);
-      return x(time - d.participantStartTime);
-    })
-    .attr("y", (d, i) => y(d.level)+20) //y(d.participantOrder))
-    .text(d=>d.task.data.feedback.confidence)
-    .style('text-anchor','end')
-    .attr("class", 'confidence')
+  // diff.exit().remove();
+
+  // diff = diffEnter.merge(diff);
+
+  // diff.select('.difficulty')
+  //   .attr("x", d => {
+  //     let time = Date.parse(d.endTime);
+  //     return x(time - d.participantStartTime);
+  //   })
+  //   .attr("y", (d, i) => y(d.level)-5) //y(d.participantOrder))
+  //   .text(d=>d.task.data.feedback.difficulty)
+  //   .style('text-anchor','end')
+  //   .attr("class", 'difficulty')
+
+
+  //   diff.select('.confidence')
+  //   .attr("x", d => {
+  //     let time = Date.parse(d.endTime);
+  //     return x(time - d.participantStartTime);
+  //   })
+  //   .attr("y", (d, i) => y(d.level)+20) //y(d.participantOrder))
+  //   .text(d=>d.task.data.feedback.confidence)
+  //   .style('text-anchor','end')
+  //   .attr("class", 'confidence')
 
 
 
@@ -356,17 +356,17 @@ function makePlots(provData) {
     .text(d => (d.level == 0 && d.label !== "browse away" ? d.label : ""));
 
   rects = participantGroups.selectAll(".s-event")
-  .data([])
-  // .data((d, i) =>
-  //   d.provEvents
-  //     .filter(
-  //       e => e.type === "singleAction" && e.label !== "submitted valid answer"
-  //     )
-  //     .map(pEvent => {
-  //       pEvent.participantStartTime = startTime(d);
-  //       return pEvent;
-  //     })
-  // );
+  // .data([])
+  .data((d, i) =>
+    d.provEvents
+      .filter(
+        e => e.type === "singleAction" && e.label !== "submitted valid answer"
+      )
+      .map(pEvent => {
+        pEvent.participantStartTime = startTime(d);
+        return pEvent;
+      })
+  );
 
   rectsEnter = rects
     .enter()
