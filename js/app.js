@@ -148,9 +148,9 @@ let taskPrompts = {
       processProvenance();
       break;
     case "visProvenance":
-        exportTidyProvenance();
+         //exportTidyProvenance();
 
-          // processVisProvenance();
+          processVisProvenance();
           break;
     case "export":
       exportResults();
@@ -861,12 +861,12 @@ function computeAccuracy(taskID, answerObj) {
       let correctAnswers = [
         { id: "19299318", followers: 610 }, //Jason
         { id: "40219508", followers: 552 }, //Noeska
-        { id: "81658145", followers: 1048 }, //Alex
         { id: "16112517", followers: 1059 } //Robert
       ];
 
       //Tamara, James, Jon, Marc, Klaus
       let extendedAnswers = [
+        { id: "81658145", followers: 1048 }, //Alex
         { id: "1652270612", followers: 1123 }, //Tamara
         { id: "30009655", followers: 141 }, //James
         { id: "201277609", followers: 509 }, //Jon
@@ -1014,7 +1014,7 @@ function processVisProvenance() {
 
   let slimProvenance = {};
 
-  var files =[...Array(55).keys()]
+  var files =[...Array(56).keys()]
   files.map((n,i)=>{
     rawdata = fs.readFileSync("allProvenance/provenance_" + i + ".json");
   let provenance = JSON.parse(rawdata);
@@ -1025,7 +1025,20 @@ function processVisProvenance() {
       let task = prov.id.split('_')[1];
       if (allProvenance[id]){
         allProvenance[id][task] = prov;
-        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>{
+          if (e.event === 'sort'){
+            //distinguish between sort on attribute and sort on person; 
+            if (typeof e.sortKey == 'number'){
+              return 'sort-matrix-col';
+            }else {
+              return 'sort-' + e.sortKey;
+            }
+          } else {
+            return e.event
+          }
+          });
+        
+      
 
       } else {
         allProvenance[id]={};
@@ -1034,7 +1047,19 @@ function processVisProvenance() {
 
         slimProvenance[id]={};
         slimProvenance[id].visType = prov['data']['provGraphs'][0].selections ? 'adjMatrix' : 'nodeLink'
-        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>e.event);
+        slimProvenance[id][task] = prov['data']['provGraphs'].map(e=>{
+          if (e.event === 'sort'){
+            //distinguish between sort on attribute and sort on person; 
+            if (typeof e.sortKey == 'number'){
+              return 'sort-matrix-col';
+            }else {
+              return 'sort-' + e.sortKey;
+            }
+          } else {
+            return e.event
+          }
+          });
+        
       }
     };
   })

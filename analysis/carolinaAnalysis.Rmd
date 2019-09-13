@@ -36,6 +36,8 @@ averages<- filter( df, measure == 'minutesOnTask') %>%
   mutate( value = as.numeric( as.character(value)) ) %>% 
   group_by(taskNumber) %>% summarise_at(vars(value), funs(mean, min,max, sd))
 
+df_acc <- filter( df, measure == 'accuracy')
+
 #filter out measurement that don't make the cut as far as timespent;
 dfv <- filter( df, measure != 'minutesOnTask' | as.numeric( as.character(value))<10)
 
@@ -58,19 +60,90 @@ visType.colors <- c(adjMatrix = "#05b4dd", nodeLink = "#f4aa4a")
 ```
 
 
-```{r fig.width=15, fig.height=8}
+```{r fig.width=7, fig.height=3}
+# 
+# user_provenance <- 
+#   dfprov %>%
+#    filter(grepl("sort", event))  %>%
+#     mutate(prolificId = id) %>%
+#      group_by(taskId,event,prolificId) %>%
+#     count()
+# 
+#  user_provenance_data <- merge(user_provenance, df_acc, by="prolificId")
+ 
+  answerFrequency <- function(task) {
+    
+    sdf = df %>% filter( taskNumber == task )
+tt = as.character(sdf[1,]$taskTitle)
+prompt = as.character(sdf[1,]$taskPrompt)
+number = as.character(sdf[1,]$taskNumber)
+
+
+    data <- sdf %>%
+   filter(measure == 'nodeAnswer')  %>%
+     group_by(value,visType) %>%
+    count()
+
+ data$value <- factor(data$value, levels = unique(data$value[order(-data$n)]))
+ 
+  ggplot(data=data,aes(x=value, y=n,fill=visType)) +
+  geom_bar(stat="identity")+
+   #facet_grid(taskId ~ .)+
+  theme(strip.text.y = element_text(angle=0),  panel.grid.major = element_blank())+
+  #coord_flip()+
+  # ylab("Event Frequency")+
+  scale_fill_manual(values=visType.colors)+  labs(
+      title = paste(task,'-',tt,sep=""),
+      subtitle = prompt
+      # caption = paste('W(acc) = ',acc_stats$W,' p-value(acc) = ',acc_stats$'p.value',  '\n', 'W(time) = ',time_stats$W,'p-value(time) = ',time_stats$'p.value' )
+    )+
+    xlab('Answer')+
+    ylab('Frequency')+
+    theme(axis.text.x=element_text(angle = -90, hjust = 0))
+  
+  ggsave(paste("charts/taskAnswers/",task,".pdf",sep=""), width=10, height=3, units="in")
+  
+  }
+
+
+# answerFrequency('T12')
+for (task in seq(1,16,1)){
+  answerFrequency(paste('T',sprintf("%.2d",task),sep=""))
+}
+
+
+# ggplot(data=data, aes(x=visType, y=n/150, fill=visType)) +
+#   geom_bar(stat="identity")+
+#    facet_grid(event ~ taskId)+
+#   theme(strip.text.y = element_text(angle=0),  panel.grid.major = element_blank())+
+#   coord_flip()+
+#   ylab("Event Frequency")+
+#   scale_fill_manual(values=visType.colors)
+#   
+# # ggsave("charts/vis_provenance.pdf", width=5, height=8, units="in")
+# 
+# ggsave("charts/task_provenance.pdf", width=15, height=10, units="in")
+
+
+```
+
+
+
+```{r fig.width=15, fig.height=10}
 
 data <- 
   dfprov %>%
+  # filter(grepl("sort", event))  %>%
    filter(event!= 'Finished Task' & event!= 'startedProvenance')  %>%
-  mutate( event = ifelse(event == 'Searched for Node', "search", as.character(event)))  %>% 
-    mutate( event = ifelse(event == 'answerBox', "Select Answer", as.character(event)))  %>% 
-      mutate( event = ifelse(event == 'Hard Selected a Node', "Select Answer", as.character(event)))  %>% 
-        mutate( event = ifelse(event == 'Hard Unselected a Node', "Unselect Answer", as.character(event)))  %>% 
-    mutate( event = ifelse(event == 'colLabel', "Highlight Neighbors", as.character(event)))  %>% 
-        mutate( event = ifelse(event == 'Unselect Node', "Un-Highlight Neighbors", as.character(event)))  %>% 
+   mutate( event = ifelse(grepl("sort", event), "sort", as.character(event)))  %>%
+  mutate( event = ifelse(event == 'Searched for Node', "search", as.character(event)))  %>%
+    mutate( event = ifelse(event == 'answerBox', "Select Answer", as.character(event)))  %>%
+      mutate( event = ifelse(event == 'Hard Selected a Node', "Select Answer", as.character(event)))  %>%
+        mutate( event = ifelse(event == 'Hard Unselected a Node', "Unselect Answer", as.character(event)))  %>%
+    mutate( event = ifelse(event == 'colLabel', "Highlight Neighbors", as.character(event)))  %>%
+        mutate( event = ifelse(event == 'Unselect Node', "Un-Highlight Neighbors", as.character(event)))  %>%
 
-      mutate( event = ifelse(event == 'Select Node', "Highlight Neighbors", as.character(event)))  %>% 
+      mutate( event = ifelse(event == 'Select Node', "Highlight Neighbors", as.character(event)))  %>%
 
 
   group_by(taskId,event,visType) %>%
@@ -85,6 +158,11 @@ ggplot(data=data, aes(x=visType, y=n/150, fill=visType)) +
   ylab("Event Frequency")+
   scale_fill_manual(values=visType.colors)
   
+# ggsave("charts/vis_provenance.pdf", width=5, height=8, units="in")
+
+ggsave("charts/task_provenance.pdf", width=15, height=10, units="in")
+
+
 ```
 
 
@@ -124,6 +202,9 @@ ggplot(data=data, aes(x=visType, y=n, fill=visType)) +
   coord_flip()+
   ylab("Code Frequency")+
   scale_fill_manual(values=visType.colors)
+
+ggsave("charts/insights.pdf", width = 7, height =5, units = "in")
+
   
 ```
 
