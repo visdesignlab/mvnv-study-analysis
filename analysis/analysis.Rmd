@@ -315,11 +315,17 @@ reportCI <- function(data, attr) {
        sep="")
 }
 
-citext <- function(task) {
-nl = df_acc %>% 
+citext <- function(task, measure_) {
+  
+df_tmp <- df %>% 
+  filter(measure==measure_) 
+
+df_tmp$value = as.numeric( as.character(df_tmp$value ))
+
+nl = df_tmp %>% 
   filter(taskId == task & visType == "nodeLink")
 
-adj = df_acc %>% 
+adj = df_tmp %>% 
   filter(taskId == task & visType == "adjMatrix")
 
 cat( paste(task," | node link\n") )
@@ -334,23 +340,44 @@ cat( "\n" )
 
 
 }
+cat("\n\n =========ACCURACIES======== \n\n")
 
-citext("S-task01")
-citext("S-task02")
-citext("S-task03")
-citext("S-task04")
-citext("S-task05")
-citext("S-task06")
-citext("S-task07")
-citext("S-task08")
-citext("S-task09")
-citext("S-task10")
-citext("S-task11")
-citext("S-task12")
-citext("S-task13")
-citext("S-task14")
-citext("S-task15")
-citext("S-task16")
+citext("S-task01", "accuracy")
+citext("S-task02", "accuracy")
+citext("S-task03", "accuracy")
+citext("S-task04", "accuracy")
+citext("S-task05", "accuracy")
+citext("S-task06", "accuracy")
+citext("S-task07", "accuracy")
+citext("S-task08", "accuracy")
+citext("S-task09", "accuracy")
+citext("S-task10", "accuracy")
+citext("S-task11", "accuracy")
+citext("S-task12", "accuracy")
+citext("S-task13", "accuracy")
+citext("S-task14", "accuracy")
+citext("S-task15", "accuracy")
+#citext("S-task16", "accuracy")
+
+cat("\n\n =========TIMES======== \n\n")
+
+citext("S-task01", "minutesOnTask")
+citext("S-task02", "minutesOnTask")
+citext("S-task03", "minutesOnTask")
+citext("S-task04", "minutesOnTask")
+citext("S-task05", "minutesOnTask")
+citext("S-task06", "minutesOnTask")
+citext("S-task07", "minutesOnTask")
+citext("S-task08", "minutesOnTask")
+citext("S-task09", "minutesOnTask")
+citext("S-task10", "minutesOnTask")
+citext("S-task11", "minutesOnTask")
+citext("S-task12", "minutesOnTask")
+citext("S-task13", "minutesOnTask")
+citext("S-task14", "minutesOnTask")
+citext("S-task15", "minutesOnTask")
+citext("S-task16", "minutesOnTask")
+
 ```
 
 
@@ -378,8 +405,14 @@ reportES <- function(data, attr, group) {
        sep="")
 }
 
-estext <- function(task) {
-esd = df_acc %>% 
+estext <- function(task, measure_) {
+  
+df_tmp <- df %>% 
+  filter(measure==measure_) 
+
+df_tmp$value = as.numeric( as.character(df_tmp$value ))
+
+esd = df_tmp %>% 
   filter(taskId == task)
 
 cat( paste(task, "\n") )
@@ -389,23 +422,43 @@ cat( "\n" )
 
 
 }
+cat("\n\n =========ACCURACIES======== \n\n")
 
-estext("S-task01")
-estext("S-task02")
-estext("S-task03")
-estext("S-task04")
-estext("S-task05")
-estext("S-task06")
-estext("S-task07")
-estext("S-task08")
-estext("S-task09")
-estext("S-task10")
-estext("S-task11")
-estext("S-task12")
-estext("S-task13")
-estext("S-task14")
-estext("S-task15")
-estext("S-task16")
+estext("S-task01", "accuracy")
+estext("S-task02", "accuracy")
+estext("S-task03", "accuracy")
+estext("S-task04", "accuracy")
+estext("S-task05", "accuracy")
+estext("S-task06", "accuracy")
+estext("S-task07", "accuracy")
+estext("S-task08", "accuracy")
+estext("S-task09", "accuracy")
+estext("S-task10", "accuracy")
+estext("S-task11", "accuracy")
+estext("S-task12", "accuracy")
+estext("S-task13", "accuracy")
+estext("S-task14", "accuracy")
+estext("S-task15", "accuracy")
+#estext("S-task16", "accuracy")
+
+cat("\n\n =========TIMES======== \n\n")
+
+estext("S-task01", "minutesOnTask")
+estext("S-task02", "minutesOnTask")
+estext("S-task03", "minutesOnTask")
+estext("S-task04", "minutesOnTask")
+estext("S-task05", "minutesOnTask")
+estext("S-task06", "minutesOnTask")
+estext("S-task07", "minutesOnTask")
+estext("S-task08", "minutesOnTask")
+estext("S-task09", "minutesOnTask")
+estext("S-task10", "minutesOnTask")
+estext("S-task11", "minutesOnTask")
+estext("S-task12", "minutesOnTask")
+estext("S-task13", "minutesOnTask")
+estext("S-task14", "minutesOnTask")
+estext("S-task15", "minutesOnTask")
+estext("S-task16", "minutesOnTask")
 ```
 
 ## TODO Subtract CIs?
