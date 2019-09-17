@@ -13,7 +13,8 @@
         "taxonomy": {
             "target": "single node",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":2,"edge":0}
     },
     "S-task02": {
         "hypothesis":"Distractor Effect Hypothesis, Attribute Sorting Hypothesis",
@@ -29,7 +30,8 @@
         "taxonomy": {
             "target": "single node",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":6,"edge":0}
     },
     "S-task03": {
         "hypothesis":"Scalable Attributes Hypothesis",
@@ -45,7 +47,8 @@
         "taxonomy": {
             "target": "single node",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":4,"edge":0}
     },
     "S-task04": {
         "hypothesis":"Distractor Effect Hypothesis",
@@ -64,7 +67,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":1,"edge":0}
     },
     "S-task05": {
         "hypothesis":"Distractor Effect Hypothesis",
@@ -83,7 +87,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":6,"edge":0}
     },
     "S-task06": {
         "hypothesis":"Edge Attribute Hypothesis",
@@ -99,7 +104,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":0,"edge":2}
     },
     "S-task07": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
@@ -115,7 +121,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "AGT"
-        }
+        },
+        "attributes":{"node":1,"edge":2}
     },
     "S-task08": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis, Common Neighbor Hypothesis",
@@ -131,7 +138,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":1,"edge":0}
     },
     "S-task09": {
         "hypothesis":"Edge Attribute Hypothesis",
@@ -148,7 +156,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "AGT"
-        }
+        },
+        "attributes":{"node":0,"edge":2}
     },
     "S-task10": {
         "hypothesis":"Within Node Comparison Hypothesis, Small/Large Network Hypothesis",
@@ -168,7 +177,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":3,"edge":0}
     },
     "S-task11": {
         "hypothesis":"Within Node Comparison Hypothesis,Small/Large Network Hypothesis",
@@ -188,7 +198,8 @@
         "taxonomy": {
             "target": "neighbors",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":3,"edge":0}
     },
     "S-task12": {
         "hypothesis": "Cluster Hypothesis",
@@ -205,7 +216,8 @@
         "taxonomy": {
             "target": "clusters",
             "type": "AGT"
-        }
+        },
+        "attributes":{"node":1,"edge":0}
     },
     "S-task13": {
         "hypothesis":"Path Hypothesis, Small/Large Network Hypothesis",
@@ -222,7 +234,8 @@
         "taxonomy": {
             "target": "paths",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":2,"edge":0}
     },
     "S-task14": {
         "hypothesis":"Path Hypothesis, Small/Large Network Hypothesis",
@@ -239,7 +252,8 @@
         "taxonomy": {
             "target": "paths",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":2,"edge":0}
     },
     "S-task15": {
         "hypothesis":"Topology plus Simple Attribute Hypothesis",
@@ -256,7 +270,8 @@
         "taxonomy": {
             "target": "paths",
             "type": "TGA"
-        }
+        },
+        "attributes":{"node":1,"edge":0}
     },
     "S-task16": {
         "hypothesis":"Insight Generation Hypothesis",
@@ -271,7 +286,8 @@
         "taxonomy": {
             "target": "NA",
             "type": "NA"
-        }
+        },
+        "attributes":{"node":6,"edge":0}
     }
 
 }

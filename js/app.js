@@ -383,9 +383,10 @@ async function processData() {
       delete p.data[key].replyCount;
       delete p.data[key].replyType;
       delete p.data[key].answerKey;
-
+      
       //replace taxonomy and hypothesis from taskList file (for post-study updates)
       p.data[key].taxonomy = taskList[key].taxonomy;
+      p.data[key].attributes = taskList[key].attributes;
       p.data[key].hypothesis = taskList[key].hypothesis;
 
       if (p.data[key].answer) {
@@ -615,6 +616,9 @@ async function exportTidy(results) {
     "visType",
     "taskType",
     "topology",
+    "node_attributes",
+    "edge_attributes",
+    "attributes",
     "hypothesis_1",
     "hypothesis_2",
     "measure",
@@ -648,6 +652,9 @@ async function exportTidy(results) {
             visType: data.visType,
             taskType: data.taxonomy.type,
             topology: data.taxonomy.target,
+            node_attributes:data.attributes.node,
+            edge_attributes:data.attributes.edge,
+            attributes:data.attributes.node + data.attributes.edge,
             hypothesis_1: hypothesis[0],
             hypothesis_2: hypothesis[1] ? hypothesis[1] : "",
             measure,
@@ -861,12 +868,12 @@ function computeAccuracy(taskID, answerObj) {
       let correctAnswers = [
         { id: "19299318", followers: 610 }, //Jason
         { id: "40219508", followers: 552 }, //Noeska
+        { id: "81658145", followers: 1048 }, //Alex
         { id: "16112517", followers: 1059 } //Robert
       ];
 
       //Tamara, James, Jon, Marc, Klaus
       let extendedAnswers = [
-        { id: "81658145", followers: 1048 }, //Alex
         { id: "1652270612", followers: 1123 }, //Tamara
         { id: "30009655", followers: 141 }, //James
         { id: "201277609", followers: 509 }, //Jon
