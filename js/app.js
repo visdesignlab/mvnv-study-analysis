@@ -383,7 +383,7 @@ async function processData() {
       delete p.data[key].replyCount;
       delete p.data[key].replyType;
       delete p.data[key].answerKey;
-      
+
       //replace taxonomy and hypothesis from taskList file (for post-study updates)
       p.data[key].taxonomy = taskList[key].taxonomy;
       p.data[key].attributes = taskList[key].attributes;
@@ -757,14 +757,16 @@ function computeAccuracy(taskID, answerObj) {
       //  "S-task03": "Well connected with few likes/tweets",
 
       //Jeffrey or Alex
-      let correctAnswers = ["247943631", "81658145", "208312922", "40219508"];
+      let correctAnswers = ["247943631", "81658145"];
       if (correctAnswers.find(a => a == answer.ids)) {
         return 1;
       }
-      // //Rob && Noeska
-      // if (correctAnswers.find(a => a == answer.ids)) {
-      //   return second;
-      // }
+
+      let almostCorrect = ["208312922", "40219508"];
+      //Rob && Noeska
+      if (almostCorrect.find(a => a == answer.ids)) {
+        return second;
+      }
 
       return 0;
     },

@@ -340,45 +340,64 @@ cat( "\n" )
 
 
 }
-cat("\n\n =========ACCURACIES======== \n\n")
+# cat("\n\n =========ACCURACIES======== \n\n")
+# 
+# citext("S-task01", "accuracy")
+# citext("S-task02", "accuracy")
+# citext("S-task03", "accuracy")
+# citext("S-task04", "accuracy")
+# citext("S-task05", "accuracy")
+# citext("S-task06", "accuracy")
+# citext("S-task07", "accuracy")
+# citext("S-task08", "accuracy")
+# citext("S-task09", "accuracy")
+# citext("S-task10", "accuracy")
+# citext("S-task11", "accuracy")
+# citext("S-task12", "accuracy")
+# citext("S-task12A", "accuracy")
+# citext("S-task12B", "accuracy")
+# citext("S-task13", "accuracy")
+# citext("S-task14", "accuracy")
+# citext("S-task15", "accuracy")
+# #citext("S-task16", "accuracy")
+# 
+ cat("\n\n =========TIMES======== \n\n")
+# 
+# citext("S-task01", "minutesOnTask")
+# citext("S-task02", "minutesOnTask")
+# citext("S-task03", "minutesOnTask")
+# citext("S-task04", "minutesOnTask")
+# citext("S-task05", "minutesOnTask")
+# citext("S-task06", "minutesOnTask")
+# citext("S-task07", "minutesOnTask")
+# citext("S-task08", "minutesOnTask")
+# citext("S-task09", "minutesOnTask")
+# citext("S-task10", "minutesOnTask")
+# citext("S-task11", "minutesOnTask")
+# citext("S-task12", "minutesOnTask")
+# citext("S-task13", "minutesOnTask")
+# citext("S-task14", "minutesOnTask")
+# citext("S-task15", "minutesOnTask")
+# citext("S-task16", "minutesOnTask")
 
-citext("S-task01", "accuracy")
-citext("S-task02", "accuracy")
-citext("S-task03", "accuracy")
-citext("S-task04", "accuracy")
-citext("S-task05", "accuracy")
-citext("S-task06", "accuracy")
-citext("S-task07", "accuracy")
-citext("S-task08", "accuracy")
-citext("S-task09", "accuracy")
-citext("S-task10", "accuracy")
-citext("S-task11", "accuracy")
-citext("S-task12", "accuracy")
-citext("S-task12A", "accuracy")
-citext("S-task12B", "accuracy")
-citext("S-task13", "accuracy")
-citext("S-task14", "accuracy")
-citext("S-task15", "accuracy")
-#citext("S-task16", "accuracy")
 
-cat("\n\n =========TIMES======== \n\n")
+for (task in seq(1,16,1)){
+  citext(paste("S-task", sprintf("%.2d",task),sep=""),"minutesOnTask")
 
-citext("S-task01", "minutesOnTask")
-citext("S-task02", "minutesOnTask")
-citext("S-task03", "minutesOnTask")
-citext("S-task04", "minutesOnTask")
-citext("S-task05", "minutesOnTask")
-citext("S-task06", "minutesOnTask")
-citext("S-task07", "minutesOnTask")
-citext("S-task08", "minutesOnTask")
-citext("S-task09", "minutesOnTask")
-citext("S-task10", "minutesOnTask")
-citext("S-task11", "minutesOnTask")
-citext("S-task12", "minutesOnTask")
-citext("S-task13", "minutesOnTask")
-citext("S-task14", "minutesOnTask")
-citext("S-task15", "minutesOnTask")
-citext("S-task16", "minutesOnTask")
+}
+
+# cat("\n\n =========DIFFICULTY======== \n\n")
+# for (task in seq(1,16,1)){
+#   citext(paste("S-task", sprintf("%.2d",task),sep=""),"difficulty")
+# 
+# }
+# 
+# cat("\n\n =========CONFIDENCE======== \n\n")
+# for (task in seq(1,16,1)){
+#     citext(paste("S-task", sprintf("%.2d",task),sep=""),"confidence")
+# 
+# }
+
 
 ```
 
