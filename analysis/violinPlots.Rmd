@@ -55,7 +55,6 @@ ci_values <- read.csv("../results/study/CSV/stats.csv")
 ```
 
 
-
 ```{r}
 
 visType.colors <- c(adjMatrix = "#05b4dd", nodeLink = "#f4aa4a")
@@ -276,7 +275,7 @@ gridLabels <- function(x) {
     #else seq(0, round(max(x)), round(max(x)/3)) 
 }
 
-ymin <- function(values) {
+ymin <- function(values, args) {
   # yValues <- ci_values %>% 
   # filter(taskId == task & measure==measure_) 
   # 
@@ -289,8 +288,33 @@ ymin <- function(values) {
 # adj = df_tmp %>% 
 #   filter(taskId == task & visType == "adjMatrix")
 # 
-  print(ci_acc_NL$M)
+  
+  
+  print(args)
   return(0.75)
+}
+
+ciboot <- function(values) {
+  ci <- boot.ci(
+    boot(data=values, statistic=mean.fun, R=1000, sim="ordinary")
+  )
+  
+  dfci = data.frame(
+    ymin = round( ci$bca[,4], 2),
+    ymax = round( ci$bca[,5], 2),
+    y = round( mean( values ), 2)
+    )
+  
+  print('hi')
+  print(dfci)
+  print(ci)
+
+#  cat( "M=",     round( mean( data[[attr]] ), 2), "~",
+#       "[", round( ci$bca[,4]          , 2), ",",
+#       round( ci$bca[,5]          , 2), "]",
+#       sep="")
+  
+  return(dfci)
 }
 
 plotData <-df %>% 
@@ -321,17 +345,17 @@ plotData <-df %>%
 #     )
 # 
 
-d=data.frame(drink=c("coffee","tea","water"), mean=c(3,6,2), lower=c(2.6,5.6,1.8), upper=c(3.5,6.3,2.8))
- ggplot() + 
- geom_pointrange(data=d, mapping=aes(x=drink, y=mean, ymin=upper, ymax=lower)) 
-
-print(d);
+#d=data.frame(drink=c("coffee","tea","water"), mean=c(3,6,2), lower=c(2.6,5.6,1.8), upper=c(3.5,6.3,2.8))
+# ggplot() + 
+# geom_pointrange(data=d, mapping=aes(x=drink, y=mean, ymin=upper, ymax=lower)) 
+#
+#print(d);
 
   ggplot(data=plotData, aes(x=visLabel, y=value, fill=visType, color=visType)) +
     facet_wrap(. ~ label, scales="free", nrow=1) +
     geom_violin(show.legend=FALSE) +
   # fun.data = "mean_cl_boot"
-    stat_summary(fun.y =mean, fun.ymin = ymin, fun.ymax = mean, colour = "black", size = 0.5, alpha=.5, show.legend=FALSE) +
+    stat_summary(fun.data=ciboot, colour = "black", size = 0.5, alpha=.5, show.legend=FALSE) +
   coord_flip() + 
     labs(
       # title = paste(number, '-', tt),
