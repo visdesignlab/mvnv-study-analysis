@@ -1,6 +1,4 @@
 ---
-title: "carolinaAnalysis"
-author: '@carolinanobre'
 date: "9/3/2019"
 output: html_document
 fig_width: 12 
@@ -15,6 +13,10 @@ library(ggridges)
 library(pwr) 
 library(grid)
 library(gtable)
+
+library(boot)
+library(bootES)
+
 
 library(ggthemes)
 
@@ -274,7 +276,22 @@ gridLabels <- function(x) {
     #else seq(0, round(max(x)), round(max(x)/3)) 
 }
 
-
+ymin <- function(values) {
+  # yValues <- ci_values %>% 
+  # filter(taskId == task & measure==measure_) 
+  # 
+  # print(strsplit(yValues$M, 'M='))
+# df_tmp$value = as.numeric( as.character(df_tmp$value ))
+# 
+# nl = df_tmp %>% 
+#   filter(taskId == task & visType == "nodeLink")
+# 
+# adj = df_tmp %>% 
+#   filter(taskId == task & visType == "adjMatrix")
+# 
+  print(ci_acc_NL$M)
+  return(0.75)
+}
 
 plotData <-df %>% 
   filter( measure == "accuracy" | measure == "minutesOnTask"  )  %>% 
@@ -304,14 +321,20 @@ plotData <-df %>%
 #     )
 # 
 
+d=data.frame(drink=c("coffee","tea","water"), mean=c(3,6,2), lower=c(2.6,5.6,1.8), upper=c(3.5,6.3,2.8))
+ ggplot() + 
+ geom_pointrange(data=d, mapping=aes(x=drink, y=mean, ymin=upper, ymax=lower)) 
+
+print(d);
 
   ggplot(data=plotData, aes(x=visLabel, y=value, fill=visType, color=visType)) +
     facet_wrap(. ~ label, scales="free", nrow=1) +
     geom_violin(show.legend=FALSE) +
-    stat_summary(fun.data = "mean_cl_boot", colour = "black", size = 0.5, alpha=.5, show.legend=FALSE) +
+  # fun.data = "mean_cl_boot"
+    stat_summary(fun.y =mean, fun.ymin = ymin, fun.ymax = mean, colour = "black", size = 0.5, alpha=.5, show.legend=FALSE) +
   coord_flip() + 
     labs(
-      #title = paste(number, '-', tt),
+      # title = paste(number, '-', tt),
       # subtitle = paste(number, '-', tt) , #prompt,
        # caption = paste('W=',acc_stats$W,' p=',acc_stats$'p.value', acc_stats$d, '    ', 'W=',time_stats$W,'p=',time_stats$'p.value', time_stats$d, '\n' ,ci_acc_NL$M,  ci_acc_AM$M, ci_time_NL$M, ci_time_AM$M )
       #      caption = paste(' W=',acc_stats$W,' p=',acc_stats$'p.value', acc_stats$d, '    ', '         W=',time_stats$W,'p=',time_stats$'p.value', time_stats$d, '\n' ,'NL:', ci_acc_NL$M,  'AM:', ci_acc_AM$M, '         NL:', ci_time_NL$M,'AM:', ci_time_AM$M )
@@ -326,21 +349,18 @@ plotData <-df %>%
 
 
 
-# filename <- paste("violins/",gsub(" ", "", paste(number,tt), fixed = TRUE),".pdf", sep="")
-# ggsave(filename, width = 7, height = 2.5, units = "in")
-}
-
- vplot('S-task03')
-```
-
-
-```{r }
-
-for (task in seq(1,16,1)){
-  #vplot(paste("S-task", sprintf("%.2d",task),sep=""))
+filename <- paste("violins/",gsub(" ", "", paste(number,tt), fixed = TRUE),".pdf", sep="")
+ ggsave(filename, width = 7, height = 1.5, units = "in")
 }
 
  # vplot('S-task03')
-  
+
+for (task in seq(1,1,1)){
+ vplot(paste("S-task", sprintf("%.2d",task),sep=""))
+}
+
 ```
+
+
+
 

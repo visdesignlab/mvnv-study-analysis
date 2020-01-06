@@ -1,6 +1,5 @@
 ---
 title: "analysis"
-author: '@laneharrison'
 date: "8/23/2019"
 output: html_document
 ---
@@ -110,7 +109,6 @@ df %>%
 
 ## Power Analysis
 
-first, we copy over a trusty old function (h/t Mia)
 ```{r}
 
 powerAnalysisGraph <- function(m1, m2, stdev, iterNum=15){
@@ -295,7 +293,6 @@ wtest("S-task16")
 ## CIs
 
 ```{r, warning=FALSE}
-# Credit to Mia for the originals
 
 # Bootstrap 95% CI for mean
 # function to obtain mean from the data (with indexing)
@@ -407,7 +404,6 @@ for (task in seq(1,16,1)){
 Note: at least as of 10-Sep-2019, negative effect sizes appear to mean "the adjMatrix wins" aka the adjMatrix has a higher accuracy
 
 ```{r, warning=FALSE}
-# Credit to Mia for the originals
 
 
 reportES <- function(data, attr, group) {
