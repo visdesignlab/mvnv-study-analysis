@@ -87,6 +87,8 @@ reportCI <- function(data, attr) {
   ci <- boot.ci(
     boot(data=data[[attr]], statistic=mean.fun, R=1000, sim="ordinary")
   )
+  
+  print(nrow(data))
 
   cat( "M=",     round( mean( data[[attr]] ), 2), "~",
        "[", round( ci$bca[,4]          , 2), ",",
@@ -122,13 +124,13 @@ cat( "\n" )
 
  cat("\n\n =========ACCURACIES======== \n\n")
 
-for (task in seq(1,15,1)){
+for (task in seq(12,12,1)){
   citext(paste("S-task", sprintf("%.2d",task),sep=""),"accuracy")
 }
 
  cat("\n\n =========TIMES======== \n\n")
 
-for (task in seq(1,15,1)){
+for (task in seq(12,12,1)){
   citext(paste("S-task", sprintf("%.2d",task),sep=""),"minutesOnTask")
 }
 
@@ -240,6 +242,8 @@ for (task in seq(1,16,1)){
 
 
 vplot <- function(task) {
+  
+  print(task)
 
 sdf = df %>% filter( taskId == task )
 tt = as.character(sdf[1,]$taskTitle)
@@ -294,7 +298,10 @@ ymin <- function(values, args) {
   return(0.75)
 }
 
+
 ciboot <- function(values) {
+#  values = as.numeric( as.character(values ))
+
   ci <- boot.ci(
     boot(data=values, statistic=mean.fun, R=1000, sim="ordinary")
   )
@@ -305,15 +312,12 @@ ciboot <- function(values) {
     y = round( mean( values ), 2)
     )
   
-  print('hi')
-  print(dfci)
-  print(ci)
+# S-task12  | node link
+# M=3.46~[3.02,4.75]
+# S-task12  | adj matrix
+# M=3.43~[3.05,3.94]
 
-#  cat( "M=",     round( mean( data[[attr]] ), 2), "~",
-#       "[", round( ci$bca[,4]          , 2), ",",
-#       round( ci$bca[,5]          , 2), "]",
-#       sep="")
-  
+  print(length(values))
   return(dfci)
 }
 
@@ -351,6 +355,8 @@ plotData <-df %>%
 #
 #print(d);
 
+print(nrow(plotData))
+
   ggplot(data=plotData, aes(x=visLabel, y=value, fill=visType, color=visType)) +
     facet_wrap(. ~ label, scales="free", nrow=1) +
     geom_violin(show.legend=FALSE) +
@@ -379,7 +385,7 @@ filename <- paste("violins/",gsub(" ", "", paste(number,tt), fixed = TRUE),".pdf
 
  # vplot('S-task03')
 
-for (task in seq(1,1,1)){
+for (task in seq(12,12,1)){
  vplot(paste("S-task", sprintf("%.2d",task),sep=""))
 }
 
@@ -387,4 +393,17 @@ for (task in seq(1,1,1)){
 
 
 
+checking out the filtering
+
+```{r}
+plotData <- df %>% 
+  filter( measure == "accuracy" | measure == "minutesOnTask"  )  %>% 
+             # | measure == "difficulty" | measure == "confidence") %>% 
+    filter( taskId == "S-task12" ) %>% 
+   mutate( value = as.numeric( as.character(value)) ) %>% 
+   mutate( label = labels.measure[as.character(measure)] ) %>% 
+     mutate( visLabel = labels.visType[as.character(visType)] ) %>% 
+
+  mutate( label = factor(label, levels=c("Accuracy","Time (minutes)", "Confidence","Difficulty")));
+```
 
