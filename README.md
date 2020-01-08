@@ -2,6 +2,10 @@
 
 This repository contains all the survey results from the MVNV crowdsourced study as well as the R scripts used to analyze them and the d3 code used to generalize an interactive visualization of the provenance data.
 
+
+### Survey 
+The MVNV crowdsourced study itself can be found at [https://github.com/visdesignlab/mvnv-study](https://github.com/visdesignlab/mvnv-study).
+
 ## Survey Data
 
 The survey data can be found in three formats: JSON for the original data from the firestore database, CSV for exported versions for R processing, and MaxQDA data which contains an export of the qualitative coding done with the survey responses for the open ended explore task.
@@ -23,3 +27,4 @@ A live version of a visualization of the provenance data collected during the su
 ### Run locally
 
 In order to see the provenance visualization locally, download this repo and run a local server such as http-server.
+
