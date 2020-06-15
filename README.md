@@ -12,7 +12,7 @@ The survey data can be found in three formats: JSON for the original data from t
 
 ## Analysis Code
 
-THe R Scripts used to analyze the results and generate the figures that are included in the paper and in the supplementary pdf can be found in the analysis folder.
+The R Scripts used to analyze the results and generate the figures that are included in the paper and in the supplementary pdf can be found in the analysis folder.
 
 ## Provenance Visualization
 
